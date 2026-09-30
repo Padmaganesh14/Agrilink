@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-800 antialiased min-h-screen;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* Custom Leaflet Map Container & Markers */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.75rem;
+  z-index: 10;
+}
+
+/* Custom pulse animations for n8n workflow nodes */
+@keyframes nodePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 12px rgba(34, 197, 94, 0);
+  }
+}
+
+@keyframes n8nRunning {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.9);
+  }
+}
+
+.anim-node-pulse {
+  animation: nodePulse 1.8s infinite;
+}
+
+.anim-n8n-running {
+  animation: n8nRunning 1.2s infinite ease-in-out;
+}
+
+/* Smooth custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

@@ -1,0 +1,254 @@
+{
+  "name": "AgriLink AI - Master Sell My Crop Workflow (Single Continuous Pipeline)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sell-my-crop-master",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node-01-webhook",
+      "name": "① Webhook (Farmer Input)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "crop",
+              "name": "crop",
+              "value": "={{ $json.body.crop || 'Tomato' }}",
+              "type": "string"
+            },
+            {
+              "id": "quantityKg",
+              "name": "quantityKg",
+              "value": "={{ Number($json.body.quantityKg || $json.body.quantity) || 2000 }}",
+              "type": "number"
+            },
+            {
+              "id": "location",
+              "name": "location",
+              "value": "={{ $json.body.location || 'Trichy' }}",
+              "type": "string"
+            },
+            {
+              "id": "quality",
+              "name": "quality",
+              "value": "={{ $json.body.quality || 'Grade A' }}",
+              "type": "string"
+            },
+            {
+              "id": "expectedPrice",
+              "name": "expectedPrice",
+              "value": "={{ Number($json.body.expectedPrice) || 28 }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-02-validate",
+      "name": "② Validate Farmer Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 3: Fetch Mandi Data (GitHub mandi-data repository / Agmarknet Daily Feed)\n// Simulating clean GitHub / Agmarknet CSV fetch\nconst rawCsv = `date,state,district,market,commodity,variety,grade,min_price,max_price,modal_price\n2026-09-28,Tamil Nadu,Trichy,Trichy,Tomato,Local,Grade A,2400,3200,2800\n2026-09-28,Tamil Nadu,Chennai,Koyambedu,Tomato,Local,Grade A,3000,4000,3500\n2026-09-28,Tamil Nadu,Coimbatore,Coimbatore,Tomato,Hybrid,Grade A,2800,3600,3200\n2026-09-28,Tamil Nadu,Madurai,Madurai,Tomato,Local,Grade A,2200,3100,2700\n2026-09-28,Tamil Nadu,Trichy,Trichy,Coconut,Pollachi Regular,Grade A,2400,3100,2800\n2026-09-28,Tamil Nadu,Chennai,Koyambedu,Coconut,Pollachi Regular,Grade A,3000,3800,3400\n2026-09-28,Tamil Nadu,Trichy,Trichy,Banana,Poovan,Grade A,2000,2700,2400\n2026-09-28,Tamil Nadu,Chennai,Koyambedu,Banana,Poovan,Grade A,2600,3400,3000\n2026-09-28,Tamil Nadu,Trichy,Trichy,Onion,Small Red Bellary,Export Grade,4600,5600,5200\n2026-09-28,Tamil Nadu,Chennai,Koyambedu,Onion,Small Red Bellary,Export Grade,5800,6900,6400`;\n\nconst farmer = $input.first().json;\nreturn [{ json: { rawCsv, farmer } }];"
+      },
+      "id": "node-03-fetch-data",
+      "name": "③ Fetch Mandi Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 4: Parse CSV lines & Filter State (Tamil Nadu)\nconst item = $input.first().json;\nconst lines = item.rawCsv.trim().split('\\n');\nconst headers = lines[0].split(',');\n\nconst parsed = [];\nfor (let i = 1; i < lines.length; i++) {\n  const row = lines[i].split(',');\n  const obj = {};\n  headers.forEach((h, idx) => {\n    const val = row[idx];\n    obj[h.trim()] = isNaN(val) ? val.trim() : Number(val);\n  });\n  if (obj.state === 'Tamil Nadu') {\n    parsed.push(obj);\n  }\n}\n\nreturn [{ json: { records: parsed, farmer: item.farmer } }];"
+      },
+      "id": "node-04-parse-csv",
+      "name": "④ Parse CSV & Filter State",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [920, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 5: Filter Commodity & Normalize Prices (1 Quintal = 100 KG)\nconst item = $input.first().json;\nconst cropQuery = item.farmer.crop.toLowerCase().trim();\n\nlet filtered = item.records.filter(r => {\n  const c = r.commodity.toLowerCase();\n  return c === cropQuery || c.includes(cropQuery) || cropQuery.includes(c);\n});\n\nif (filtered.length === 0) {\n  filtered = item.records.slice(0, 4);\n}\n\nconst normalized = filtered.map(r => ({\n  market: r.market,\n  district: r.district,\n  commodity: r.commodity,\n  modalPriceQuintal: r.modal_price,\n  modalPricePerKg: r.modal_price / 100,\n  minPricePerKg: r.min_price / 100,\n  maxPricePerKg: r.max_price / 100\n}));\n\nreturn [{ json: { mandis: normalized, farmer: item.farmer } }];"
+      },
+      "id": "node-05-normalize-price",
+      "name": "⑤ Normalize Price (Quintal ➔ KG)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1160, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 6: Market Analysis (Price Spread & Demand Scoring)\nconst item = $input.first().json;\nconst mandis = item.mandis;\n\nconst scored = mandis.map(m => {\n  let demand = 'Medium';\n  if (m.district === 'Chennai') demand = 'High';\n  else if (m.district === 'Coimbatore') demand = 'High';\n  else if (m.district === 'Madurai') demand = 'Low';\n\n  return {\n    ...m,\n    demand,\n    spread: m.maxPricePerKg - m.minPricePerKg\n  };\n});\n\nreturn [{ json: { scoredMandis: scored, farmer: item.farmer } }];"
+      },
+      "id": "node-06-market-analysis",
+      "name": "⑥ Market Analysis",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1400, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 7: Market Opportunity Comparison\nconst item = $input.first().json;\nconst mandis = item.scoredMandis;\nconst farmer = item.farmer;\n\nconst chennai = mandis.find(m => m.district === 'Chennai') || { modalPricePerKg: 35, modalPriceQuintal: 3500 };\nconst trichy = mandis.find(m => m.district === 'Trichy') || { modalPricePerKg: 28, modalPriceQuintal: 2800 };\nconst coimbatore = mandis.find(m => m.district === 'Coimbatore') || { modalPricePerKg: 32, modalPriceQuintal: 3200 };\nconst madurai = mandis.find(m => m.district === 'Madurai') || { modalPricePerKg: 27, modalPriceQuintal: 2700 };\n\nconst comparison = [\n  { market: 'Trichy', shortName: 'TRICHY', pricePerKg: trichy.modalPricePerKg, note: 'Local Base', isLocal: true },\n  { market: 'Chennai', shortName: 'CHENNAI', pricePerKg: chennai.modalPricePerKg, note: 'Best Market (+₹' + (chennai.modalPricePerKg - farmer.expectedPrice) + '/kg)', isLocal: false },\n  { market: 'Coimbatore', shortName: 'COIMBATORE', pricePerKg: coimbatore.modalPricePerKg, note: '+₹4/kg', isLocal: false },\n  { market: 'Madurai', shortName: 'MADURAI', pricePerKg: madurai.modalPricePerKg, note: '-₹1/kg', isLocal: false }\n];\n\nreturn [{ json: { comparison, bestMarket: chennai, localMarket: trichy, farmer } }];"
+      },
+      "id": "node-07-market-opportunity",
+      "name": "⑦ Market Opportunity",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1640, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 8: Buyer Matching (AgriLink Verified B2B Wholesale Network)\nconst item = $input.first().json;\n\nconst buyer = {\n  id: 'buyer-koyambedu',\n  name: 'Koyambedu Wholesale Mart',\n  location: 'Chennai',\n  requiredQuantityKg: item.farmer.quantityKg,\n  targetPrice: item.bestMarket.modalPricePerKg,\n  paymentTerms: 'WhatsApp-coordinated escrow on dispatch',\n  badge: 'B2B Wholesale Buyer',\n  verified: true,\n  isBestMatch: true\n};\n\nreturn [{ json: { ...item, buyer } }];"
+      },
+      "id": "node-08-buyer-matching",
+      "name": "⑧ Buyer Matching",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1880, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 9: Transport Estimation (Corridor Distance & Freight Cost)\nconst item = $input.first().json;\n\nconst transport = {\n  partner: 'Tamil Nadu Agro Logistics',\n  vehicle: 'Eicher Pro 2049 (14 FT)',\n  capacityKg: 3000,\n  estimatedCost: 3600,\n  estimatedRatePerKg: 1.8,\n  distanceKm: 330,\n  corridor: 'NH38 / NH45 Direct Highway',\n  transitHours: '~6 Hours'\n};\n\nreturn [{ json: { ...item, transport } }];"
+      },
+      "id": "node-09-transport",
+      "name": "⑨ Transport Estimate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2120, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 10: Opportunity Score & Net Advantage Calculation\nconst item = $input.first().json;\nconst farmerExp = item.farmer.expectedPrice;\nconst marketPrice = item.bestMarket.modalPricePerKg;\nconst transportCostPerKg = 2.0; // conservative ₹2/kg freight allocation\n\nconst grossDifference = marketPrice - farmerExp; // e.g. 35 - 28 = ₹7/kg\nconst netAdvantagePerKg = Math.max(0, grossDifference - transportCostPerKg); // 7 - 2 = ₹5/kg\nconst totalOpportunity = Math.round(netAdvantagePerKg * item.farmer.quantityKg); // 5 * 2000 = ₹10,000\n\nconst opportunityScore = {\n  marketPricePerKg: marketPrice,\n  farmerExpectedPrice: farmerExp,\n  grossDiffPerKg: grossDifference,\n  estimatedTransportPerKg: transportCostPerKg,\n  netAdvantagePerKg: netAdvantagePerKg,\n  totalOpportunityAmount: totalOpportunity\n};\n\nreturn [{ json: { ...item, opportunityScore } }];"
+      },
+      "id": "node-10-opportunity-score",
+      "name": "⑩ Opportunity Score",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2360, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 11: AI Explanation ('Why This Market')\nconst item = $input.first().json;\nconst opp = item.opportunityScore;\n\nconst aiInsight = {\n  recommendation: 'CHENNAI HAS THE BEST ESTIMATED OPPORTUNITY',\n  summary: 'Chennai shows a higher observed mandi price (+₹' + opp.grossDiffPerKg + '/kg over expected) with high institutional buyer demand, offsetting the ~₹2/kg NH45 transport cost and unlocking +₹' + opp.totalOpportunityAmount.toLocaleString() + ' net opportunity.',\n  whyReasons: [\n    'Higher indicative wholesale APMC price (+₹' + opp.grossDiffPerKg + '/kg gross)',\n    'High B2B institutional demand (Koyambedu Wholesale Mart)',\n    'Quantity match: ' + item.farmer.quantityKg.toLocaleString() + ' KG lot size',\n    'Direct NH45 corridor (~330 KM with direct freight availability)',\n    'Estimated transport accounted for (~₹' + opp.estimatedTransportPerKg + '/kg deduction)'\n  ],\n  disclaimer: 'AI estimate — not a guaranteed selling price.'\n};\n\nreturn [{ json: { ...item, aiInsight } }];"
+      },
+      "id": "node-11-ai-explanation",
+      "name": "⑪ AI Explanation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2600, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 12: Generate AI Promotion (Bilingual Content)\nconst item = $input.first().json;\nconst crop = item.farmer.crop;\nconst qty = item.farmer.quantityKg.toLocaleString();\nconst loc = item.farmer.location;\nconst price = item.bestMarket.modalPricePerKg;\n\nconst promotion = {\n  caption: '🍅 Fresh ' + item.farmer.quality + ' ' + crop + '\\n📦 Quantity: ' + qty + ' KG\\n📍 Farm Origin: ' + loc + ', Tamil Nadu\\n💰 Indicative Market Rate: ₹' + price + ' / KG\\n🤝 Available for verified B2B purchase via AgriLink AI.',\n  captionTa: '🍅 புதிய ' + crop + ' (' + qty + ' கிலோ)\\n📍 பண்ணை: ' + loc + ', தமிழ்நாடு\\n💰 உத்தேச சந்தை விலை: ₹' + price + ' / கிலோ\\n🤝 AgriLink AI தளம் மூலம் நேரடி B2B கொள்முதல்.',\n  channels: ['WhatsApp Wholesale Broadcast', 'AgriLink Buyer Portal', 'Koyambedu Terminal Feed']\n};\n\nreturn [{ json: { ...item, promotion } }];"
+      },
+      "id": "node-12-promotion",
+      "name": "⑫ Generate Promotion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2840, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 13: Order & WhatsApp Payment Coordination\nconst item = $input.first().json;\n\nconst order = {\n  orderId: 'AGRI-2026-8842',\n  status: 'Ready for Dispatch',\n  totalValue: item.bestMarket.modalPricePerKg * item.farmer.quantityKg,\n  buyerName: item.buyer.name,\n  whatsappPaymentCoordinated: true\n};\n\nreturn [{ json: { ...item, order } }];"
+      },
+      "id": "node-13-order",
+      "name": "⑬ Order & Payment",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3080, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 14: Logistics Route & Telemetry\nconst item = $input.first().json;\n\nconst logistics = {\n  route: item.farmer.location + ' Farm Gate ➔ Chennai Koyambedu',\n  corridorKm: 330,\n  speedKmH: 52,\n  currentCheckpoint: 'Villupuram (NH45)',\n  status: 'Tracking Active',\n  etaHours: 6\n};\n\nreturn [{ json: { ...item, logistics } }];"
+      },
+      "id": "node-14-logistics",
+      "name": "⑭ Logistics Corridor",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3320, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  crop: $json.farmer.crop,\n  quantityKg: $json.farmer.quantityKg,\n  farmerLocation: $json.farmer.location,\n  recommendedMarket: {\n    market: $json.bestMarket.district,\n    modalPricePerKg: $json.bestMarket.modalPricePerKg,\n    modalPriceQuintal: $json.bestMarket.modalPriceQuintal,\n    demand: 'High',\n    grossDiffPerKg: $json.opportunityScore.grossDiffPerKg,\n    estimatedTransportPerKg: $json.opportunityScore.estimatedTransportPerKg,\n    netAdvantagePerKg: $json.opportunityScore.netAdvantagePerKg,\n    totalOpportunityAmount: $json.opportunityScore.totalOpportunityAmount\n  },\n  marketComparison: $json.comparison,\n  buyer: $json.buyer,\n  transport: $json.transport,\n  aiInsight: $json.aiInsight,\n  promotion: $json.promotion,\n  order: $json.order,\n  logistics: $json.logistics,\n  provenance: {\n    source: 'data.gov.in / Agmarknet Mandi Feed',\n    department: 'Directorate of Marketing & Inspection (DMI)',\n    date: '2026-09-28'\n  }\n}) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              }
+            ]
+          }
+        }
+      },
+      "id": "node-15-response",
+      "name": "⑮ Final Response (AgriLink UI)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [3560, 300]
+    }
+  ],
+  "connections": {
+    "① Webhook (Farmer Input)": {
+      "main": [[{ "node": "② Validate Farmer Input", "type": "main", "index": 0 }]]
+    },
+    "② Validate Farmer Input": {
+      "main": [[{ "node": "③ Fetch Mandi Data", "type": "main", "index": 0 }]]
+    },
+    "③ Fetch Mandi Data": {
+      "main": [[{ "node": "④ Parse CSV & Filter State", "type": "main", "index": 0 }]]
+    },
+    "④ Parse CSV & Filter State": {
+      "main": [[{ "node": "⑤ Normalize Price (Quintal ➔ KG)", "type": "main", "index": 0 }]]
+    },
+    "⑤ Normalize Price (Quintal ➔ KG)": {
+      "main": [[{ "node": "⑥ Market Analysis", "type": "main", "index": 0 }]]
+    },
+    "⑥ Market Analysis": {
+      "main": [[{ "node": "⑦ Market Opportunity", "type": "main", "index": 0 }]]
+    },
+    "⑦ Market Opportunity": {
+      "main": [[{ "node": "⑧ Buyer Matching", "type": "main", "index": 0 }]]
+    },
+    "⑧ Buyer Matching": {
+      "main": [[{ "node": "⑨ Transport Estimate", "type": "main", "index": 0 }]]
+    },
+    "⑨ Transport Estimate": {
+      "main": [[{ "node": "⑩ Opportunity Score", "type": "main", "index": 0 }]]
+    },
+    "⑩ Opportunity Score": {
+      "main": [[{ "node": "⑪ AI Explanation", "type": "main", "index": 0 }]]
+    },
+    "⑪ AI Explanation": {
+      "main": [[{ "node": "⑫ Generate Promotion", "type": "main", "index": 0 }]]
+    },
+    "⑫ Generate Promotion": {
+      "main": [[{ "node": "⑬ Order & Payment", "type": "main", "index": 0 }]]
+    },
+    "⑬ Order & Payment": {
+      "main": [[{ "node": "⑭ Logistics Corridor", "type": "main", "index": 0 }]]
+    },
+    "⑭ Logistics Corridor": {
+      "main": [[{ "node": "⑮ Final Response (AgriLink UI)", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

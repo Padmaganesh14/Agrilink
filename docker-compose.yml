@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: agrilink-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - agrilink-network
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: agrilink-n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=false
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=Asia/Kolkata
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - agrilink-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: agrilink-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - MONGO_URI=mongodb://mongodb:27017/agrilink
+      - N8N_WEBHOOK_URL=http://n8n:5678/webhook/sell-my-crop-master
+      - NODE_ENV=production
+    depends_on:
+      - mongodb
+      - n8n
+    networks:
+      - agrilink-network
+
+networks:
+  agrilink-network:
+    driver: bridge
+
+volumes:
+  mongo_data:
+  n8n_data:

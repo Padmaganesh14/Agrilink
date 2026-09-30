@@ -1,0 +1,31 @@
+date,state,district,market,commodity,variety,grade,min_price,max_price,modal_price
+2026-09-28,Tamil Nadu,Trichy,Trichy,Tomato,Local,Grade A,2400,3200,2800
+2026-09-28,Tamil Nadu,Chennai,Koyambedu,Tomato,Local,Grade A,3000,4000,3500
+2026-09-28,Tamil Nadu,Coimbatore,Coimbatore,Tomato,Hybrid,Grade A,2800,3600,3200
+2026-09-28,Tamil Nadu,Madurai,Madurai,Tomato,Local,Grade A,2200,3100,2700
+2026-09-28,Tamil Nadu,Salem,Salem,Tomato,Local,Grade A,2500,3300,2900
+2026-09-28,Tamil Nadu,Tirunelveli,Tirunelveli,Tomato,Local,Grade A,2300,3000,2650
+2026-09-28,Tamil Nadu,Trichy,Trichy,Coconut,Pollachi Regular,Grade A,2400,3100,2800
+2026-09-28,Tamil Nadu,Chennai,Koyambedu,Coconut,Pollachi Regular,Grade A,3000,3800,3400
+2026-09-28,Tamil Nadu,Coimbatore,Coimbatore,Coconut,Pollachi Regular,Grade A,2800,3400,3100
+2026-09-28,Tamil Nadu,Madurai,Madurai,Coconut,Pollachi Regular,Grade A,2200,2900,2600
+2026-09-28,Tamil Nadu,Trichy,Trichy,Banana,Poovan,Grade A,2000,2700,2400
+2026-09-28,Tamil Nadu,Chennai,Koyambedu,Banana,Poovan,Grade A,2600,3400,3000
+2026-09-28,Tamil Nadu,Coimbatore,Coimbatore,Banana,Poovan,Grade A,2400,3100,2800
+2026-09-28,Tamil Nadu,Madurai,Madurai,Banana,Poovan,Grade A,1900,2600,2300
+2026-09-28,Tamil Nadu,Trichy,Trichy,Onion,Small Red Bellary,Export Grade,4600,5600,5200
+2026-09-28,Tamil Nadu,Chennai,Koyambedu,Onion,Small Red Bellary,Export Grade,5800,6900,6400
+2026-09-28,Tamil Nadu,Coimbatore,Coimbatore,Onion,Small Red Bellary,Export Grade,5200,6200,5700
+2026-09-28,Tamil Nadu,Madurai,Madurai,Onion,Small Red Bellary,Export Grade,4400,5400,5000
+2026-09-28,Tamil Nadu,Trichy,Trichy,Rice,Ponni Aged,Grade A,4200,5100,4800
+2026-09-28,Tamil Nadu,Chennai,Koyambedu,Rice,Ponni Aged,Grade A,5100,6100,5600
+2026-09-28,Tamil Nadu,Coimbatore,Coimbatore,Rice,Ponni Aged,Grade A,4700,5600,5200
+2026-09-28,Tamil Nadu,Madurai,Madurai,Rice,Ponni Aged,Grade A,4300,5200,4900
+2026-09-28,Tamil Nadu,Trichy,Trichy,Cotton,MCU-5,Grade A,6000,7000,6500
+2026-09-28,Tamil Nadu,Coimbatore,Coimbatore,Cotton,MCU-5,Grade A,6700,7600,7200
+2026-09-28,Tamil Nadu,Chennai,Koyambedu,Cotton,MCU-5,Grade A,6500,7400,7000
+2026-09-28,Tamil Nadu,Trichy,Trichy,Brinjal,Green Long,Grade A,1500,2100,1800
+2026-09-28,Tamil Nadu,Chennai,Koyambedu,Brinjal,Green Long,Grade A,2100,2800,2500
+2026-09-28,Tamil Nadu,Coimbatore,Coimbatore,Brinjal,Green Long,Grade A,1800,2500,2200
+2026-09-28,Tamil Nadu,Trichy,Trichy,Sugarcane,CO-86032,Grade A,280,340,310
+2026-09-28,Tamil Nadu,Chennai,Koyambedu,Sugarcane,CO-86032,Grade A,360,450,400
