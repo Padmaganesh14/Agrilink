@@ -74,12 +74,8 @@ export const AgriProvider = ({ children }) => {
   const [harvestDate, setHarvestDate] = useState("");
   const [expectedPrice, setExpectedPrice] = useState("");
 
-  const [selectedBuyer, setSelectedBuyer] = useState(
-    defaultCrops[0].matchedBuyers[0],
-  );
-  const [selectedTransport, setSelectedTransport] = useState(
-    transportPartners[0],
-  );
+  const [selectedBuyer, setSelectedBuyer] = useState(null);
+  const [selectedTransport, setSelectedTransport] = useState(null);
   const [transportConfirmed, setTransportConfirmed] = useState(false);
 
   const [activeOrderId, setActiveOrderId] = useState(null);
