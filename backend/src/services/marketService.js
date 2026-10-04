@@ -44,6 +44,7 @@ IMPORTANT:
 - All prices must be REALISTIC current Indian market prices for ${crop} in ₹/KG.
 - Mandi prices must reflect actual seasonal variation.
 - bestMarket.location must be the actual city name only.
+- In aiInsight.disclaimer, you MUST explicitly state that these prices are AI-estimated representations and NOT verified live APMC data.
 - Return ONLY the JSON object. No markdown, no explanation.
 `;
 

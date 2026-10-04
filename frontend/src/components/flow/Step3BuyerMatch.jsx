@@ -28,10 +28,7 @@ export const Step3BuyerMatch = () => {
   const intel = marketIntelligence || {};
 
   // Buyers come from Gemini AI response
-  const aiBuyers = intel.buyers || [];
-
-  // Legacy fallback to crop.matchedBuyers if AI buyers not available
-  const buyers = aiBuyers.length > 0 ? aiBuyers : (selectedCrop.matchedBuyers || []);
+  const buyers = intel.buyers || [];
 
   const [visibleCount, setVisibleCount] = useState(4);
   const visibleBuyers = buyers.slice(0, visibleCount);

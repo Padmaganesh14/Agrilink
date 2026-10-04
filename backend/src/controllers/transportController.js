@@ -3,11 +3,18 @@ import axios from "axios";
 
 export async function matchTransport(req, res, next) {
   try {
-    const {
-      origin = "Trichy",
-      destination = "Chennai",
-      quantityKg = 2000,
-    } = req.body;
+    const { origin, destination, quantityKg } = req.body;
+
+    if (!origin || !destination) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Missing required origin or destination",
+        });
+    }
+
+    const qty = Number(quantityKg);
 
     const { data: transporters, error } = await supabase
       .from("transporters")
@@ -63,11 +70,11 @@ export async function matchTransport(req, res, next) {
     }
 
     if (distanceKm === null) {
-      console.warn(
-        "Real routing service unavailable. Using fallback distance.",
-      );
-      distanceKm = 330; // Fallback distance for Trichy -> Chennai
-      transitHoursStr = "6h 0m";
+      return res.status(400).json({
+        success: false,
+        message:
+          "Unable to calculate route distance between the provided origin and destination.",
+      });
     }
 
     const transportPartners = transporters.map((t) => ({

@@ -60,13 +60,26 @@ export const Step5_5TransportSelection = () => {
 
     try {
       setIsStartingTracking(true);
-      const trackingData = {
-        orderId: activeOrderId,
-        origin: customLocation,
-        destination: selectedBuyer?.location,
-        distanceKm: selectedTransport?.distanceKm || 0,
-        etaHours: selectedTransport?.transitHours ? parseFloat(selectedTransport.transitHours) : 0,
-      };
+        let parsedEta = 0;
+        if (selectedTransport?.transitHours) {
+          const match = selectedTransport.transitHours.match(/(\d+)h\s*(\d+)m/);
+          if (match) {
+            parsedEta = parseInt(match[1]) + parseInt(match[2]) / 60;
+          } else {
+            parsedEta = parseFloat(selectedTransport.transitHours);
+          }
+        }
+        
+        // ensure at least a small eta to avoid divide by zero for speed
+        if (parsedEta === 0) parsedEta = 1;
+
+        const trackingData = {
+          orderId: activeOrderId,
+          origin: customLocation,
+          destination: selectedBuyer?.location,
+          distanceKm: selectedTransport?.distanceKm || 0,
+          etaHours: parsedEta,
+        };
 
       const result = await api.startTracking(trackingData);
       if (result.success) {

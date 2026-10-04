@@ -54,7 +54,7 @@ export const Step6LogisticsTracking = () => {
             destination: orderRes.order.deliveryLocation,
             currentCheckpoint: "Farm",
             distanceKm: 0,
-            etaHours: 0
+            etaHours: 0,
           });
         }
         setIsLoading(false);
@@ -363,18 +363,24 @@ export const Step6LogisticsTracking = () => {
                   {lang === "ta" ? "வாங்குபவர்:" : "Buyer:"}
                 </span>
                 <span className="font-black text-slate-900 text-right">
-                  {buyer.name}<br/>
-                  <span className="text-[10px] text-slate-500 uppercase">{buyer.location}</span>
+                  {buyer.name}
+                  <br />
+                  <span className="text-[10px] text-slate-500 uppercase">
+                    {buyer.location}
+                  </span>
                 </span>
               </div>
-              
+
               <div className="flex justify-between py-1 border-b border-slate-100">
                 <span className="text-slate-500 font-bold">
                   {lang === "ta" ? "விற்பனையாளர்:" : "Seller:"}
                 </span>
                 <span className="font-black text-slate-900 text-right">
-                  {orderData.pickupLocation} Farm<br/>
-                  <span className="text-[10px] text-slate-500 uppercase">{orderData.pickupLocation}</span>
+                  {orderData.pickupLocation} Farm
+                  <br />
+                  <span className="text-[10px] text-slate-500 uppercase">
+                    {orderData.pickupLocation}
+                  </span>
                 </span>
               </div>
 
@@ -383,8 +389,11 @@ export const Step6LogisticsTracking = () => {
                   {lang === "ta" ? "போக்குவரத்து:" : "Transport:"}
                 </span>
                 <span className="font-black text-agri-600 text-right">
-                  {transport.name}<br/>
-                  <span className="text-[10px] uppercase">Vehicle: {transport.vehicle}</span>
+                  {transport.name}
+                  <br />
+                  <span className="text-[10px] uppercase">
+                    Vehicle: {transport.vehicle}
+                  </span>
                 </span>
               </div>
 
@@ -396,13 +405,16 @@ export const Step6LogisticsTracking = () => {
                   ₹{transport.estimatedCost?.toLocaleString()}
                 </span>
               </div>
-              
+
               <div className="flex justify-between py-2 mt-2 bg-slate-50 px-3 rounded-lg border border-slate-200">
                 <span className="text-slate-800 font-black">
                   {lang === "ta" ? "மொத்த தொகை:" : "Grand Total:"}
                 </span>
                 <span className="font-black text-emerald-700 text-xl">
-                  ₹{((orderData.totalValue || 0) + (transport.estimatedCost || 0)).toLocaleString()}
+                  ₹
+                  {(
+                    (orderData.totalValue || 0) + (transport.estimatedCost || 0)
+                  ).toLocaleString()}
                 </span>
               </div>
             </div>
@@ -410,59 +422,57 @@ export const Step6LogisticsTracking = () => {
             {/* Vertical Dynamic Timeline */}
             <div className="space-y-2 pt-4 border-t border-slate-100">
               <span className="text-lg font-black text-slate-400 block mb-2">
-                {lang === "ta"
-                  ? "ஆர்டர் நிலை"
-                  : "Order Status Timeline"}
+                {lang === "ta" ? "ஆர்டர் நிலை" : "Order Status Timeline"}
               </span>
 
               {[
-                { 
-                  id: "s1", 
-                  label: "Order Placed", 
-                  done: true, 
-                  current: false
+                {
+                  id: "s1",
+                  label: "Order Placed",
+                  done: true,
+                  current: false,
                 },
-                { 
-                  id: "s2", 
-                  label: "Transport Assigned", 
-                  done: trackingData.status !== "Awaiting Dispatch", 
-                  current: trackingData.status === "Awaiting Dispatch"
+                {
+                  id: "s2",
+                  label: "Transport Assigned",
+                  done: trackingData.status !== "Awaiting Dispatch",
+                  current: trackingData.status === "Awaiting Dispatch",
                 },
-                { 
-                  id: "s3", 
-                  label: "In Transit", 
-                  done: trackingData.status === "Delivered", 
-                  current: trackingData.status === "In Transit"
+                {
+                  id: "s3",
+                  label: "In Transit",
+                  done: trackingData.status === "Delivered",
+                  current: trackingData.status === "In Transit",
                 },
-                { 
-                  id: "s4", 
-                  label: "Delivered", 
-                  done: trackingData.status === "Delivered", 
-                  current: trackingData.status === "Delivered"
-                }
+                {
+                  id: "s4",
+                  label: "Delivered",
+                  done: trackingData.status === "Delivered",
+                  current: trackingData.status === "Delivered",
+                },
               ].map((stage) => (
-                  <div
-                    key={stage.id}
-                    className={`flex items-center justify-between p-2 rounded-lg text-base transition-all ${
-                      stage.done
-                        ? "bg-emerald-50 text-agri-800 font-bold"
-                        : stage.current
-                          ? "bg-blue-50 text-blue-900 font-black ring-1 ring-blue-300"
-                          : "text-slate-400"
-                    }`}
-                  >
-                    <div className="flex items-center space-x-2">
-                      {stage.done ? (
-                        <CheckCircle2 className="w-4 h-4 text-agri-600 shrink-0" />
-                      ) : stage.current ? (
-                        <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse ml-0.5 mr-1"></span>
-                      ) : (
-                        <span className="w-2 h-2 rounded-full bg-slate-300 ml-1 mr-1"></span>
-                      )}
-                      <span className="text-base ">{stage.label}</span>
-                    </div>
+                <div
+                  key={stage.id}
+                  className={`flex items-center justify-between p-2 rounded-lg text-base transition-all ${
+                    stage.done
+                      ? "bg-emerald-50 text-agri-800 font-bold"
+                      : stage.current
+                        ? "bg-blue-50 text-blue-900 font-black ring-1 ring-blue-300"
+                        : "text-slate-400"
+                  }`}
+                >
+                  <div className="flex items-center space-x-2">
+                    {stage.done ? (
+                      <CheckCircle2 className="w-4 h-4 text-agri-600 shrink-0" />
+                    ) : stage.current ? (
+                      <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse ml-0.5 mr-1"></span>
+                    ) : (
+                      <span className="w-2 h-2 rounded-full bg-slate-300 ml-1 mr-1"></span>
+                    )}
+                    <span className="text-base ">{stage.label}</span>
                   </div>
-                ))}
+                </div>
+              ))}
             </div>
           </div>
         </div>

@@ -3,16 +3,22 @@ import { triggerN8nMasterWorkflow } from "../services/n8nService.js";
 
 export async function analyzeMarket(req, res, next) {
   try {
-    const { crop, quantity, quantityKg, location, expectedPrice, quality } =
-      req.body;
-    const qty = Number(quantityKg || quantity) || 2000;
+    const { crop, quantity, quantityKg, location, expectedPrice, quality } = req.body;
+    const qty = Number(quantityKg || quantity);
+
+    if (!crop || !qty || !location) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields: crop, quantityKg, and location are required."
+      });
+    }
 
     const payload = {
-      crop: crop || "Tomato",
+      crop: crop,
       quantityKg: qty,
-      location: location || "Trichy",
-      expectedPrice: Number(expectedPrice) || 28,
-      quality: quality || "Grade A",
+      location: location,
+      expectedPrice: expectedPrice ? Number(expectedPrice) : null, // AI can handle null or we omit
+      quality: quality || "Standard",
     };
 
     // Attempt n8n master workflow first

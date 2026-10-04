@@ -273,7 +273,7 @@ export const Step2MarketOpportunity = () => {
           <div className="flex items-start space-x-2">
             <AlertCircle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
             <span className="font-semibold">
-              AI estimate based on Agmarknet APMC data — not a guaranteed selling price. Final contract is confirmed directly with the buyer.
+              {intel?.aiInsight?.disclaimer || "AI estimate based on Agmarknet APMC data — not a guaranteed selling price. Final contract is confirmed directly with the buyer."}
             </span>
           </div>
         </div>

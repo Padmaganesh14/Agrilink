@@ -3,7 +3,7 @@ import { useAgri } from "../../context/AgriContext";
 import { CheckCircle2, ChevronRight } from "lucide-react";
 
 export const SellMyCropStepper = () => {
-  const { flowStep, setFlowStep, t, lang } = useAgri();
+  const { flowStep, setFlowStep, t, lang, selectedCrop, customLocation, customQty, marketIntelligence, selectedBuyer, activeOrderId } = useAgri();
 
   const steps = [
     { num: 1, label: lang === "ta" ? "1. பயிர்" : "1. Crop" },
@@ -15,6 +15,23 @@ export const SellMyCropStepper = () => {
   ];
 
   const currentStepNum = flowStep === "transport" ? 5.5 : flowStep;
+
+  // Derive which steps are unlocked based on actual data presence
+  const isStep1Valid = !!selectedCrop?.name && !!customLocation && Number(customQty) > 0;
+  const isStep2Valid = isStep1Valid && !!marketIntelligence;
+  const isStep3Valid = isStep2Valid && !!selectedBuyer;
+  const isStep4Valid = isStep3Valid;
+  const isStep5Valid = isStep4Valid && !!activeOrderId;
+
+  const isStepUnlocked = (stepNum) => {
+    if (stepNum === 1) return true;
+    if (stepNum === 2) return isStep1Valid;
+    if (stepNum === 3) return isStep2Valid;
+    if (stepNum === 4) return isStep3Valid;
+    if (stepNum === 5) return isStep4Valid;
+    if (stepNum === 6) return isStep5Valid; // Logistics requires an active order
+    return false;
+  };
 
   return (
     <div className="bg-white border-t border-slate-200 md:border-t-0 md:border-b fixed bottom-0 left-0 right-0 md:sticky md:top-[56px] z-40 shadow-[0_-4px_6px_-1px_rgb(0,0,0,0.05)] md:shadow-sm py-3 md:py-2">
@@ -30,6 +47,7 @@ export const SellMyCropStepper = () => {
         {/* Stepper Tabs - Mobile touch targets increased */}
         <div className="flex items-center space-x-2 overflow-x-auto hide-scrollbar pb-1 md:pb-0">
           {steps.map((s, idx) => {
+            const unlocked = isStepUnlocked(s.num);
             const isPassed = currentStepNum > s.num;
             const isCurrent =
               currentStepNum === s.num ||
@@ -39,15 +57,15 @@ export const SellMyCropStepper = () => {
               <React.Fragment key={s.num}>
                 <button
                   onClick={() => {
-                    if (s.num <= currentStepNum) {
+                    if (unlocked) {
                       setFlowStep(s.num);
                     }
                   }}
-                  disabled={s.num > currentStepNum}
+                  disabled={!unlocked}
                   className={`px-4 py-2.5 md:px-3 md:py-1.5 rounded-lg md:rounded text-sm md:text-xs font-medium transition-colors flex items-center space-x-1.5 md:space-x-1 whitespace-nowrap shrink-0 ${
                     isCurrent
                       ? "bg-emerald-600 text-white shadow-sm"
-                      : isPassed
+                      : unlocked
                         ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 cursor-pointer"
                         : "bg-slate-50 text-slate-400 opacity-60 cursor-not-allowed"
                   }`}

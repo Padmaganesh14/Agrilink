@@ -43,27 +43,49 @@ export async function createOrder(req, res, next) {
       return res.status(500).json({ success: false, message: 'Database failure: could not create order', error: orderError.message });
     }
 
-    // Attempt to reduce stock if cropId is provided
+    // Attempt to reduce stock if cropId is provided using optimistic locking
     if (req.body.cropId) {
       try {
-        // RPC function would be better here for atomicity, but doing standard select + update since we lack RPC definition in setup.
-        // Wait, Supabase allows atomic decrement: 
-        // Unfortunately standard REST API doesn't support atomic decrement unless using RPC.
-        // We'll fetch the crop, subtract, and update.
-        const { data: cropData } = await supabase
-          .from('crops')
-          .select('quantityAvailable')
-          .eq('id', req.body.cropId)
-          .single();
-
-        if (cropData) {
-          const newQty = Math.max(0, cropData.quantityAvailable - qty);
-          const newStatus = newQty === 0 ? 'sold' : 'available';
-
-          await supabase
+        let success = false;
+        let attempts = 0;
+        
+        while (!success && attempts < 3) {
+          const { data: cropData } = await supabase
             .from('crops')
-            .update({ quantityAvailable: newQty, status: newStatus })
-            .eq('id', req.body.cropId);
+            .select('quantityAvailable')
+            .eq('id', req.body.cropId)
+            .single();
+
+          if (cropData) {
+            const oldQty = cropData.quantityAvailable;
+            if (oldQty < qty) {
+              // We already created the order, but let's assume it failed due to stock?
+              // In a real app we'd roll back the order. Here we log and break.
+              console.warn("Insufficient crop inventory for order:", orderId);
+              break; 
+            }
+            
+            const newQty = oldQty - qty;
+            const newStatus = newQty === 0 ? 'sold' : 'available';
+
+            const { data: updated, error: updateErr } = await supabase
+              .from('crops')
+              .update({ quantityAvailable: newQty, status: newStatus })
+              .eq('id', req.body.cropId)
+              .eq('quantityAvailable', oldQty) // Optimistic locking condition
+              .select();
+
+            if (!updateErr && updated && updated.length > 0) {
+              success = true;
+            }
+          } else {
+            break; // Crop not found
+          }
+          attempts++;
+        }
+        
+        if (!success) {
+          console.error("Failed to deduct inventory for order:", orderId);
         }
       } catch (err) {
         console.error("Failed to decrement crop stock:", err);
