@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAgri } from "../../context/AgriContext";
 import {
   getCropDisplayName,
@@ -29,6 +29,7 @@ export const Step6LogisticsTracking = () => {
     selectedTransport,
     selectedBuyer,
     activeOrderId,
+    userRole,
   } = useAgri();
 
   const [orderData, setOrderData] = useState(null);
@@ -46,6 +47,8 @@ export const Step6LogisticsTracking = () => {
         if (trackRes.success) setTrackingData(trackRes.tracking);
         setIsLoading(false);
       });
+    } else {
+      setIsLoading(false);
     }
   }, [activeOrderId]);
 
@@ -63,7 +66,13 @@ export const Step6LogisticsTracking = () => {
         Failed to load tracking data. Please return to the previous step.
         <br />
         <button
-          onClick={() => setFlowStep(5)}
+          onClick={() => {
+            if (userRole === "buyer") {
+              setCurrentView("buyer-marketplace");
+            } else {
+              setFlowStep(5);
+            }
+          }}
           className="mt-4 px-4 py-2 bg-slate-200 text-slate-800 rounded"
         >
           Go Back
