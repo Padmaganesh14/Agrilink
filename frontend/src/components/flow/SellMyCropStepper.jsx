@@ -1,67 +1,66 @@
-import React from 'react';
-import { useAgri } from '../../context/AgriContext';
-import { CheckCircle2, ChevronRight } from 'lucide-react';
+import React from "react";
+import { useAgri } from "../../context/AgriContext";
+import { CheckCircle2, ChevronRight } from "lucide-react";
 
 export const SellMyCropStepper = () => {
   const { flowStep, setFlowStep, t, lang } = useAgri();
 
   const steps = [
-    { num: 1, label: t.step01Pill },
-    { num: 2, label: t.step02Pill },
-    { num: 3, label: t.step03Pill },
-    { num: 4, label: t.step04Pill },
-    { num: 5, label: t.step05Pill },
-    { num: 6, label: t.step06Pill },
+    { num: 1, label: lang === "ta" ? "1. பயிர்" : "1. Crop" },
+    { num: 2, label: lang === "ta" ? "2. சந்தை" : "2. Market" },
+    { num: 3, label: lang === "ta" ? "3. வாங்குபவர்" : "3. Buyer" },
+    { num: 4, label: lang === "ta" ? "4. AI" : "4. AI" },
+    { num: 5, label: lang === "ta" ? "5. ஆர்டர்" : "5. Order" },
+    { num: 6, label: lang === "ta" ? "6. சரக்கு" : "6. Logistics" },
   ];
 
-  const currentStepNum = flowStep === 'transport' ? 5.5 : flowStep;
+  const currentStepNum = flowStep === "transport" ? 5.5 : flowStep;
 
   return (
-    <div className="bg-white border-b border-slate-200 sticky top-[70px] z-30 shadow-sm py-4">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          
-          {/* Header Title */}
-          <div className="flex items-center space-x-3">
-            <span className="w-4 h-4 rounded-full bg-emerald-600"></span>
-            <span className="text-xl font-bold text-slate-900">
-              {lang === 'ta' ? 'பயிரை விற்க' : 'SELL CROP'}
-            </span>
-          </div>
+    <div className="bg-white border-t border-slate-200 md:border-t-0 md:border-b fixed bottom-0 left-0 right-0 md:sticky md:top-[56px] z-40 shadow-[0_-4px_6px_-1px_rgb(0,0,0,0.05)] md:shadow-sm py-3 md:py-2">
+      <div className="max-w-4xl mx-auto px-3 sm:px-6">
+        {/* Desktop Header Title - Hidden on mobile to save space */}
+        <div className="hidden md:flex items-center space-x-2 mb-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+            {lang === "ta" ? "பயிரை விற்க" : "SELL CROP WORKFLOW"}
+          </span>
+        </div>
 
-          {/* Stepper Pills */}
-          <div className="flex items-center space-x-2 overflow-x-auto pb-2 sm:pb-0 hide-scrollbar">
-            {steps.map((s, idx) => {
-              const isPassed = currentStepNum > s.num;
-              const isCurrent = currentStepNum === s.num || (s.num === 5 && currentStepNum === 5.5);
+        {/* Stepper Tabs - Mobile touch targets increased */}
+        <div className="flex items-center space-x-2 overflow-x-auto hide-scrollbar pb-1 md:pb-0">
+          {steps.map((s, idx) => {
+            const isPassed = currentStepNum > s.num;
+            const isCurrent =
+              currentStepNum === s.num ||
+              (s.num === 5 && currentStepNum === 5.5);
 
-              return (
-                <React.Fragment key={s.num}>
-                  <button
-                    onClick={() => setFlowStep(s.num)}
-                    className={`px-6 py-3 rounded-lg text-lg font-bold transition-colors flex items-center space-x-2 whitespace-nowrap ${
-                      isCurrent
-                        ? 'bg-emerald-600 text-white shadow-md'
-                        : isPassed
-                        ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                        : 'bg-slate-100 text-slate-500'
-                    }`}
-                  >
-                    {isPassed && <CheckCircle2 className="w-5 h-5" />}
-                    <span>{s.label}</span>
-                  </button>
-
-                  {idx < steps.length - 1 && (
-                    <ChevronRight className="w-5 h-5 text-slate-400 shrink-0 hidden md:block" />
+            return (
+              <React.Fragment key={s.num}>
+                <button
+                  onClick={() => setFlowStep(s.num)}
+                  className={`px-4 py-2.5 md:px-3 md:py-1.5 rounded-lg md:rounded text-sm md:text-xs font-medium transition-colors flex items-center space-x-1.5 md:space-x-1 whitespace-nowrap shrink-0 ${
+                    isCurrent
+                      ? "bg-emerald-600 text-white shadow-sm"
+                      : isPassed
+                        ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                        : "bg-slate-50 text-slate-500 hover:bg-slate-100"
+                  }`}
+                >
+                  {isPassed && (
+                    <CheckCircle2 className="w-4 h-4 md:w-3 md:h-3" />
                   )}
-                </React.Fragment>
-              );
-            })}
-          </div>
+                  <span>{s.label}</span>
+                </button>
 
+                {idx < steps.length - 1 && (
+                  <ChevronRight className="w-4 h-4 md:w-3 md:h-3 text-slate-300 shrink-0 hidden md:block" />
+                )}
+              </React.Fragment>
+            );
+          })}
         </div>
       </div>
     </div>
   );
 };
-

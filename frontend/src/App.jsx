@@ -1,49 +1,47 @@
-import React from 'react';
-import { useAgri } from './context/AgriContext';
-import { Navbar } from './components/common/Navbar';
-import { JudgeDemoDock } from './components/common/JudgeDemoDock';
-import { LandingPage } from './components/landing/LandingPage';
-import { FarmerLoginView } from './components/auth/FarmerLoginView';
-import { BuyerLoginView } from './components/auth/BuyerLoginView';
-import { CommandCenterDashboard } from './components/dashboard/CommandCenterDashboard';
-import { SellMyCropStepper } from './components/flow/SellMyCropStepper';
-import { Step1AddCrop } from './components/flow/Step1AddCrop';
-import { Step2MarketOpportunity } from './components/flow/Step2MarketOpportunity';
-import { Step3BuyerMatch } from './components/flow/Step3BuyerMatch';
-import { Step4PromotionN8N } from './components/flow/Step4PromotionN8N';
-import { Step5OrderPayment } from './components/flow/Step5OrderPayment';
-import { Step5_5TransportSelection } from './components/flow/Step5_5TransportSelection';
-import { Step6LogisticsTracking } from './components/flow/Step6LogisticsTracking';
-import { BuyerMarketplaceView } from './components/marketplace/BuyerMarketplaceView';
+import React from "react";
+import { useAgri } from "./context/AgriContext";
+import { Navbar } from "./components/common/Navbar";
+import { LandingPage } from "./components/landing/LandingPage";
+import { FarmerLoginView } from "./components/auth/FarmerLoginView";
+import { BuyerLoginView } from "./components/auth/BuyerLoginView";
+import { CommandCenterDashboard } from "./components/dashboard/CommandCenterDashboard";
+import { SellMyCropStepper } from "./components/flow/SellMyCropStepper";
+import { Step1AddCrop } from "./components/flow/Step1AddCrop";
+import { Step2MarketOpportunity } from "./components/flow/Step2MarketOpportunity";
+import { Step3BuyerMatch } from "./components/flow/Step3BuyerMatch";
+import { Step4PromotionN8N } from "./components/flow/Step4PromotionN8N";
+import { Step5OrderPayment } from "./components/flow/Step5OrderPayment";
+import { Step5_5TransportSelection } from "./components/flow/Step5_5TransportSelection";
+import { Step6LogisticsTracking } from "./components/flow/Step6LogisticsTracking";
+import { BuyerMarketplaceView } from "./components/marketplace/BuyerMarketplaceView";
 
 export function AppContent() {
   const { currentView, flowStep } = useAgri();
 
   return (
     <div className="min-h-screen bg-[#F5F7F6] flex flex-col font-sans selection:bg-emerald-100 selection:text-emerald-900 text-slate-900">
-      
       {/* Top Navbar */}
       <Navbar />
 
       {/* Main View Router */}
-      <main className="flex-1">
-        {currentView === 'landing' ? (
+      <main className="flex-1 pb-16 md:pb-0">
+        {currentView === "landing" ? (
           <LandingPage />
-        ) : currentView === 'farmer-login' ? (
+        ) : currentView === "farmer-login" ? (
           <FarmerLoginView />
-        ) : currentView === 'buyer-login' ? (
+        ) : currentView === "buyer-login" ? (
           <BuyerLoginView />
-        ) : currentView === 'command-center' ? (
+        ) : currentView === "command-center" ? (
           <CommandCenterDashboard />
-        ) : currentView === 'buyer-marketplace' ? (
+        ) : currentView === "buyer-marketplace" ? (
           <BuyerMarketplaceView />
-        ) : currentView === 'flow' ? (
+        ) : currentView === "flow" ? (
           <div>
-            {/* Persistent 6-step progress indicator */}
+            {/* Desktop top stepper / Mobile bottom nav stepper */}
             <SellMyCropStepper />
 
             {/* Step Content */}
-            <div className="pt-4">
+            <div className="pt-4 px-2 md:px-0">
               {flowStep === 1 ? (
                 <Step1AddCrop />
               ) : flowStep === 2 ? (
@@ -54,7 +52,7 @@ export function AppContent() {
                 <Step4PromotionN8N />
               ) : flowStep === 5 ? (
                 <Step5OrderPayment />
-              ) : flowStep === 'transport' ? (
+              ) : flowStep === "transport" ? (
                 <Step5_5TransportSelection />
               ) : flowStep === 6 ? (
                 <Step6LogisticsTracking />
@@ -67,10 +65,6 @@ export function AppContent() {
           <LandingPage />
         )}
       </main>
-
-      {/* Floating Demo Dock for Judges and Presentation */}
-      <JudgeDemoDock />
-
     </div>
   );
 }
