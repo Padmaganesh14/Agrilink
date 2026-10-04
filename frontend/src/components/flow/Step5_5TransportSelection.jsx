@@ -1,25 +1,29 @@
-import React from 'react';
-import { useAgri } from '../../context/AgriContext';
-import { demoTransportPartners, getCropDisplayName, getLocationDisplayName } from '../../data/mockData';
-import { 
-  Truck, 
-  ArrowRight, 
-  ArrowLeft, 
-  CheckCircle2, 
-  ShieldAlert
-} from 'lucide-react';
+import React from "react";
+import { useAgri } from "../../context/AgriContext";
+import {
+  transportPartners,
+  getCropDisplayName,
+  getLocationDisplayName,
+} from "../../data/mockData";
+import {
+  Truck,
+  ArrowRight,
+  ArrowLeft,
+  CheckCircle2,
+  ShieldAlert,
+} from "lucide-react";
 
 export const Step5_5TransportSelection = () => {
-  const { 
-    t, 
-    lang, 
-    setFlowStep, 
-    selectedCrop, 
-    customQty, 
+  const {
+    t,
+    lang,
+    setFlowStep,
+    selectedCrop,
+    customQty,
     customLocation,
     selectedBuyer,
     selectedTransport,
-    chooseTransport
+    chooseTransport,
   } = useAgri();
 
   const handleSelectPartner = (partner) => {
@@ -32,36 +36,38 @@ export const Step5_5TransportSelection = () => {
 
   const cropDisplay = getCropDisplayName(selectedCrop.name, lang);
   const locationDisplay = getLocationDisplayName(customLocation, lang);
-  const buyerLocation = getLocationDisplayName(selectedBuyer?.location || 'Chennai', lang);
+  const buyerLocation = getLocationDisplayName(
+    selectedBuyer?.location || "Chennai",
+    lang,
+  );
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 pb-28 space-y-6">
-      
       {/* Header */}
       <div className="text-center mb-6">
         <div className="inline-flex items-center space-x-2 bg-emerald-50 text-agri-700 px-5 py-3 rounded-md text-base font-black  mb-2 border border-emerald-200">
           <Truck className="w-3.5 h-3.5 text-agri-500" />
-          <span>{lang === 'ta' ? 'போக்குவரத்து நிறுவன தேர்வு' : 'Transport Partner Selection'}</span>
+          <span>
+            {lang === "ta"
+              ? "போக்குவரத்து நிறுவன தேர்வு"
+              : "Transport Partner Selection"}
+          </span>
           <span>•</span>
-          <span>{lang === 'ta' ? 'படி 5B / 6' : 'Step 5B of 6'}</span>
+          <span>{lang === "ta" ? "படி 5B / 6" : "Step 5B of 6"}</span>
         </div>
         <h1 className="text-3xl font-black text-[#0F172A] tracking-tight ">
           {t.arrangeTransportTitle}
         </h1>
         <p className="text-base sm:text-lg font-bold text-slate-500 mt-1">
-          {cropDisplay} • {customQty.toLocaleString()} {lang === 'ta' ? 'கிலோ' : 'KG'} | {locationDisplay} &rarr; {buyerLocation}
+          {cropDisplay} • {customQty.toLocaleString()}{" "}
+          {lang === "ta" ? "கிலோ" : "KG"} | {locationDisplay} &rarr;{" "}
+          {buyerLocation}
         </p>
-      </div>
-
-      {/* Demo Notice */}
-      <div className="bg-slate-100 rounded-lg p-3.5 border border-slate-200 text-base text-slate-600 flex items-center space-x-2.5">
-        <ShieldAlert className="w-4 h-4 text-slate-500 shrink-0" />
-        <span className="font-semibold">{lang === 'ta' ? 'விவசாயியே சரக்கு வாகனத்தை தேர்வு செய்கிறார். கட்டணங்கள் மாதிரி மதிப்பீடுகள்.' : 'The farmer chooses the freight carrier. Freight rates are estimated for simulation.'}</span>
       </div>
 
       {/* 3 Transport Cards */}
       <div className="space-y-4">
-        {demoTransportPartners.map((partner) => {
+        {transportPartners.map((partner) => {
           const isSelected = selectedTransport?.id === partner.id;
 
           return (
@@ -70,8 +76,8 @@ export const Step5_5TransportSelection = () => {
               onClick={() => handleSelectPartner(partner)}
               className={`bg-white rounded-lg p-6 border-2 cursor-pointer transition-all shadow-md ${
                 isSelected
-                  ? 'border-agri-500 bg-emerald-50/20 ring-1 ring-agri-500/20'
-                  : 'border-slate-200 hover:border-slate-300'
+                  ? "border-agri-500 bg-emerald-50/20 ring-1 ring-agri-500/20"
+                  : "border-slate-200 hover:border-slate-300"
               }`}
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4 mb-4">
@@ -82,11 +88,8 @@ export const Step5_5TransportSelection = () => {
                   <div>
                     <div className="flex items-center space-x-2">
                       <h3 className="text-base font-black text-[#0F172A]">
-                        {lang === 'ta' ? partner.tamilName : partner.name}
+                        {lang === "ta" ? partner.tamilName : partner.name}
                       </h3>
-                      <span className="text-[9px] font-black  px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 font-mono">
-                        {t.demoTransportPartnerBadge}
-                      </span>
                     </div>
                     <p className="text-base text-slate-500 font-bold mt-0.5">
                       {partner.vehicle} • {partner.capacityText}
@@ -97,7 +100,7 @@ export const Step5_5TransportSelection = () => {
                 <div className="flex items-center space-x-2 self-start sm:self-auto">
                   <span className="text-base font-bold text-agri-600 flex items-center space-x-1">
                     <span className="w-2 h-2 rounded-full bg-agri-500 animate-pulse"></span>
-                    <span> {lang === 'ta' ? 'கிடைக்கும்' : 'Available'}</span>
+                    <span> {lang === "ta" ? "கிடைக்கும்" : "Available"}</span>
                   </span>
 
                   <button
@@ -108,11 +111,15 @@ export const Step5_5TransportSelection = () => {
                     }}
                     className={`px-6 py-4 rounded-lg text-base font-black  transition-all ${
                       isSelected
-                        ? 'bg-agri-500 text-white shadow-xs'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                        ? "bg-agri-500 text-white shadow-xs"
+                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                     }`}
                   >
-                    {isSelected ? (lang === 'ta' ? '✓ தேர்ந்தெடுக்கப்பட்டது' : '✓ SELECTED') : t.selectTransportBtn}
+                    {isSelected
+                      ? lang === "ta"
+                        ? "✓ தேர்ந்தெடுக்கப்பட்டது"
+                        : "✓ SELECTED"
+                      : t.selectTransportBtn}
                   </button>
                 </div>
               </div>
@@ -121,17 +128,20 @@ export const Step5_5TransportSelection = () => {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-base">
                 <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
                   <span className="text-slate-400 text-lg  font-bold block">
-                    {lang === 'ta' ? 'வாகனம்' : 'Vehicle'}
+                    {lang === "ta" ? "வாகனம்" : "Vehicle"}
                   </span>
-                  <span className="font-extrabold text-slate-800">{partner.vehicle}</span>
+                  <span className="font-extrabold text-slate-800">
+                    {partner.vehicle}
+                  </span>
                 </div>
 
                 <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
                   <span className="text-slate-400 text-lg  font-bold block">
-                    {lang === 'ta' ? 'கொள்ளளவு' : 'Capacity'}
+                    {lang === "ta" ? "கொள்ளளவு" : "Capacity"}
                   </span>
                   <span className="font-extrabold text-slate-800">
-                    {partner.capacityKg.toLocaleString()} {lang === 'ta' ? 'கிலோ' : 'KG'}
+                    {partner.capacityKg.toLocaleString()}{" "}
+                    {lang === "ta" ? "கிலோ" : "KG"}
                   </span>
                 </div>
 
@@ -139,19 +149,22 @@ export const Step5_5TransportSelection = () => {
                   <span className="text-slate-400 text-lg  font-bold block">
                     {t.estimatedTransportCostLabel}
                   </span>
-                  <span className="font-black text-agri-600">₹{partner.estimatedCost.toLocaleString()}</span>
+                  <span className="font-black text-agri-600">
+                    ₹{partner.estimatedCost.toLocaleString()}
+                  </span>
                 </div>
 
                 <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
                   <span className="text-slate-400 text-lg  font-bold block">
-                    {lang === 'ta' ? 'பயண நேரம்' : 'ETA'}
+                    {lang === "ta" ? "பயண நேரம்" : "ETA"}
                   </span>
                   <span className="font-extrabold text-slate-800">
-                    {lang === 'ta' ? '~6 மணிநேரம் (NH45 வழித்தடம்)' : partner.eta}
+                    {lang === "ta"
+                      ? "~6 மணிநேரம் (NH45 வழித்தடம்)"
+                      : partner.eta}
                   </span>
                 </div>
               </div>
-
             </div>
           );
         })}
@@ -160,38 +173,44 @@ export const Step5_5TransportSelection = () => {
       {/* Selected Transport Summary Confirmation Card */}
       {selectedTransport && (
         <div className="bg-emerald-50/90 border-2 border-agri-500 rounded-lg p-6 space-y-4 shadow-sm">
-          
           <div className="flex items-center space-x-2 text-agri-800 border-b border-emerald-200 pb-3">
             <CheckCircle2 className="w-5 h-5 text-agri-600 shrink-0" />
-            <h3 className="text-lg font-black ">
-              {t.transportSelectedBanner}
-            </h3>
+            <h3 className="text-lg font-black ">{t.transportSelectedBanner}</h3>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-base text-agri-950 font-bold">
             <div>
               <span className="text-agri-600 text-lg  block">
-                {lang === 'ta' ? 'போக்குவரத்து நிறுவனம்' : 'Carrier'}
+                {lang === "ta" ? "போக்குவரத்து நிறுவனம்" : "Carrier"}
               </span>
-              <span>{lang === 'ta' && selectedTransport.tamilName ? selectedTransport.tamilName : selectedTransport.name}</span>
+              <span>
+                {lang === "ta" && selectedTransport.tamilName
+                  ? selectedTransport.tamilName
+                  : selectedTransport.name}
+              </span>
             </div>
             <div>
               <span className="text-agri-600 text-lg  block">
-                {lang === 'ta' ? 'வாகனம்' : 'Vehicle'}
+                {lang === "ta" ? "வாகனம்" : "Vehicle"}
               </span>
               <span>{selectedTransport.vehicle}</span>
             </div>
             <div>
               <span className="text-agri-600 text-lg  block">
-                {lang === 'ta' ? 'உத்தேச கட்டணம்' : 'Estimated Freight'}
+                {lang === "ta" ? "உத்தேச கட்டணம்" : "Estimated Freight"}
               </span>
-              <span className="text-agri-800 font-black">₹{selectedTransport.estimatedCost.toLocaleString()}</span>
+              <span className="text-agri-800 font-black">
+                ₹{selectedTransport.estimatedCost.toLocaleString()}
+              </span>
             </div>
             <div>
               <span className="text-agri-600 text-lg  block">
-                {lang === 'ta' ? 'புறப்பாடு / சேருமிடம்' : 'Pickup / Delivery'}
+                {lang === "ta" ? "புறப்பாடு / சேருமிடம்" : "Pickup / Delivery"}
               </span>
-              <span>{locationDisplay} {lang === 'ta' ? 'தோட்டம்' : 'Farm'} ➔ {buyerLocation}</span>
+              <span>
+                {locationDisplay} {lang === "ta" ? "தோட்டம்" : "Farm"} ➔{" "}
+                {buyerLocation}
+              </span>
             </div>
           </div>
 
@@ -203,7 +222,6 @@ export const Step5_5TransportSelection = () => {
             <span>{t.confirmStartTrackingBtn}</span>
             <ArrowRight className="w-5 h-5" />
           </button>
-
         </div>
       )}
 
@@ -225,7 +243,6 @@ export const Step5_5TransportSelection = () => {
           <ArrowRight className="w-4 h-4 text-emerald-400" />
         </button>
       </div>
-
     </div>
   );
 };

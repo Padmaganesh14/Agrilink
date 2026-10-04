@@ -3,7 +3,7 @@ import { translations } from "../data/i18n";
 import {
   defaultCrops,
   defaultOrder,
-  demoTransportPartners,
+  transportPartners,
   findOrBuildCrop,
 } from "../data/mockData";
 import { calculateMarketIntelligence } from "../data/governmentMarketData";
@@ -64,24 +64,32 @@ export const AgriProvider = ({ children }) => {
   // 6: Logistics & Track
   const [flowStep, setFlowStep] = useState(1);
 
-  const [selectedCrop, setSelectedCrop] = useState(defaultCrops[0]);
-  const [customQty, setCustomQty] = useState(2000);
-  const [customLocation, setCustomLocation] = useState("Trichy");
+  const [selectedCrop, setSelectedCrop] = useState({
+    name: "",
+    icon: "",
+    defaultQty: "",
+    defaultLocation: "",
+    grade: "",
+    localPrice: "",
+    matchedBuyers: [],
+  });
+  const [customQty, setCustomQty] = useState("");
+  const [customLocation, setCustomLocation] = useState("");
   const [cropQuality, setCropQuality] = useState("Grade A");
-  const [harvestDate, setHarvestDate] = useState("2026-10-05");
+  const [harvestDate, setHarvestDate] = useState("");
   const [expectedPrice, setExpectedPrice] = useState("");
 
   const [selectedBuyer, setSelectedBuyer] = useState(
     defaultCrops[0].matchedBuyers[0],
   );
   const [selectedTransport, setSelectedTransport] = useState(
-    demoTransportPartners[0],
+    transportPartners[0],
   );
   const [transportConfirmed, setTransportConfirmed] = useState(false);
 
   const [order, setOrder] = useState({
     ...defaultOrder,
-    transport: demoTransportPartners[0],
+    transport: transportPartners[0],
   });
 
   // Auth state
@@ -93,31 +101,22 @@ export const AgriProvider = ({ children }) => {
   const [n8nActiveNode, setN8nActiveNode] = useState(0);
   const [n8nLogs, setN8nLogs] = useState([]);
 
-  // Market Intelligence state (driven by government Agmarknet dataset / n8n webhook)
-  const [marketIntelligence, setMarketIntelligence] = useState(() =>
-    calculateMarketIntelligence({
-      cropName: "Tomato",
-      quantityKg: 2000,
-      farmLocation: "Trichy",
-      expectedPrice: 28,
-      quality: "Grade A",
-    }),
-  );
+  // Market Intelligence state
+  const [marketIntelligence, setMarketIntelligence] = useState(null);
   const [isMarketIntelLoading, setIsMarketIntelLoading] = useState(false);
-  const [n8nWebhookMode, setN8nWebhookMode] = useState("local"); // 'local' | 'n8n_live'
 
   const refreshMarketIntelligence = async (overrideParams = {}) => {
     setIsMarketIntelLoading(true);
-    const cropName = overrideParams.cropName || selectedCrop.name || "Tomato";
+    const cropName = overrideParams.cropName || selectedCrop.name || "";
     const qty =
       overrideParams.quantityKg !== undefined
         ? overrideParams.quantityKg
-        : customQty || 2000;
-    const loc = overrideParams.farmLocation || customLocation || "Trichy";
+        : customQty || 0;
+    const loc = overrideParams.farmLocation || customLocation || "";
     const exp =
       overrideParams.expectedPrice !== undefined
         ? overrideParams.expectedPrice
-        : expectedPrice || 28;
+        : expectedPrice || 0;
     const qual = overrideParams.quality || cropQuality || "Grade A";
 
     try {
@@ -127,11 +126,10 @@ export const AgriProvider = ({ children }) => {
         farmLocation: loc,
         expectedPrice: exp,
         quality: qual,
-        forceLocalMode: n8nWebhookMode === "local",
       });
       setMarketIntelligence(result);
     } catch (e) {
-      console.warn("Market intelligence computation notice:", e);
+      console.warn("Market intelligence error:", e);
     } finally {
       setIsMarketIntelLoading(false);
     }
@@ -251,25 +249,7 @@ export const AgriProvider = ({ children }) => {
   };
 
   const resetDemo = () => {
-    setSelectedCrop(defaultCrops[0]);
-    setCustomQty(2000);
-    setCustomLocation("Trichy");
-    setCropQuality("Grade A");
-    setHarvestDate("2026-10-05");
-    setExpectedPrice("");
-    setSelectedBuyer(defaultCrops[0].matchedBuyers[0]);
-    setSelectedTransport(demoTransportPartners[0]);
-    setTransportConfirmed(false);
-    setOrder({
-      ...defaultOrder,
-      transport: demoTransportPartners[0],
-    });
-    setN8nStatus("idle");
-    setN8nActiveNode(0);
-    setN8nLogs([]);
-    setFlowStep(1);
-    setCurrentView("landing");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Deprecated
   };
 
   // Trigger n8n interactive simulation with animated sequential node stepping
@@ -431,8 +411,6 @@ export const AgriProvider = ({ children }) => {
         marketIntelligence,
         isMarketIntelLoading,
         refreshMarketIntelligence,
-        n8nWebhookMode,
-        setN8nWebhookMode,
       }}
     >
       {children}

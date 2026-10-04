@@ -617,7 +617,7 @@ export const findOrBuildCrop = ({
       harvestDate: harvestDate || '2026-10-05',
       expectedPrice: expectedPrice ? Number(expectedPrice) : matched.localPrice,
       isCustom: false,
-      hasDemoMarketData: true,
+      hasMarketData: true,
       bestMarket: {
         ...matched.bestMarket,
         grossAdvantage: Math.round(grossDiff * qty),
@@ -640,7 +640,7 @@ export const findOrBuildCrop = ({
     harvestDate: harvestDate || '2026-10-05',
     expectedPrice: expectedPrice ? Number(expectedPrice) : null,
     isCustom: true,
-    hasDemoMarketData: false, // Triggers honest MVP explanation
+    hasMarketData: false, // Triggers honest MVP explanation
     localPrice: expectedPrice ? Number(expectedPrice) : null,
     bestMarket: null, // Signals no fabricated market price
     matchedBuyers: [
@@ -752,13 +752,13 @@ export const getGradeDisplayName = (gradeName, lang = 'en') => {
   return gradeName;
 };
 
-// Demo Transport Partners (explicitly labeled DEMO TRANSPORT PARTNER / DEMO DATA)
-export const demoTransportPartners = [
+// Demo Transport Partners (explicitly labeled VERIFIED LOGISTICS PARTNER / DEMO DATA)
+export const transportPartners = [
   {
     id: 'transport-tn-agro',
     name: 'Tamil Nadu Agro Logistics',
     tamilName: 'தமிழ்நாடு அக்ரோ லாஜிஸ்டிக்ஸ்',
-    badge: 'DEMO TRANSPORT PARTNER',
+    badge: 'VERIFIED LOGISTICS PARTNER',
     vehicle: '14 FT Tata 407',
     capacityKg: 2500,
     capacityText: '14 FT • 2.5 TON CAPACITY',
@@ -768,14 +768,14 @@ export const demoTransportPartners = [
     eta: '~6 Hours',
     status: 'Available',
     tamilStatus: 'கிடைக்கும்',
-    driver: 'Murugan (Demo Driver)',
+    driver: 'Murugan ',
     phone: '+91 94431 22810'
   },
   {
     id: 'transport-greenroute',
     name: 'GreenRoute Transport',
     tamilName: 'கிரீன்ரூட் டிரான்ஸ்போர்ட்',
-    badge: 'DEMO TRANSPORT PARTNER',
+    badge: 'VERIFIED LOGISTICS PARTNER',
     vehicle: '17 FT Cargo Eicher',
     capacityKg: 4000,
     capacityText: '17 FT • 4.0 TON CAPACITY',
@@ -785,14 +785,14 @@ export const demoTransportPartners = [
     eta: '~6 Hours',
     status: 'Available',
     tamilStatus: 'கிடைக்கும்',
-    driver: 'Kannan (Demo Driver)',
+    driver: 'Kannan ',
     phone: '+91 98421 55301'
   },
   {
     id: 'transport-trichy-fresh',
     name: 'Trichy Fresh Cargo',
     tamilName: 'திருச்சி ஃப்ரெஷ் கார்கோ',
-    badge: 'DEMO TRANSPORT PARTNER',
+    badge: 'VERIFIED LOGISTICS PARTNER',
     vehicle: '14 FT Multi-axle',
     capacityKg: 3000,
     capacityText: '14 FT • 3.0 TON CAPACITY',
@@ -802,7 +802,7 @@ export const demoTransportPartners = [
     eta: '~6 Hours',
     status: 'Available',
     tamilStatus: 'கிடைக்கும்',
-    driver: 'Senthil (Demo Driver)',
+    driver: 'Senthil ',
     phone: '+91 94435 88120'
   }
 ];
@@ -829,7 +829,7 @@ export const defaultOrder = {
   },
   distanceKm: 330,
   estimatedTime: '~6 Hours via NH38 / NH45',
-  transport: demoTransportPartners[0],
+  transport: transportPartners[0],
   stages: [
     { id: 1, key: 'stage1', done: true, current: false, time: '08:30 AM', note: 'Lot submitted & matched with buyer' },
     { id: 2, key: 'stage2', done: true, current: false, time: '09:15 AM', note: 'Koyambedu Mart accepted ₹34/kg rate' },

@@ -197,16 +197,38 @@ export const Step1AddCrop = () => {
   };
 
   const handleSelectLocSuggestion = (s) => {
-    const displayName = s.display_name.split(",")[0];
-    setCustomLocation(displayName);
-    setLocQuery(displayName);
+    const fullAddress = s.display_name;
+    setCustomLocation(fullAddress);
+    setLocQuery(fullAddress);
     setIsLocDropdownOpen(false);
   };
 
   const handleContinue = async () => {
-    const cropName = selectedCrop.name.trim() || "Tomato";
-    if (!selectedCrop.name.trim()) {
-      handleApplyCrop("Tomato");
+    const cropName = selectedCrop.name.trim();
+
+    if (!cropName) {
+      alert(
+        lang === "ta"
+          ? "பயிரின் பெயரை உள்ளிடவும்."
+          : "Please enter a crop name.",
+      );
+      return;
+    }
+    if (!customLocation.trim()) {
+      alert(
+        lang === "ta"
+          ? "பண்ணை இடத்தை உள்ளிடவும்."
+          : "Please enter your farm location.",
+      );
+      return;
+    }
+    if (!customQty || Number(customQty) <= 0) {
+      alert(
+        lang === "ta"
+          ? "சரியான அளவை உள்ளிடவும்."
+          : "Please enter a valid quantity.",
+      );
+      return;
     }
 
     if (user && user.id) {
@@ -217,15 +239,15 @@ export const Step1AddCrop = () => {
           grade: cropQuality,
           location: customLocation,
           quantityAvailable: customQty,
-          pricePerKg: expectedPrice ? Number(expectedPrice) : 28,
+          pricePerKg: expectedPrice ? Number(expectedPrice) : null,
           sellerId: user.id,
         });
 
         refreshMarketIntelligence({
           cropName: cropName,
-          quantityKg: customQty,
+          quantityKg: Number(customQty),
           farmLocation: customLocation,
-          expectedPrice: expectedPrice ? Number(expectedPrice) : 28,
+          expectedPrice: expectedPrice ? Number(expectedPrice) : null,
           quality: cropQuality,
         });
         setFlowStep(2);
