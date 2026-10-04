@@ -38,13 +38,18 @@ export const SellMyCropStepper = () => {
             return (
               <React.Fragment key={s.num}>
                 <button
-                  onClick={() => setFlowStep(s.num)}
+                  onClick={() => {
+                    if (s.num <= currentStepNum) {
+                      setFlowStep(s.num);
+                    }
+                  }}
+                  disabled={s.num > currentStepNum}
                   className={`px-4 py-2.5 md:px-3 md:py-1.5 rounded-lg md:rounded text-sm md:text-xs font-medium transition-colors flex items-center space-x-1.5 md:space-x-1 whitespace-nowrap shrink-0 ${
                     isCurrent
                       ? "bg-emerald-600 text-white shadow-sm"
                       : isPassed
-                        ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-                        : "bg-slate-50 text-slate-500 hover:bg-slate-100"
+                        ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 cursor-pointer"
+                        : "bg-slate-50 text-slate-400 opacity-60 cursor-not-allowed"
                   }`}
                 >
                   {isPassed && (
