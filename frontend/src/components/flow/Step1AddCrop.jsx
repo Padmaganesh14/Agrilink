@@ -1,17 +1,18 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useAgri } from '../../context/AgriContext';
-import { 
-  defaultCrops, 
-  popularCropsCatalog, 
+import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
+import { useAgri } from "../../context/AgriContext";
+import {
+  defaultCrops,
+  popularCropsCatalog,
   popularCropChips,
   cropTamilMap,
   locationTamilMap,
   getCropDisplayName,
-  getLocationDisplayName
-} from '../../data/mockData';
-import { 
-  Scale, 
-  MapPin, 
+  getLocationDisplayName,
+} from "../../data/mockData";
+import {
+  Scale,
+  MapPin,
   ArrowRight,
   Search,
   PlusCircle,
@@ -21,18 +22,19 @@ import {
   Cpu,
   Layers,
   ChevronDown,
-  Coins
-} from 'lucide-react';
+  Coins,
+} from "lucide-react";
 
 export const Step1AddCrop = () => {
-  const { 
-    t, 
-    lang, 
-    setFlowStep, 
-    selectedCrop, 
-    customQty, 
-    setCustomQty, 
-    customLocation, 
+  const {
+    user,
+    t,
+    lang,
+    setFlowStep,
+    selectedCrop,
+    customQty,
+    setCustomQty,
+    customLocation,
     setCustomLocation,
     cropQuality,
     setCropQuality,
@@ -41,23 +43,29 @@ export const Step1AddCrop = () => {
     expectedPrice,
     setExpectedPrice,
     setArbitraryCrop,
-    refreshMarketIntelligence
+    refreshMarketIntelligence,
   } = useAgri();
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const searchContainerRef = useRef(null);
 
   // Reverse mapping from Tamil display name to canonical English name
-  const reverseCropTamil = Object.entries(cropTamilMap).reduce((acc, [en, ta]) => {
-    acc[ta.toLowerCase()] = en;
-    return acc;
-  }, {});
+  const reverseCropTamil = Object.entries(cropTamilMap).reduce(
+    (acc, [en, ta]) => {
+      acc[ta.toLowerCase()] = en;
+      return acc;
+    },
+    {},
+  );
 
-  const reverseLocationTamil = Object.entries(locationTamilMap).reduce((acc, [en, ta]) => {
-    acc[ta.toLowerCase()] = en;
-    return acc;
-  }, {});
+  const reverseLocationTamil = Object.entries(locationTamilMap).reduce(
+    (acc, [en, ta]) => {
+      acc[ta.toLowerCase()] = en;
+      return acc;
+    },
+    {},
+  );
 
   // Display crop name and location according to current language
   const displayCropName = getCropDisplayName(selectedCrop.name, lang);
@@ -66,35 +74,44 @@ export const Step1AddCrop = () => {
   // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target)) {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(e.target)
+      ) {
         setIsDropdownOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Filter crops across default and popular catalog
   const allKnownCrops = [...defaultCrops, ...popularCropsCatalog];
-  const filteredSuggestions = allKnownCrops.filter(c => {
+  const filteredSuggestions = allKnownCrops.filter((c) => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return true;
-    return c.name.toLowerCase().includes(q) || (c.tamilName && c.tamilName.includes(q));
+    return (
+      c.name.toLowerCase().includes(q) ||
+      (c.tamilName && c.tamilName.includes(q))
+    );
   });
 
   const exactMatchExists = allKnownCrops.some(
-    c => c.name.toLowerCase() === searchQuery.toLowerCase().trim() ||
-         (c.tamilName && c.tamilName.trim() === searchQuery.trim())
+    (c) =>
+      c.name.toLowerCase() === searchQuery.toLowerCase().trim() ||
+      (c.tamilName && c.tamilName.trim() === searchQuery.trim()),
   );
 
   // Apply a known or custom crop
   const handleApplyCrop = (cropInput) => {
     const cleanInput = cropInput.trim();
-    const canonicalName = reverseCropTamil[cleanInput.toLowerCase()] || cleanInput;
+    const canonicalName =
+      reverseCropTamil[cleanInput.toLowerCase()] || cleanInput;
 
-    const found = allKnownCrops.find(c => 
-      c.name.toLowerCase() === canonicalName.toLowerCase() ||
-      (c.tamilName && c.tamilName === cleanInput)
+    const found = allKnownCrops.find(
+      (c) =>
+        c.name.toLowerCase() === canonicalName.toLowerCase() ||
+        (c.tamilName && c.tamilName === cleanInput),
     );
 
     if (found) {
@@ -104,7 +121,7 @@ export const Step1AddCrop = () => {
         location: customLocation || found.defaultLocation,
         quality: found.grade || cropQuality,
         harvestDate: harvestDate,
-        expectedPrice: expectedPrice || found.localPrice || ''
+        expectedPrice: expectedPrice || found.localPrice || "",
       });
     } else {
       setArbitraryCrop({
@@ -113,10 +130,10 @@ export const Step1AddCrop = () => {
         location: customLocation,
         quality: cropQuality,
         harvestDate: harvestDate,
-        expectedPrice: expectedPrice
+        expectedPrice: expectedPrice,
       });
     }
-    setSearchQuery('');
+    setSearchQuery("");
     setIsDropdownOpen(false);
   };
 
@@ -127,10 +144,10 @@ export const Step1AddCrop = () => {
       quantity: presetCrop.defaultQty,
       location: presetCrop.defaultLocation,
       quality: presetCrop.grade,
-      harvestDate: '2026-10-05',
-      expectedPrice: presetCrop.localPrice
+      harvestDate: "2026-10-05",
+      expectedPrice: presetCrop.localPrice,
     });
-    setSearchQuery('');
+    setSearchQuery("");
     setIsDropdownOpen(false);
   };
 
@@ -144,7 +161,7 @@ export const Step1AddCrop = () => {
       location: customLocation,
       quality: cropQuality,
       harvestDate: harvestDate,
-      expectedPrice: expectedPrice
+      expectedPrice: expectedPrice,
     });
   };
 
@@ -155,30 +172,50 @@ export const Step1AddCrop = () => {
     setCustomLocation(canonical);
   };
 
-  const handleContinue = () => {
-    const cropName = selectedCrop.name.trim() || 'Tomato';
+  const handleContinue = async () => {
+    const cropName = selectedCrop.name.trim() || "Tomato";
     if (!selectedCrop.name.trim()) {
-      handleApplyCrop('Tomato');
+      handleApplyCrop("Tomato");
     }
-    refreshMarketIntelligence({
-      cropName: cropName,
-      quantityKg: customQty,
-      farmLocation: customLocation,
-      expectedPrice: expectedPrice ? Number(expectedPrice) : 28,
-      quality: cropQuality
-    });
-    setFlowStep(2);
+
+    if (user && user.id) {
+      try {
+        await axios.post("http://localhost:8000/api/crops", {
+          cropName: cropName,
+          tamilName: cropTamilMap[cropName] || cropName,
+          grade: cropQuality,
+          location: customLocation,
+          quantityAvailable: customQty,
+          pricePerKg: expectedPrice ? Number(expectedPrice) : 28,
+          sellerId: user.id,
+        });
+        
+        refreshMarketIntelligence({
+          cropName: cropName,
+          quantityKg: customQty,
+          farmLocation: customLocation,
+          expectedPrice: expectedPrice ? Number(expectedPrice) : 28,
+          quality: cropQuality,
+        });
+        setFlowStep(2);
+      } catch (err) {
+        console.error("Failed to list crop", err);
+        alert("Failed to save crop to database. Check backend logs.");
+      }
+    } else {
+      alert("User not logged in!");
+      setFlowStep(1);
+    }
   };
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 pb-28 space-y-6">
-      
       {/* Header */}
       <div className="text-center mb-4">
         <div className="inline-flex items-center space-x-2 bg-emerald-50 text-agri-700 px-5 py-3 rounded-md text-base font-black  mb-2 border border-emerald-200">
           <span>{t.step01Pill}</span>
           <span>•</span>
-          <span>{lang === 'ta' ? 'படி 1 / 6' : 'Step 1 of 6'}</span>
+          <span>{lang === "ta" ? "படி 1 / 6" : "Step 1 of 6"}</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-black text-[#0F172A] tracking-tight ">
           {t.step01Title}
@@ -190,7 +227,6 @@ export const Step1AddCrop = () => {
 
       {/* Main Container Card */}
       <div className="bg-white rounded-lg p-6 sm:p-8 border border-slate-200/90 shadow-xl space-y-6">
-        
         {/* ========================================================= */}
         {/* SECTION 1: SEARCH OR ENTER ANY CROP (Combobox + Custom)   */}
         {/* ========================================================= */}
@@ -201,7 +237,9 @@ export const Step1AddCrop = () => {
               <span>{t.chooseYourCrop}</span>
             </label>
             <span className="text-base font-bold text-agri-700 bg-emerald-50 px-4 py-2 rounded-md border border-emerald-200">
-              {lang === 'ta' ? 'அனைத்து பயிர்களுக்கும் பொருந்தும்' : 'Crop-Agnostic Engine'}
+              {lang === "ta"
+                ? "அனைத்து பயிர்களுக்கும் பொருந்தும்"
+                : "Crop-Agnostic Engine"}
             </span>
           </div>
 
@@ -218,7 +256,7 @@ export const Step1AddCrop = () => {
                 }}
                 onFocus={() => setIsDropdownOpen(true)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && searchQuery.trim()) {
+                  if (e.key === "Enter" && searchQuery.trim()) {
                     handleApplyCrop(searchQuery);
                   }
                 }}
@@ -242,11 +280,14 @@ export const Step1AddCrop = () => {
                     <div className="flex items-center space-x-2">
                       <PlusCircle className="w-4 h-4 text-agri-600" />
                       <span className="text-base font-black">
-                        + {lang === 'ta' ? `"${searchQuery}" பயிரைச் சேர்` : `Add "${searchQuery}" as Custom Crop`}
+                        +{" "}
+                        {lang === "ta"
+                          ? `"${searchQuery}" பயிரைச் சேர்`
+                          : `Add "${searchQuery}" as Custom Crop`}
                       </span>
                     </div>
                     <span className="text-lg font-bold px-2 py-0.5 rounded-md bg-white border border-emerald-200">
-                      {lang === 'ta' ? 'புதிய பயிர்' : 'Arbitrary Crop'}
+                      {lang === "ta" ? "புதிய பயிர்" : "Arbitrary Crop"}
                     </span>
                   </div>
                 )}
@@ -254,7 +295,9 @@ export const Step1AddCrop = () => {
                 {/* Filtered known crops */}
                 <div className="p-2 space-y-1">
                   <p className="text-lg font-black  text-slate-400 px-5 py-3">
-                    {lang === 'ta' ? `பரிந்துரைக்கப்பட்ட பயிர்கள் (${filteredSuggestions.length})` : `Suggested Agricultural Commodities (${filteredSuggestions.length})`}
+                    {lang === "ta"
+                      ? `பரிந்துரைக்கப்பட்ட பயிர்கள் (${filteredSuggestions.length})`
+                      : `Suggested Agricultural Commodities (${filteredSuggestions.length})`}
                   </p>
                   {filteredSuggestions.map((c) => (
                     <div
@@ -266,21 +309,25 @@ export const Step1AddCrop = () => {
                         <span className="text-xl">{c.icon}</span>
                         <div>
                           <p className="text-base font-black text-slate-900">
-                            {lang === 'ta' ? c.tamilName : c.name}
+                            {lang === "ta" ? c.tamilName : c.name}
                           </p>
                           <p className="text-lg font-bold text-slate-400">
-                            {lang === 'ta' ? c.name : c.tamilName}
+                            {lang === "ta" ? c.name : c.tamilName}
                           </p>
                         </div>
                       </div>
                       <span className="text-lg font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
-                        {lang === 'ta' && c.grade === 'Grade A' ? 'கிரேடு A' : c.grade || 'Standard'}
+                        {lang === "ta" && c.grade === "Grade A"
+                          ? "கிரேடு A"
+                          : c.grade || "Standard"}
                       </span>
                     </div>
                   ))}
                   {filteredSuggestions.length === 0 && !searchQuery.trim() && (
                     <p className="text-base text-slate-400 p-3 text-center">
-                      {lang === 'ta' ? 'பயிரின் பெயரை மேலே தட்டச்சு செய்யவும்.' : 'Type any agricultural crop name above.'}
+                      {lang === "ta"
+                        ? "பயிரின் பெயரை மேலே தட்டச்சு செய்யவும்."
+                        : "Type any agricultural crop name above."}
                     </p>
                   )}
                 </div>
@@ -295,7 +342,8 @@ export const Step1AddCrop = () => {
             </p>
             <div className="flex flex-wrap gap-1.5 items-center">
               {popularCropChips.map((chip) => {
-                const isActive = selectedCrop.name.toLowerCase() === chip.name.toLowerCase();
+                const isActive =
+                  selectedCrop.name.toLowerCase() === chip.name.toLowerCase();
                 return (
                   <button
                     key={chip.name}
@@ -303,26 +351,32 @@ export const Step1AddCrop = () => {
                     onClick={() => handleApplyCrop(chip.name)}
                     className={`inline-flex items-center space-x-1.5 px-5 py-3.5 rounded-lg text-base font-bold transition-all ${
                       isActive
-                        ? 'bg-agri-500 text-white shadow-xs scale-105'
-                        : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200/60'
+                        ? "bg-agri-500 text-white shadow-xs scale-105"
+                        : "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200/60"
                     }`}
                   >
                     <span>{chip.icon}</span>
-                    <span>{lang === 'ta' ? chip.tamilName : chip.name}</span>
+                    <span>{lang === "ta" ? chip.tamilName : chip.name}</span>
                   </button>
                 );
               })}
 
-              <span className="text-base text-slate-400 font-semibold mx-1">{t.orLabel}</span>
+              <span className="text-base text-slate-400 font-semibold mx-1">
+                {t.orLabel}
+              </span>
 
               {/* Add Custom Crop Quick Trigger */}
               <button
                 type="button"
                 onClick={() => {
-                  const promptMsg = lang === 'ta' 
-                    ? 'எந்தப் பயிரின் பெயரையும் உள்ளிடவும் (எ.கா. தேங்காய், ஏலக்காய், முருங்கை, மரவள்ளிக்கிழங்கு):'
-                    : 'Enter any crop name (e.g. Coconut, Cardamom, Drumstick, Tapioca):';
-                  const customName = prompt(promptMsg, lang === 'ta' ? 'தேங்காய்' : 'Coconut');
+                  const promptMsg =
+                    lang === "ta"
+                      ? "எந்தப் பயிரின் பெயரையும் உள்ளிடவும் (எ.கா. தேங்காய், ஏலக்காய், முருங்கை, மரவள்ளிக்கிழங்கு):"
+                      : "Enter any crop name (e.g. Coconut, Cardamom, Drumstick, Tapioca):";
+                  const customName = prompt(
+                    promptMsg,
+                    lang === "ta" ? "தேங்காய்" : "Coconut",
+                  );
                   if (customName && customName.trim()) {
                     handleApplyCrop(customName);
                   }
@@ -359,9 +413,13 @@ export const Step1AddCrop = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {defaultCrops.map((c) => {
               const isSelected = selectedCrop.id === c.id;
-              const cropTitle = lang === 'ta' ? c.tamilName : c.name;
-              const locationTitle = lang === 'ta' ? (locationTamilMap[c.defaultLocation] || c.defaultLocation) : c.defaultLocation;
-              const gradeTitle = lang === 'ta' && c.grade === 'Grade A' ? 'கிரேடு A' : c.grade;
+              const cropTitle = lang === "ta" ? c.tamilName : c.name;
+              const locationTitle =
+                lang === "ta"
+                  ? locationTamilMap[c.defaultLocation] || c.defaultLocation
+                  : c.defaultLocation;
+              const gradeTitle =
+                lang === "ta" && c.grade === "Grade A" ? "கிரேடு A" : c.grade;
 
               return (
                 <div
@@ -369,8 +427,8 @@ export const Step1AddCrop = () => {
                   onClick={() => handleSelectDemoPreset(c)}
                   className={`p-3.5 rounded-lg border-2 text-left cursor-pointer transition-all ${
                     isSelected
-                      ? 'border-agri-500 bg-emerald-50/50 ring-2 ring-agri-500/20 shadow-xs'
-                      : 'border-slate-200 hover:border-slate-300 bg-slate-50/50'
+                      ? "border-agri-500 bg-emerald-50/50 ring-2 ring-agri-500/20 shadow-xs"
+                      : "border-slate-200 hover:border-slate-300 bg-slate-50/50"
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -384,7 +442,8 @@ export const Step1AddCrop = () => {
                       {cropTitle}
                     </p>
                     <p className="text-base text-slate-500 font-bold mt-0.5">
-                      {c.defaultQty.toLocaleString()} {lang === 'ta' ? 'கிலோ' : 'KG'} • {locationTitle}
+                      {c.defaultQty.toLocaleString()}{" "}
+                      {lang === "ta" ? "கிலோ" : "KG"} • {locationTitle}
                     </p>
                     <span className="inline-block mt-1.5 text-[9px] font-black  px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-600">
                       {gradeTitle}
@@ -415,7 +474,6 @@ export const Step1AddCrop = () => {
 
           {/* Form Rows */}
           <div className="space-y-4">
-            
             {/* ROW 1: Crop Name + Quantity (KG) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Crop Name */}
@@ -432,7 +490,7 @@ export const Step1AddCrop = () => {
                     className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 bg-white font-black text-slate-900 text-lg focus:outline-none focus:border-agri-500 transition-all pr-12"
                   />
                   <span className="absolute right-3.5 top-3 text-xl">
-                    {selectedCrop.icon || '🌱'}
+                    {selectedCrop.icon || "🌱"}
                   </span>
                 </div>
               </div>
@@ -483,8 +541,12 @@ export const Step1AddCrop = () => {
                   >
                     <option value="Grade A">{t.gradeAStandard}</option>
                     <option value="Grade B">{t.gradeB}</option>
-                    <option value="Premium / Export Quality">{t.premiumExport}</option>
-                    <option value="Organic Certified">{t.organicCertified}</option>
+                    <option value="Premium / Export Quality">
+                      {t.premiumExport}
+                    </option>
+                    <option value="Organic Certified">
+                      {t.organicCertified}
+                    </option>
                   </select>
                   <ChevronDown className="w-4 h-4 absolute right-3.5 top-3.5 text-slate-400 pointer-events-none" />
                 </div>
@@ -524,44 +586,10 @@ export const Step1AddCrop = () => {
                 className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 bg-white font-black text-slate-900 text-lg focus:outline-none focus:border-agri-500 transition-all placeholder:font-normal placeholder:text-slate-400"
               />
             </div>
-
           </div>
         </div>
 
-        {/* ========================================================= */}
-        {/* ARCHITECTURE TRANSPARENCY CALLOUT (For Judges/Demo)       */}
-        {/* Exact Layout Matching Specification                      */}
-        {/* ========================================================= */}
-        <div className="bg-[#0F172A] text-white rounded-lg p-5 border border-slate-800 space-y-3 shadow-lg">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
-            <div className="flex items-center space-x-2">
-              <span className="text-base">⚙</span>
-              <span className="text-base font-black  text-agri-400">
-                {t.aiMarketIntelBox}
-              </span>
-            </div>
-            <span className="text-lg font-mono bg-indigo-950/90 text-indigo-300 px-2.5 py-1 rounded-md border border-indigo-700 self-start sm:self-auto">
-              {t.n8nDynamicSchema}
-            </span>
-          </div>
 
-          <p className="text-base text-slate-300 leading-relaxed">
-            {t.cropAgnosticDesc}
-          </p>
-
-          <div className="p-3 bg-black/60 rounded-lg font-mono text-lg text-emerald-400 overflow-x-auto border border-slate-800">
-            <pre>
-{JSON.stringify({
-  crop: selectedCrop.name,
-  quantityKg: customQty,
-  location: customLocation,
-  quality: cropQuality,
-  harvestDate: harvestDate,
-  expectedPrice: expectedPrice ? Number(expectedPrice) : undefined
-}, null, 2)}
-            </pre>
-          </div>
-        </div>
 
         {/* Primary Action Button */}
         <div className="pt-2">
@@ -574,9 +602,7 @@ export const Step1AddCrop = () => {
             <ArrowRight className="w-5 h-5" />
           </button>
         </div>
-
       </div>
-
     </div>
   );
 };

@@ -2,7 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 
+import authRoutes from './routes/authRoutes.js';
 import marketRoutes from './routes/marketRoutes.js';
+import cropRoutes from './routes/cropRoutes.js';
 import promotionRoutes from './routes/promotionRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import transportRoutes from './routes/transportRoutes.js';
@@ -27,7 +29,9 @@ app.get('/api/health', (req, res) => {
 });
 
 // Route Mounts
+app.use('/api/auth', authRoutes);
 app.use('/api/market', marketRoutes);
+app.use('/api/crops', cropRoutes);
 app.use('/api/promotion', promotionRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/order', orderRoutes);

@@ -1,33 +1,38 @@
-import React, { useEffect, useRef } from 'react';
-import { useAgri } from '../../context/AgriContext';
-import { routeCoordinates, getCropDisplayName, getLocationDisplayName } from '../../data/mockData';
-import L from 'leaflet';
-import { 
-  Truck, 
-  MapPin, 
-  CheckCircle2, 
-  Clock, 
-  Phone, 
-  ArrowLeft, 
+import React, { useEffect, useRef } from "react";
+import { useAgri } from "../../context/AgriContext";
+import {
+  routeCoordinates,
+  getCropDisplayName,
+  getLocationDisplayName,
+} from "../../data/mockData";
+import L from "leaflet";
+import {
+  Truck,
+  MapPin,
+  CheckCircle2,
+  Clock,
+  Phone,
+  ArrowLeft,
   RotateCcw,
   Sparkles,
   ChevronRight,
-  ShieldAlert
-} from 'lucide-react';
+  ShieldAlert,
+} from "lucide-react";
 
 export const Step6LogisticsTracking = () => {
-  const { 
-    t, 
-    lang, 
+  const {
+    t,
+    lang,
     setCurrentView,
-    setFlowStep, 
-    order, 
-    advanceOrderStage, 
-    resetDemo, 
+    setFlowStep,
+    order,
+    advanceOrderStage,
+    resetDemo,
     selectedCrop,
     customQty,
     selectedTransport,
-    selectedBuyer 
+    selectedBuyer,
+    userRole,
   } = useAgri();
 
   const mapContainerRef = useRef(null);
@@ -35,61 +40,122 @@ export const Step6LogisticsTracking = () => {
 
   const isFinalStage = order.stages[order.stages.length - 1].done;
   const transport = selectedTransport || order.transport;
-  const buyer = selectedBuyer || { name: 'Koyambedu Wholesale Mart', location: 'Chennai' };
+  const buyer = selectedBuyer || {
+    name: "Koyambedu Wholesale Mart",
+    location: "Chennai",
+  };
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
     if (mapInstanceRef.current) return;
 
-    try {
-      const map = L.map(mapContainerRef.current, {
-        center: [11.93, 79.48],
-        zoom: 7,
-        zoomControl: false,
-        attributionControl: false
-      });
+    const initMap = async () => {
+      try {
+        const map = L.map(mapContainerRef.current, {
+          center: [11.1271, 78.6569], // Tamil Nadu center
+          zoom: 7,
+          zoomControl: false,
+          attributionControl: false,
+        });
 
-      mapInstanceRef.current = map;
+        mapInstanceRef.current = map;
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-      }).addTo(map);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 18,
+        }).addTo(map);
 
-      // Route Polyline
-      const polyline = L.polyline(routeCoordinates, {
-        color: '#0B8F62',
-        weight: 6,
-        opacity: 0.9,
-        dashArray: '10, 10'
-      }).addTo(map);
+        const createEmojiIcon = (emoji, bg) =>
+          L.divIcon({
+            className: "custom-map-pin",
+            html: `<div style="background-color: ${bg}; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 2px solid white;">${emoji}</div>`,
+            iconSize: [34, 34],
+            iconAnchor: [17, 17],
+          });
 
-      const createEmojiIcon = (emoji, bg) => L.divIcon({
-        className: 'custom-map-pin',
-        html: `<div style="background-color: ${bg}; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 2px solid white;">${emoji}</div>`,
-        iconSize: [34, 34],
-        iconAnchor: [17, 17]
-      });
+        // 1. Geocode Origin and Destination
+        const fetchCoordinates = async (query) => {
+          try {
+            const res = await fetch(
+              `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query + ", Tamil Nadu, India")}&format=json&limit=1`,
+            );
+            const data = await res.json();
+            if (data && data.length > 0) {
+              return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+            }
+          } catch (e) {
+            console.warn("Geocoding failed for", query);
+          }
+          return null;
+        };
 
-      // Trichy Origin Marker
-      L.marker([10.7905, 78.7047], {
-        icon: createEmojiIcon('📍', '#14532D')
-      }).addTo(map).bindPopup('<b>Trichy Farm Gate</b><br>Origin');
+        const origin = customLocation || "Trichy";
+        const destination = buyer.location || "Chennai";
 
-      // Chennai Destination Marker
-      L.marker([13.0694, 80.1948], {
-        icon: createEmojiIcon('🏢', '#0F172A')
-      }).addTo(map).bindPopup('<b>Chennai Koyambedu Terminal</b><br>Destination');
+        const [originCoords, destCoords] = await Promise.all([
+          fetchCoordinates(origin),
+          fetchCoordinates(destination),
+        ]);
 
-      // Moving Truck Marker
-      L.marker([11.9398, 79.4897], {
-        icon: createEmojiIcon('🚚', '#d97706')
-      }).addTo(map).bindPopup(`<b>${transport.name}</b><br>Vehicle: ${transport.vehicle}<br>NH45 Highway`);
+        const oCoords = originCoords || [10.7905, 78.7047]; // fallback Trichy
+        const dCoords = destCoords || [13.0694, 80.1948]; // fallback Chennai
 
-      map.fitBounds(polyline.getBounds(), { padding: [30, 30] });
+        // Origin Marker
+        L.marker(oCoords, {
+          icon: createEmojiIcon("📍", "#14532D"),
+        })
+          .addTo(map)
+          .bindPopup(`<b>${origin} Farm Gate</b><br>Origin`);
 
-    } catch (err) {
-      console.warn('Map initialization notice:', err);
-    }
+        // Destination Marker
+        L.marker(dCoords, {
+          icon: createEmojiIcon("🏢", "#0F172A"),
+        })
+          .addTo(map)
+          .bindPopup(`<b>${buyer.name}</b><br>Destination`);
+
+        // 2. Fetch Route from OSRM
+        try {
+          // OSRM format: lon,lat
+          const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${oCoords[1]},${oCoords[0]};${dCoords[1]},${dCoords[0]}?overview=full&geometries=geojson`;
+          const routeRes = await fetch(osrmUrl);
+          const routeData = await routeRes.json();
+
+          if (routeData.routes && routeData.routes.length > 0) {
+            const coords = routeData.routes[0].geometry.coordinates.map((c) => [
+              c[1],
+              c[0],
+            ]); // GeoJSON is lon,lat -> Leaflet needs lat,lon
+
+            const polyline = L.polyline(coords, {
+              color: "#0B8F62",
+              weight: 6,
+              opacity: 0.9,
+              dashArray: "10, 10",
+            }).addTo(map);
+
+            map.fitBounds(polyline.getBounds(), { padding: [30, 30] });
+
+            // Place truck in the middle of the route
+            const midIndex = Math.floor(coords.length / 2);
+            const truckCoords = coords[midIndex];
+
+            L.marker(truckCoords, {
+              icon: createEmojiIcon("🚚", "#d97706"),
+            })
+              .addTo(map)
+              .bindPopup(
+                `<b>${transport.name}</b><br>Vehicle: ${transport.vehicle}<br>En route`,
+              );
+          }
+        } catch (e) {
+          console.warn("Routing failed", e);
+        }
+      } catch (err) {
+        console.warn("Map initialization notice:", err);
+      }
+    };
+
+    initMap();
 
     return () => {
       if (mapInstanceRef.current) {
@@ -101,32 +167,34 @@ export const Step6LogisticsTracking = () => {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 pb-28 space-y-6">
-      
       {/* Header */}
       <div className="text-center mb-6">
         <div className="inline-flex items-center space-x-2 bg-emerald-50 text-agri-700 px-5 py-3 rounded-md text-base font-black  mb-2 border border-emerald-200">
           <Truck className="w-3.5 h-3.5 text-agri-500" />
           <span>{t.step06Pill}</span>
           <span>•</span>
-          <span>{lang === 'ta' ? 'படி 6 / 6' : 'Step 6 of 6'}</span>
+          <span>{lang === "ta" ? "படி 6 / 6" : "Step 6 of 6"}</span>
         </div>
         <h1 className="text-3xl font-black text-[#0F172A] tracking-tight ">
           {t.step06Title}
         </h1>
         <p className="text-base sm:text-lg font-medium text-slate-500 mt-1">
-          {lang === 'ta' ? 'திருச்சி பண்ணை முதல் சென்னை கோயம்பேடு வரையிலான நேரலை நெடுஞ்சாலை போக்குவரத்து கண்காணிப்பு.' : 'Real-time highway transit visualization from Trichy Farm Gate to Chennai Koyambedu.'}
+          {lang === "ta"
+            ? "திருச்சி பண்ணை முதல் சென்னை கோயம்பேடு வரையிலான நேரலை நெடுஞ்சாலை போக்குவரத்து கண்காணிப்பு."
+            : "Real-time highway transit visualization from Trichy Farm Gate to Chennai Koyambedu."}
         </p>
       </div>
 
       {/* Premium Split Layout: Left Map + Right Order Specs */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
         {/* LEFT COLUMN: OpenStreetMap Card */}
         <div className="lg:col-span-7 bg-white rounded-lg p-5 border border-slate-200/90 shadow-lg space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div className="flex items-center space-x-2">
               <span className="text-base font-black text-slate-800 ">
-                {lang === 'ta' ? 'திருச்சி ➔ சென்னை வழித்தடம்' : 'TRICHY ➔ CHENNAI ROUTE'}
+                {lang === "ta"
+                  ? "திருச்சி ➔ சென்னை வழித்தடம்"
+                  : "TRICHY ➔ CHENNAI ROUTE"}
               </span>
               <span className="text-[9px] font-black  px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 font-mono">
                 {t.simulatedDemoTrackingBadge}
@@ -145,36 +213,52 @@ export const Step6LogisticsTracking = () => {
               <div className="flex items-center space-x-1.5">
                 <span className="w-2 h-2 rounded-full bg-agri-400 animate-ping"></span>
                 <span className="font-black text-agri-400  text-lg">
-                  {lang === 'ta' ? 'நெடுஞ்சாலை தொலை அளவீடு' : 'Highway Telemetry'}
+                  {lang === "ta"
+                    ? "நெடுஞ்சாலை தொலை அளவீடு"
+                    : "Highway Telemetry"}
                 </span>
               </div>
               <p className="font-bold text-slate-100 text-base">
-                {lang === 'ta' ? 'இணைப்பு மையம்: விழுப்புரம் (NH45)' : 'Node: Villupuram (NH45)'}
+                {lang === "ta"
+                  ? "இணைப்பு மையம்: விழுப்புரம் (NH45)"
+                  : "Node: Villupuram (NH45)"}
               </p>
               <p className="text-lg text-slate-400">
-                {lang === 'ta' ? 'வழித்தடம்: 330 கி.மீ • ~6 மணிநேரம்' : 'Corridor: 330 KM • ~6 Hours'}
+                {lang === "ta"
+                  ? "வழித்தடம்: 330 கி.மீ • ~6 மணிநேரம்"
+                  : "Corridor: 330 KM • ~6 Hours"}
               </p>
             </div>
           </div>
 
           <div className="flex items-center justify-between text-base text-slate-500 font-medium pt-1">
-            <span>{lang === 'ta' ? 'தூரம்:' : 'Distance:'} <b className="text-slate-800">330 KM</b></span>
-            <span>{lang === 'ta' ? 'நேரம்:' : 'Duration:'} <b className="text-slate-800">{lang === 'ta' ? '~6 மணிநேரம்' : '~6 Hours'}</b></span>
-            <span>{lang === 'ta' ? 'வேகம்:' : 'Speed:'} <b className="text-agri-600">52 km/h</b></span>
+            <span>
+              {lang === "ta" ? "தூரம்:" : "Distance:"}{" "}
+              <b className="text-slate-800">330 KM</b>
+            </span>
+            <span>
+              {lang === "ta" ? "நேரம்:" : "Duration:"}{" "}
+              <b className="text-slate-800">
+                {lang === "ta" ? "~6 மணிநேரம்" : "~6 Hours"}
+              </b>
+            </span>
+            <span>
+              {lang === "ta" ? "வேகம்:" : "Speed:"}{" "}
+              <b className="text-agri-600">52 km/h</b>
+            </span>
           </div>
         </div>
 
         {/* RIGHT COLUMN: Order Specs & 7-Stage Timeline */}
         <div className="lg:col-span-5 space-y-4">
-          
           <div className="bg-white rounded-lg p-6 border border-slate-200/90 shadow-lg space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <span className="text-lg font-black  text-slate-400">
-                  {lang === 'ta' ? 'பரிவர்த்தனை' : 'Transaction'}
+                  {lang === "ta" ? "பரிவர்த்தனை" : "Transaction"}
                 </span>
                 <h3 className="text-base font-black text-[#0F172A]">
-                  {lang === 'ta' ? 'ஆர்டர்' : 'ORDER'} #{order.orderId}
+                  {lang === "ta" ? "ஆர்டர்" : "ORDER"} #{order.orderId}
                 </h3>
               </div>
 
@@ -190,30 +274,47 @@ export const Step6LogisticsTracking = () => {
             {/* Spec lines */}
             <div className="space-y-2 text-base">
               <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-500 font-bold">{lang === 'ta' ? 'பயிர் விவரம்:' : 'Crop Lot:'}</span>
-                <span className="font-black text-slate-900">{getCropDisplayName(selectedCrop.name, lang)} • {customQty.toLocaleString()} {lang === 'ta' ? 'கிலோ' : 'KG'}</span>
+                <span className="text-slate-500 font-bold">
+                  {lang === "ta" ? "பயிர் விவரம்:" : "Crop Lot:"}
+                </span>
+                <span className="font-black text-slate-900">
+                  {getCropDisplayName(selectedCrop.name, lang)} •{" "}
+                  {customQty.toLocaleString()} {lang === "ta" ? "கிலோ" : "KG"}
+                </span>
               </div>
 
               <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-500 font-bold">{lang === 'ta' ? 'வாங்குபவர்:' : 'Buyer:'}</span>
+                <span className="text-slate-500 font-bold">
+                  {lang === "ta" ? "வாங்குபவர்:" : "Buyer:"}
+                </span>
                 <span className="font-black text-slate-900">{buyer.name}</span>
               </div>
 
               <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-500 font-bold">{lang === 'ta' ? 'போக்குவரத்து:' : 'Transport:'}</span>
-                <span className="font-black text-agri-600">{transport.name} ({transport.vehicle})</span>
+                <span className="text-slate-500 font-bold">
+                  {lang === "ta" ? "போக்குவரத்து:" : "Transport:"}
+                </span>
+                <span className="font-black text-agri-600">
+                  {transport.name} ({transport.vehicle})
+                </span>
               </div>
 
               <div className="flex justify-between py-1">
-                <span className="text-slate-500 font-bold">{lang === 'ta' ? 'சரக்கு கட்டணம்:' : 'Freight Fee:'}</span>
-                <span className="font-black text-slate-900">₹{transport.estimatedCost.toLocaleString()}</span>
+                <span className="text-slate-500 font-bold">
+                  {lang === "ta" ? "சரக்கு கட்டணம்:" : "Freight Fee:"}
+                </span>
+                <span className="font-black text-slate-900">
+                  ₹{transport.estimatedCost.toLocaleString()}
+                </span>
               </div>
             </div>
 
             {/* Vertical 7-Stage Timeline */}
             <div className="space-y-2 pt-2 border-t border-slate-100">
               <span className="text-lg font-black  text-slate-400 block mb-2">
-                {lang === 'ta' ? 'ஆர்டர் வாழ்க்கைச் சுழற்சி காலவரிசை' : 'Order Lifecycle Timeline'}
+                {lang === "ta"
+                  ? "ஆர்டர் வாழ்க்கைச் சுழற்சி காலவரிசை"
+                  : "Order Lifecycle Timeline"}
               </span>
 
               {order.stages.map((stage) => {
@@ -223,10 +324,10 @@ export const Step6LogisticsTracking = () => {
                     key={stage.id}
                     className={`flex items-center justify-between p-2 rounded-lg text-base transition-all ${
                       stage.done
-                        ? 'bg-emerald-50 text-agri-800 font-bold'
+                        ? "bg-emerald-50 text-agri-800 font-bold"
                         : stage.current
-                        ? 'bg-blue-50 text-blue-900 font-black ring-1 ring-blue-300'
-                        : 'text-slate-400'
+                          ? "bg-blue-50 text-blue-900 font-black ring-1 ring-blue-300"
+                          : "text-slate-400"
                     }`}
                   >
                     <div className="flex items-center space-x-2">
@@ -240,16 +341,15 @@ export const Step6LogisticsTracking = () => {
                       <span className="text-base ">{label}</span>
                     </div>
 
-                    <span className="text-lg opacity-70 font-mono">{stage.time}</span>
+                    <span className="text-lg opacity-70 font-mono">
+                      {stage.time}
+                    </span>
                   </div>
                 );
               })}
             </div>
-
           </div>
-
         </div>
-
       </div>
 
       {/* FINAL SUCCESS STATE: SALE IN MOTION Banner */}
@@ -261,12 +361,12 @@ export const Step6LogisticsTracking = () => {
                 {t.saleInMotionTitle}
               </h3>
               <span className="px-4 py-2 rounded-md text-lg font-black bg-emerald-950 text-agri-300 border border-emerald-500/40">
-                {lang === 'ta' ? 'சரிபார்க்கப்பட்ட B2B பரிமாற்றம்' : 'Verified B2B Transition'}
+                {lang === "ta"
+                  ? "சரிபார்க்கப்பட்ட B2B பரிமாற்றம்"
+                  : "Verified B2B Transition"}
               </span>
             </div>
-            <p className="text-base text-slate-400 mt-1">
-              {t.saleInMotionSub}
-            </p>
+            <p className="text-base text-slate-400 mt-1">{t.saleInMotionSub}</p>
           </div>
 
           <button
@@ -281,46 +381,87 @@ export const Step6LogisticsTracking = () => {
         {/* 4 Final Checkpoints */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-base pt-1">
           <div className="p-3 bg-slate-850/80 rounded-lg border border-slate-800">
-            <span className="text-slate-400 text-lg font-bold  block">{lang === 'ta' ? 'வாங்குபவர் நிலை' : 'Buyer Status'}</span>
-            <span className="font-black text-emerald-400 mt-1 block">{lang === 'ta' ? 'வாங்குபவர் உறுதி செய்தார் ✓' : 'Buyer Confirmed ✓'}</span>
+            <span className="text-slate-400 text-lg font-bold  block">
+              {lang === "ta" ? "வாங்குபவர் நிலை" : "Buyer Status"}
+            </span>
+            <span className="font-black text-emerald-400 mt-1 block">
+              {lang === "ta"
+                ? "வாங்குபவர் உறுதி செய்தார் ✓"
+                : "Buyer Confirmed ✓"}
+            </span>
           </div>
 
           <div className="p-3 bg-slate-850/80 rounded-lg border border-slate-800">
-            <span className="text-slate-400 text-lg font-bold  block">{lang === 'ta' ? 'பணம் செலுத்தும் நிலை' : 'Payment Status'}</span>
-            <span className="font-black text-amber-300 mt-1 block">{lang === 'ta' ? 'ஒருங்கிணைக்கப்பட்டது ✓' : 'Coordinated ✓'}</span>
+            <span className="text-slate-400 text-lg font-bold  block">
+              {lang === "ta" ? "பணம் செலுத்தும் நிலை" : "Payment Status"}
+            </span>
+            <span className="font-black text-amber-300 mt-1 block">
+              {lang === "ta" ? "ஒருங்கிணைக்கப்பட்டது ✓" : "Coordinated ✓"}
+            </span>
           </div>
 
           <div className="p-3 bg-slate-850/80 rounded-lg border border-slate-800">
-            <span className="text-slate-400 text-lg font-bold  block">{lang === 'ta' ? 'போக்குவரத்து நிலை' : 'Transport Status'}</span>
-            <span className="font-black text-emerald-400 mt-1 block">{lang === 'ta' ? 'உறுதி செய்யப்பட்டது ✓' : 'Confirmed ✓'}</span>
+            <span className="text-slate-400 text-lg font-bold  block">
+              {lang === "ta" ? "போக்குவரத்து நிலை" : "Transport Status"}
+            </span>
+            <span className="font-black text-emerald-400 mt-1 block">
+              {lang === "ta" ? "உறுதி செய்யப்பட்டது ✓" : "Confirmed ✓"}
+            </span>
           </div>
 
           <div className="p-3 bg-slate-850/80 rounded-lg border border-slate-800">
-            <span className="text-slate-400 text-lg font-bold  block">{lang === 'ta' ? 'டெலிவரி நிலை' : 'Delivery Status'}</span>
-            <span className="font-black text-blue-400 mt-1 block">{lang === 'ta' ? 'கண்காணிப்பு செயலில் உள்ளது ✓' : 'Tracking Active ✓'}</span>
+            <span className="text-slate-400 text-lg font-bold  block">
+              {lang === "ta" ? "டெலிவரி நிலை" : "Delivery Status"}
+            </span>
+            <span className="font-black text-blue-400 mt-1 block">
+              {lang === "ta"
+                ? "கண்காணிப்பு செயலில் உள்ளது ✓"
+                : "Tracking Active ✓"}
+            </span>
           </div>
         </div>
       </div>
 
       {/* Navigation Controls */}
       <div className="flex items-center justify-between pt-2">
-        <button
-          onClick={() => setFlowStep('transport')}
-          className="px-5 py-3 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-base flex items-center space-x-1.5 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>{t.back}</span>
-        </button>
+        {userRole === "farmer" ? (
+          <button
+            onClick={() => setFlowStep("transport")}
+            className="px-5 py-3 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-base flex items-center space-x-1.5 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>{t.back}</span>
+          </button>
+        ) : (
+          <button
+            onClick={() => setCurrentView("buyer-marketplace")}
+            className="px-5 py-3 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-base flex items-center space-x-1.5 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>{t.back}</span>
+          </button>
+        )}
 
         <button
-          onClick={() => setCurrentView('command-center')}
+          onClick={() =>
+            setCurrentView(
+              userRole === "buyer" ? "buyer-marketplace" : "command-center",
+            )
+          }
           className="px-6 py-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-base flex items-center space-x-2 transition-colors"
         >
-          <span>{lang === 'ta' ? 'கட்டுப்பாட்டு மையத்திற்குத் திரும்பு' : 'Return to Command Center'}</span>
+          <span>
+            {userRole === "buyer"
+              ? lang === "ta"
+                ? "சந்தைக்குத் திரும்பு"
+                : "Return to Marketplace"
+              : lang === "ta"
+                ? "கட்டுப்பாட்டு மையத்திற்குத் திரும்பு"
+                : "Return to Command Center"}
+          </span>
           <ChevronRight className="w-4 h-4 text-emerald-400" />
         </button>
       </div>
-
     </div>
   );
 };

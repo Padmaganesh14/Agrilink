@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { useAgri } from "../../context/AgriContext";
 import { Sprout, LogIn, UserPlus } from "lucide-react";
 
@@ -6,8 +7,7 @@ export const LandingPage = () => {
   const {
     setCurrentView,
     setUserRole,
-    loginAsDemoFarmer,
-    loginAsDemoBuyer,
+    setUser,
     t,
     lang,
   } = useAgri();
@@ -15,9 +15,9 @@ export const LandingPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [role, setRole] = useState("farmer"); // 'farmer' or 'buyer'
   const [formData, setFormData] = useState({
-    mobile: "0199876444",
-    password: "qwerew",
-    name: "majeed", // only for signup
+    mobile: "",
+    password: "",
+    name: "", // only for signup
   });
   const [loading, setLoading] = useState(false);
 
@@ -29,25 +29,29 @@ export const LandingPage = () => {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate API Call - Ready for backend integration
-    // try {
-    //   const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
-    //   const res = await axios.post(`http://localhost:5001${endpoint}`, { ...formData, role });
-    //   setUserRole(res.data.role);
-    //   setCurrentView(res.data.role === 'farmer' ? 'command-center' : 'buyer-marketplace');
-    // } catch (error) {
-    //   console.error("Auth failed", error);
-    // }
+    try {
+      const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
+      const res = await axios.post(`http://localhost:8000${endpoint}`, {
+        ...formData,
+        role,
+      });
 
-    setTimeout(() => {
+      setUser(res.data.user);
+      setUserRole(res.data.role);
+
+      setTimeout(() => {
+        setLoading(false);
+        if (res.data.role === "farmer") {
+          setCurrentView("command-center");
+        } else {
+          setCurrentView("buyer-marketplace");
+        }
+      }, 500);
+    } catch (error) {
+      console.error("Auth failed", error);
+      alert(error.response?.data?.message || "Authentication Failed");
       setLoading(false);
-      setUserRole(role);
-      if (role === "farmer") {
-        loginAsDemoFarmer();
-      } else {
-        loginAsDemoBuyer();
-      }
-    }, 800);
+    }
   };
 
   return (

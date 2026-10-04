@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useAgri } from "../../context/AgriContext";
-import { defaultCrops } from "../../data/mockData";
 import {
   Search,
   MapPin,
@@ -9,6 +9,7 @@ import {
   ArrowRight,
   TrendingUp,
   X,
+  Sprout,
 } from "lucide-react";
 
 export const BuyerMarketplaceView = () => {
@@ -20,21 +21,44 @@ export const BuyerMarketplaceView = () => {
     setSelectedBuyer,
     jumpToFlowStep,
   } = useAgri();
+
+  const [crops, setCrops] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("All");
   const [activeModalCrop, setActiveModalCrop] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const filteredCrops = defaultCrops.filter((c) => {
+  useEffect(() => {
+    const fetchCrops = async () => {
+      try {
+        // Change to dynamic endpoint, e.g., process.env.VITE_API_URL or localhost
+        const res = await axios.get("http://localhost:8000/api/crops");
+        if (res.data.success) {
+          setCrops(res.data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch crops", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCrops();
+  }, []);
+
+  const filteredCrops = crops.filter((c) => {
+    const cropName = c.cropName || "";
+    const tamilName = c.tamilName || "";
     const matchesSearch =
-      c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.tamilName.includes(searchTerm);
+      cropName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      tamilName.includes(searchTerm);
     const matchesDistrict =
-      selectedDistrict === "All" || c.defaultLocation === selectedDistrict;
+      selectedDistrict === "All" || c.location === selectedDistrict;
     return matchesSearch && matchesDistrict;
   });
 
   const handlePlaceOrder = (crop) => {
     setSelectedCrop(crop);
+    // In a real app we'd trigger an order creation logic here
     if (crop.matchedBuyers && crop.matchedBuyers.length > 0) {
       setSelectedBuyer(crop.matchedBuyers[0]);
     }
@@ -105,20 +129,24 @@ export const BuyerMarketplaceView = () => {
 
       {/* Available Crops Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-        {filteredCrops.map((crop) => (
+        {loading ? (
+          <div className="col-span-full py-12 text-center text-slate-500">Loading crops...</div>
+        ) : filteredCrops.length === 0 ? (
+          <div className="col-span-full py-12 text-center text-slate-500">No crops found matching your criteria.</div>
+        ) : filteredCrops.map((crop) => (
           <div
-            key={crop.id}
+            key={crop._id || crop.id}
             className="bg-white rounded-lg p-3.5 sm:p-5 border border-slate-200 shadow-sm hover:shadow transition-shadow flex flex-col justify-between space-y-3 sm:space-y-4"
           >
             <div>
               <div className="flex items-start justify-between border-b border-slate-100 pb-2 sm:pb-3 mb-2 sm:mb-3">
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <span className="text-xl sm:text-2xl leading-none">
-                    {crop.icon}
+                    {crop.icon || "🌾"}
                   </span>
                   <div>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-tight">
-                      {lang === "ta" ? crop.tamilName : crop.name}
+                      {lang === "ta" && crop.tamilName ? crop.tamilName : crop.cropName}
                     </h3>
                     <p className="text-[10px] sm:text-xs text-slate-500 font-medium mt-0.5">
                       {crop.grade}
@@ -137,7 +165,7 @@ export const BuyerMarketplaceView = () => {
                     <span>Qty</span>
                   </span>
                   <span className="font-semibold text-slate-900">
-                    {crop.defaultQty.toLocaleString()} KG
+                    {crop.quantityAvailable?.toLocaleString()} KG
                   </span>
                 </div>
 
@@ -147,7 +175,7 @@ export const BuyerMarketplaceView = () => {
                     <span>Loc</span>
                   </span>
                   <span className="font-semibold text-slate-900 truncate max-w-[100px] sm:max-w-none text-right">
-                    {crop.defaultLocation}
+                    {crop.location}
                   </span>
                 </div>
 
@@ -157,7 +185,7 @@ export const BuyerMarketplaceView = () => {
                     <span>Price</span>
                   </span>
                   <span className="font-bold text-emerald-700">
-                    ₹{crop.bestMarket.price}/KG
+                    ₹{crop.pricePerKg}/KG
                   </span>
                 </div>
               </div>
@@ -187,16 +215,16 @@ export const BuyerMarketplaceView = () => {
 
             <div className="flex items-center space-x-2 sm:space-x-3 border-b border-slate-100 pb-3 sm:pb-4 pr-6">
               <span className="text-2xl sm:text-3xl leading-none">
-                {activeModalCrop.icon}
+                {activeModalCrop.icon || "🌾"}
               </span>
               <div>
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-tight">
-                  {lang === "ta"
+                  {lang === "ta" && activeModalCrop.tamilName
                     ? activeModalCrop.tamilName
-                    : activeModalCrop.name}
+                    : activeModalCrop.cropName}
                 </h3>
                 <p className="text-xs sm:text-sm font-medium text-emerald-700 mt-0.5">
-                  {activeModalCrop.defaultQty.toLocaleString()} KG • Farm Lot
+                  {activeModalCrop.quantityAvailable?.toLocaleString()} KG • Farm Lot
                 </p>
               </div>
             </div>
@@ -207,7 +235,7 @@ export const BuyerMarketplaceView = () => {
                   Farm Origin
                 </span>
                 <span className="font-semibold text-slate-900 break-words">
-                  {activeModalCrop.defaultLocation}
+                  {activeModalCrop.location}
                 </span>
               </div>
 
@@ -234,7 +262,7 @@ export const BuyerMarketplaceView = () => {
                   Target Benchmark
                 </span>
                 <span className="font-bold text-emerald-700 break-words">
-                  ₹{activeModalCrop.bestMarket.price}/KG
+                  ₹{activeModalCrop.pricePerKg}/KG
                 </span>
               </div>
             </div>
@@ -246,7 +274,7 @@ export const BuyerMarketplaceView = () => {
               <span className="font-bold text-emerald-900 text-base sm:text-base mt-0.5 sm:mt-0">
                 ₹
                 {(
-                  activeModalCrop.bestMarket.price * activeModalCrop.defaultQty
+                  activeModalCrop.pricePerKg * activeModalCrop.quantityAvailable
                 ).toLocaleString()}
               </span>
             </div>
