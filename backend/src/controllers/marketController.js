@@ -32,6 +32,10 @@ export async function analyzeMarket(req, res, next) {
       ...aiResult,
     });
   } catch (err) {
-    next(err);
+    console.warn("Market analysis failed:", err.message);
+    res.json({
+      success: false,
+      message: err.message || "AI engine failed to analyze market",
+    });
   }
 }

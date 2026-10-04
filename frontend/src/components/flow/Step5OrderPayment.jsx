@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useAgri } from "../../context/AgriContext";
-import { getCropDisplayName, getLocationDisplayName } from "../../data/mockData";
+import {
+  getCropDisplayName,
+  getLocationDisplayName,
+} from "../../data/mockData";
 import { api } from "../../services/api";
 import {
   ArrowRight,

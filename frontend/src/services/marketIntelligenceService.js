@@ -1,4 +1,6 @@
-const BACKEND_API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+const BACKEND_API_URL = (
+  import.meta.env.VITE_API_URL || "http://localhost:8000"
+).replace(/\/$/, "");
 
 /**
  * Fetch market intelligence from the backend (Gemini AI engine).
@@ -9,14 +11,14 @@ export async function fetchMarketIntelligence({
   quantityKg,
   farmLocation,
   expectedPrice,
-  quality = 'Grade A',
+  quality = "Grade A",
 }) {
   const payload = {
     crop: cropName,
     quantity: Number(quantityKg) || 0,
     quantityKg: Number(quantityKg) || 0,
-    location: farmLocation || '',
-    quality: quality || 'Grade A',
+    location: farmLocation || "",
+    quality: quality || "Grade A",
     expectedPrice: Number(expectedPrice) || 0,
     timestamp: new Date().toISOString(),
   };
@@ -27,8 +29,8 @@ export async function fetchMarketIntelligence({
     const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s for AI
 
     const backendRes = await fetch(`${BACKEND_API_URL}/api/market/analyze`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
       signal: controller.signal,
     });
@@ -37,20 +39,36 @@ export async function fetchMarketIntelligence({
 
     if (backendRes.ok) {
       const data = await backendRes.json();
-      return {
-        ...data,
-        source: 'gemini_ai',
-      };
+      if (data.success) {
+        return {
+          ...data,
+          source: "gemini_ai",
+        };
+      } else {
+        throw new Error(data.message || "AI engine failed");
+      }
+    } else {
+      throw new Error(`HTTP ${backendRes.status}`);
     }
   } catch (err) {
-    console.warn('Backend AI unreachable, falling back to local dataset:', err.message);
+    console.warn(
+      "Backend AI unreachable, falling back to local dataset:",
+      err.message,
+    );
   }
 
   // Tier 2: Local government dataset fallback
-  const { calculateMarketIntelligence } = await import('../data/governmentMarketData.js');
-  const localResult = calculateMarketIntelligence({ cropName, quantityKg, farmLocation, expectedPrice, quality });
+  const { calculateMarketIntelligence } =
+    await import("../data/governmentMarketData.js");
+  const localResult = calculateMarketIntelligence({
+    cropName,
+    quantityKg,
+    farmLocation,
+    expectedPrice,
+    quality,
+  });
   return {
     ...localResult,
-    source: 'local_agmarknet',
+    source: "local_agmarknet",
   };
 }
