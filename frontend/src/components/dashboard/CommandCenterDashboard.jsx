@@ -216,12 +216,15 @@ export const CommandCenterDashboard = () => {
                 </div>
                 <div>
                   <h4 className="text-lg font-bold text-emerald-900 mb-0.5">
-                    {order.crop} • {order.quantityKg} KG | {order.pickupLocation} → {order.deliveryLocation}
+                    {order.crop} • {order.quantityKg} KG
                   </h4>
-                  <p className="text-sm text-emerald-700 font-medium">
+                  <p className="text-sm text-emerald-700 font-medium mb-1">
+                    Buyer: {order.buyerName} ({order.buyerLocation})
+                  </p>
+                  <p className="text-xs text-emerald-600/80 font-medium">
                     {lang === "ta"
-                      ? `வாகனம்: ${order.transportName || "Logistics"} • செல்கிறது: ${order.deliveryLocation}`
-                      : `Vehicle: ${order.transportName || "Logistics"} • En route to ${order.deliveryLocation}`}
+                      ? `வாகனம்: ${order.transportName || "Logistics"} • ${order.pickupLocation} → ${order.deliveryLocation}`
+                      : `Vehicle: ${order.transportName || "Pending"} • ${order.pickupLocation} → ${order.deliveryLocation}`}
                   </p>
                 </div>
               </div>

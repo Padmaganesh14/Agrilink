@@ -336,13 +336,13 @@ export const Step6LogisticsTracking = () => {
               </div>
             </div>
 
-            {/* Spec lines */}
+            {/* Spec lines (Invoice Details) */}
             <div className="space-y-2 text-base">
               <div className="flex justify-between py-1 border-b border-slate-100">
                 <span className="text-slate-500 font-bold">
                   {lang === "ta" ? "பயிர் விவரம்:" : "Crop Lot:"}
                 </span>
-                <span className="font-black text-slate-900">
+                <span className="font-black text-slate-900 text-right">
                   {getCropDisplayName(orderData.crop, lang)} •{" "}
                   {orderData.quantityKg.toLocaleString()}{" "}
                   {lang === "ta" ? "கிலோ" : "KG"}
@@ -351,17 +351,40 @@ export const Step6LogisticsTracking = () => {
 
               <div className="flex justify-between py-1 border-b border-slate-100">
                 <span className="text-slate-500 font-bold">
+                  {lang === "ta" ? "பயிர் மதிப்பு:" : "Crop Value:"}
+                </span>
+                <span className="font-black text-slate-900">
+                  ₹{orderData.totalValue?.toLocaleString()}
+                </span>
+              </div>
+
+              <div className="flex justify-between py-1 border-b border-slate-100">
+                <span className="text-slate-500 font-bold">
                   {lang === "ta" ? "வாங்குபவர்:" : "Buyer:"}
                 </span>
-                <span className="font-black text-slate-900">{buyer.name}</span>
+                <span className="font-black text-slate-900 text-right">
+                  {buyer.name}<br/>
+                  <span className="text-[10px] text-slate-500 uppercase">{buyer.location}</span>
+                </span>
+              </div>
+              
+              <div className="flex justify-between py-1 border-b border-slate-100">
+                <span className="text-slate-500 font-bold">
+                  {lang === "ta" ? "விற்பனையாளர்:" : "Seller:"}
+                </span>
+                <span className="font-black text-slate-900 text-right">
+                  {orderData.pickupLocation} Farm<br/>
+                  <span className="text-[10px] text-slate-500 uppercase">{orderData.pickupLocation}</span>
+                </span>
               </div>
 
               <div className="flex justify-between py-1 border-b border-slate-100">
                 <span className="text-slate-500 font-bold">
                   {lang === "ta" ? "போக்குவரத்து:" : "Transport:"}
                 </span>
-                <span className="font-black text-agri-600">
-                  {transport.name} ({transport.vehicle})
+                <span className="font-black text-agri-600 text-right">
+                  {transport.name}<br/>
+                  <span className="text-[10px] uppercase">Vehicle: {transport.vehicle}</span>
                 </span>
               </div>
 
@@ -370,34 +393,54 @@ export const Step6LogisticsTracking = () => {
                   {lang === "ta" ? "சரக்கு கட்டணம்:" : "Freight Fee:"}
                 </span>
                 <span className="font-black text-slate-900">
-                  ₹{transport.estimatedCost.toLocaleString()}
+                  ₹{transport.estimatedCost?.toLocaleString()}
+                </span>
+              </div>
+              
+              <div className="flex justify-between py-2 mt-2 bg-slate-50 px-3 rounded-lg border border-slate-200">
+                <span className="text-slate-800 font-black">
+                  {lang === "ta" ? "மொத்த தொகை:" : "Grand Total:"}
+                </span>
+                <span className="font-black text-emerald-700 text-xl">
+                  ₹{((orderData.totalValue || 0) + (transport.estimatedCost || 0)).toLocaleString()}
                 </span>
               </div>
             </div>
 
-            {/* Vertical 7-Stage Timeline */}
-            <div className="space-y-2 pt-2 border-t border-slate-100">
-              <span className="text-lg font-black  text-slate-400 block mb-2">
+            {/* Vertical Dynamic Timeline */}
+            <div className="space-y-2 pt-4 border-t border-slate-100">
+              <span className="text-lg font-black text-slate-400 block mb-2">
                 {lang === "ta"
-                  ? "ஆர்டர் வாழ்க்கைச் சுழற்சி காலவரிசை"
-                  : "Order Lifecycle Timeline"}
+                  ? "ஆர்டர் நிலை"
+                  : "Order Status Timeline"}
               </span>
 
               {[
-                { id: "s1", key: "stage1", done: true, time: "10:45 AM" },
-                { id: "s2", key: "stage2", done: true, time: "10:50 AM" },
-                { id: "s3", key: "stage3", done: true, time: "11:15 AM" },
-                {
-                  id: "s4",
-                  key: "stage4",
-                  done: false,
-                  current: true,
-                  time: "In Progress",
+                { 
+                  id: "s1", 
+                  label: "Order Placed", 
+                  done: true, 
+                  current: false
                 },
-                { id: "s5", key: "stage5", done: false, time: "Pending" },
-              ].map((stage) => {
-                const label = t[stage.key] || stage.key;
-                return (
+                { 
+                  id: "s2", 
+                  label: "Transport Assigned", 
+                  done: trackingData.status !== "Awaiting Dispatch", 
+                  current: trackingData.status === "Awaiting Dispatch"
+                },
+                { 
+                  id: "s3", 
+                  label: "In Transit", 
+                  done: trackingData.status === "Delivered", 
+                  current: trackingData.status === "In Transit"
+                },
+                { 
+                  id: "s4", 
+                  label: "Delivered", 
+                  done: trackingData.status === "Delivered", 
+                  current: trackingData.status === "Delivered"
+                }
+              ].map((stage) => (
                   <div
                     key={stage.id}
                     className={`flex items-center justify-between p-2 rounded-lg text-base transition-all ${
@@ -416,15 +459,10 @@ export const Step6LogisticsTracking = () => {
                       ) : (
                         <span className="w-2 h-2 rounded-full bg-slate-300 ml-1 mr-1"></span>
                       )}
-                      <span className="text-base ">{label}</span>
+                      <span className="text-base ">{stage.label}</span>
                     </div>
-
-                    <span className="text-lg opacity-70 font-mono">
-                      {stage.time}
-                    </span>
                   </div>
-                );
-              })}
+                ))}
             </div>
           </div>
         </div>

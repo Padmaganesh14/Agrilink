@@ -7,6 +7,7 @@ import {
   Building2,
   LogOut,
   Truck,
+  Settings,
 } from "lucide-react";
 
 export const Navbar = () => {
@@ -223,6 +224,17 @@ export const Navbar = () => {
                   {userRole === "farmer" ? "Farmer" : "Buyer"}
                 </p>
               </div>
+              <button
+                onClick={() => setCurrentView("settings")}
+                className={`p-1.5 rounded transition-colors ${
+                  currentView === "settings"
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "bg-slate-100 hover:bg-slate-200 text-slate-600"
+                }`}
+                title="Settings"
+              >
+                <Settings className="w-4 h-4" />
+              </button>
               <button
                 onClick={logout}
                 className="p-1.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 rounded transition-colors"

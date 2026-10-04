@@ -14,6 +14,7 @@ import { Step5OrderPayment } from "./components/flow/Step5OrderPayment";
 import { Step5_5TransportSelection } from "./components/flow/Step5_5TransportSelection";
 import { Step6LogisticsTracking } from "./components/flow/Step6LogisticsTracking";
 import { BuyerMarketplaceView } from "./components/marketplace/BuyerMarketplaceView";
+import { SettingsView } from "./components/settings/SettingsView";
 
 export function AppContent() {
   const { currentView, flowStep, user, userRole } = useAgri();
@@ -75,6 +76,12 @@ export function AppContent() {
                 )}
               </div>
             </div>
+          ) : (
+            <LandingPage />
+          )
+        ) : currentView === "settings" ? (
+          user ? (
+            <SettingsView />
           ) : (
             <LandingPage />
           )

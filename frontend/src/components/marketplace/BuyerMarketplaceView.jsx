@@ -15,6 +15,7 @@ import {
   ChevronRight,
   ShoppingCart,
   Package,
+  User,
 } from "lucide-react";
 
 export const BuyerMarketplaceView = () => {
@@ -276,6 +277,18 @@ export const BuyerMarketplaceView = () => {
                           {crop.location}
                         </span>
                       </div>
+
+                      {crop.users?.name && (
+                        <div className="flex items-center justify-between text-slate-600 bg-slate-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md border border-slate-100">
+                          <span className="flex items-center space-x-1 sm:space-x-1.5 font-medium">
+                            <User className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
+                            <span>Farm</span>
+                          </span>
+                          <span className="font-semibold text-slate-900 truncate max-w-[120px] text-right">
+                            {crop.users.name}
+                          </span>
+                        </div>
+                      )}
 
                       <div className="flex items-center justify-between text-slate-600 bg-slate-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md border border-slate-100">
                         <span className="flex items-center space-x-1 sm:space-x-1.5 font-medium">

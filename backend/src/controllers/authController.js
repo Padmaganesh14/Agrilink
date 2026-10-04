@@ -74,3 +74,43 @@ export const login = async (req, res, next) => {
     next(err);
   }
 };
+
+export const updateProfile = async (req, res, next) => {
+  try {
+    const { id, name, mobile, password } = req.body;
+    
+    if (!id) {
+      return res.status(400).json({ success: false, message: "User ID is required" });
+    }
+
+    const updates = { name, mobile };
+    if (password) updates.password = password;
+
+    const { data: user, error } = await supabase
+      .from('users')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      if (error.code === '23505') {
+        return res.status(400).json({ success: false, message: "Mobile number already in use" });
+      }
+      throw error;
+    }
+
+    res.status(200).json({
+      success: true,
+      user: {
+        id: user.id,
+        name: user.name,
+        mobile: user.mobile,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    console.error("Supabase error:", err);
+    next(err);
+  }
+};
