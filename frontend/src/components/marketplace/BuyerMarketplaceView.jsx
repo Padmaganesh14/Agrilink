@@ -142,7 +142,7 @@ export const BuyerMarketplaceView = () => {
               <div className="flex items-start justify-between border-b border-slate-100 pb-2 sm:pb-3 mb-2 sm:mb-3">
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <span className="text-xl sm:text-2xl leading-none">
-                    {crop.icon || "🌾"}
+                    {crop.icon || ""}
                   </span>
                   <div>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-tight">
@@ -215,7 +215,7 @@ export const BuyerMarketplaceView = () => {
 
             <div className="flex items-center space-x-2 sm:space-x-3 border-b border-slate-100 pb-3 sm:pb-4 pr-6">
               <span className="text-2xl sm:text-3xl leading-none">
-                {activeModalCrop.icon || "🌾"}
+                {activeModalCrop.icon || ""}
               </span>
               <div>
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-tight">

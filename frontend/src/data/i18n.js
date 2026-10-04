@@ -19,8 +19,8 @@ export const translations = {
     heroHeadingMain: "SELL YOUR CROP",
     heroHeadingHighlight: "WITH INTELLIGENCE.",
     heroDescription: "AgriLink AI helps farmers identify better market opportunities, connect with B2B buyers, promote their crops and coordinate delivery through one connected workflow.",
-    heroPrimaryBtn: "🌱 SELL MY CROP →",
-    heroSecondaryBtn: "🏢 EXPLORE BUYER MARKET",
+    heroPrimaryBtn: " SELL MY CROP →",
+    heroSecondaryBtn: " EXPLORE BUYER MARKET",
     heroFooterTag: "AI-assisted • Tamil + English • Hackathon MVP",
 
     // Hero Card
@@ -68,14 +68,14 @@ export const translations = {
     farmerLoginSubtitle: "Start with what you're growing.",
     mobileNumberLabel: "Mobile Number",
     sendOtpBtn: "SEND OTP →",
-    continueDemoFarmerBtn: "⚡ CONTINUE AS DEMO FARMER",
+    continueDemoFarmerBtn: " CONTINUE AS DEMO FARMER",
     demoFarmerInfo: "Demo: Ramanathan • Trichy, Tamil Nadu",
 
     // Buyer Login
     buyerLoginHeader: "BUYER LOGIN",
     buyerLoginSubtitle: "Source farm-direct agricultural commodities.",
     businessNumberLabel: "Business / Mobile Number",
-    continueDemoBuyerBtn: "⚡ CONTINUE AS DEMO BUYER",
+    continueDemoBuyerBtn: " CONTINUE AS DEMO BUYER",
     demoBuyerInfo: "Demo Buyer: Koyambedu Wholesale Mart • Chennai",
 
     // Farmer Command Center
@@ -156,7 +156,7 @@ export const translations = {
     // Step 04: AI + n8n
     step04Title: "AI-POWERED CROP PROMOTION",
     step04Subtitle: "Turn crop details into buyer-facing promotional content.",
-    promoteMyCropBtn: "🚀 PROMOTE MY CROP",
+    promoteMyCropBtn: " PROMOTE MY CROP",
     demoAutomationBadge: "DEMO AUTOMATION",
     node01: "01 AI ANALYSIS",
     node02: "02 CONTENT GENERATION",
@@ -224,8 +224,8 @@ export const translations = {
     heroHeadingMain: "உங்கள் பயிரை விற்கலாம்",
     heroHeadingHighlight: "நுண்ணறிவுடன்.",
     heroDescription: "அக்ரிலிங்க் AI விவசாயிகளுக்கு சிறந்த சந்தை வாய்ப்புகளை கண்டறிந்து, மொத்த வியாபாரிகளுடன் இணைத்து, விளம்பரம் மற்றும் சரக்கு போக்குவரத்தை ஒரே அமைப்பில் ஒருங்கிணைக்கிறது.",
-    heroPrimaryBtn: "🌱 என் பயிரை விற்க →",
-    heroSecondaryBtn: "🏢 வியாபாரி சந்தையை பார்க்க",
+    heroPrimaryBtn: " என் பயிரை விற்க →",
+    heroSecondaryBtn: " வியாபாரி சந்தையை பார்க்க",
     heroFooterTag: "AI-உதவி • தமிழ் + ஆங்கிலம் • ஹேக்கத்தான் MVP",
 
     // Hero Card
@@ -273,14 +273,14 @@ export const translations = {
     farmerLoginSubtitle: "நீங்கள் பயிரிட்ட பயிருடன் தொடங்குங்கள்.",
     mobileNumberLabel: "கைபேசி எண்",
     sendOtpBtn: "OTP அனுப்புக →",
-    continueDemoFarmerBtn: "⚡ மாதிரி விவசாயியாக தொடரவும்",
+    continueDemoFarmerBtn: " மாதிரி விவசாயியாக தொடரவும்",
     demoFarmerInfo: "மாதிரி: ராமநாதன் • திருச்சி, தமிழ்நாடு",
 
     // Buyer Login
     buyerLoginHeader: "வியாபாரி உள்நுழைவு",
     buyerLoginSubtitle: "விவசாயிகளிடமிருந்து நேரடியாக கொள்முதல் செய்யுங்கள்.",
     businessNumberLabel: "வணிக / கைபேசி எண்",
-    continueDemoBuyerBtn: "⚡ மாதிரி வியாபாரியாக தொடரவும்",
+    continueDemoBuyerBtn: " மாதிரி வியாபாரியாக தொடரவும்",
     demoBuyerInfo: "மாதிரி: கோயம்பேடு ஹோல்சேல் மார்ட் • சென்னை",
 
     // Farmer Command Center
@@ -360,7 +360,7 @@ export const translations = {
     // Step 04: AI + n8n
     step04Title: "AI-இயங்கும் பயிர் விளம்பரம்",
     step04Subtitle: "பயிர் தகவல்களை வியாபாரிகளுக்கான விளம்பரமாக மாற்றுகிறது.",
-    promoteMyCropBtn: "🚀 பயிரை விளம்பரம் செய்",
+    promoteMyCropBtn: " பயிரை விளம்பரம் செய்",
     demoAutomationBadge: "மாதிரி ஆட்டோமேஷன்",
     node01: "01 AI பகுப்பாய்வு",
     node02: "02 விளம்பர உரை உருவாக்கம்",

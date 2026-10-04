@@ -79,7 +79,7 @@ export const CommandCenterDashboard = () => {
         {activeCrop ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div className="flex items-center space-x-4">
-              <span className="text-4xl">🌾</span>
+              <span className="text-4xl"></span>
               <div>
                 <h2 className="text-2xl font-bold text-white mb-1">
                   {lang === "ta" && activeCrop.tamilName
@@ -217,7 +217,7 @@ export const CommandCenterDashboard = () => {
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
-                    🌾
+                    
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-900">

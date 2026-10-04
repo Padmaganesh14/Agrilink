@@ -100,7 +100,7 @@ export const Step2MarketOpportunity = () => {
         {/* Top Header with Crop Specs & Execution Engine Badge */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
           <div className="flex items-center space-x-3.5">
-            <span className="text-4xl">{crop.icon || '🌱'}</span>
+            <span className="text-4xl">{crop.icon || ''}</span>
             <div>
               <div className="flex items-center space-x-2">
                 <span className="text-lg font-black  text-agri-600">
@@ -113,7 +113,7 @@ export const Step2MarketOpportunity = () => {
                   : `${getCropDisplayName(crop.name, lang)} • Best Market Opportunity`}
               </h2>
               <p className="text-base font-bold text-slate-500 mt-0.5">
-                {customQty.toLocaleString()} {lang === 'ta' ? 'கிலோ' : 'KG'} • 📍 {getLocationDisplayName(customLocation, lang).toUpperCase()} • {lang === 'ta' ? 'விவசாயி எதிர்பார்ப்பு:' : 'Farmer Expected:'} <b className="text-slate-800">₹{farmerExp}/{lang === 'ta' ? 'கிலோ' : 'kg'}</b>
+                {customQty.toLocaleString()} {lang === 'ta' ? 'கிலோ' : 'KG'} •  {getLocationDisplayName(customLocation, lang).toUpperCase()} • {lang === 'ta' ? 'விவசாயி எதிர்பார்ப்பு:' : 'Farmer Expected:'} <b className="text-slate-800">₹{farmerExp}/{lang === 'ta' ? 'கிலோ' : 'kg'}</b>
               </p>
             </div>
           </div>

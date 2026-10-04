@@ -265,8 +265,8 @@ export function calculateMarketIntelligence({
     }
   ];
 
-  const promoCaptionEn = `🍅 Fresh ${quality} ${cropName}\n📦 Quantity: ${qty.toLocaleString()} KG\n📍 Farm Origin: ${origin}, Tamil Nadu\n💰 Indicative Market Rate: ₹${marketPrice} / KG\n🤝 Available for verified B2B purchase via AgriLink AI.`;
-  const promoCaptionTa = `🍅 புதிய ${quality === 'Grade A' ? 'கிரேடு A' : quality} ${cropName} (${qty.toLocaleString()} கிலோ)\n📍 பண்ணை: ${origin}, தமிழ்நாடு\n💰 உத்தேச சந்தை விலை: ₹${marketPrice} / கிலோ\n🤝 AgriLink AI தளம் மூலம் நேரடி B2B கொள்முதல்.`;
+  const promoCaptionEn = ` Fresh ${quality} ${cropName}\n Quantity: ${qty.toLocaleString()} KG\n Farm Origin: ${origin}, Tamil Nadu\n Indicative Market Rate: ₹${marketPrice} / KG\n Available for verified B2B purchase via AgriLink AI.`;
+  const promoCaptionTa = ` புதிய ${quality === 'Grade A' ? 'கிரேடு A' : quality} ${cropName} (${qty.toLocaleString()} கிலோ)\n பண்ணை: ${origin}, தமிழ்நாடு\n உத்தேச சந்தை விலை: ₹${marketPrice} / கிலோ\n AgriLink AI தளம் மூலம் நேரடி B2B கொள்முதல்.`;
 
   const recommendedMarket = {
     market: 'Chennai',

@@ -46,7 +46,7 @@ export const Step3BuyerMatch = () => {
           {t.step03Title}
         </h1>
         <p className="text-base sm:text-lg font-bold text-agri-700 mt-1">
-          {crop.icon} {getCropDisplayName(crop.name, lang)} • {customQty.toLocaleString()} {lang === 'ta' ? 'கிலோ இருப்பு' : 'KG Available'} • 📍 {getLocationDisplayName(customLocation, lang)}
+          {crop.icon} {getCropDisplayName(crop.name, lang)} • {customQty.toLocaleString()} {lang === 'ta' ? 'கிலோ இருப்பு' : 'KG Available'} •  {getLocationDisplayName(customLocation, lang)}
         </p>
       </div>
 

@@ -30,6 +30,7 @@ export const Step6LogisticsTracking = () => {
     resetDemo,
     selectedCrop,
     customQty,
+    customLocation,
     selectedTransport,
     selectedBuyer,
     userRole,
@@ -101,14 +102,14 @@ export const Step6LogisticsTracking = () => {
 
         // Origin Marker
         L.marker(oCoords, {
-          icon: createEmojiIcon("📍", "#14532D"),
+          icon: createEmojiIcon("", "#14532D"),
         })
           .addTo(map)
           .bindPopup(`<b>${origin} Farm Gate</b><br>Origin`);
 
         // Destination Marker
         L.marker(dCoords, {
-          icon: createEmojiIcon("🏢", "#0F172A"),
+          icon: createEmojiIcon("", "#0F172A"),
         })
           .addTo(map)
           .bindPopup(`<b>${buyer.name}</b><br>Destination`);
@@ -140,7 +141,7 @@ export const Step6LogisticsTracking = () => {
             const truckCoords = coords[midIndex];
 
             L.marker(truckCoords, {
-              icon: createEmojiIcon("🚚", "#d97706"),
+              icon: createEmojiIcon("", "#d97706"),
             })
               .addTo(map)
               .bindPopup(
@@ -201,7 +202,7 @@ export const Step6LogisticsTracking = () => {
               </span>
             </div>
             <span className="px-4 py-2 rounded-md text-lg font-black  bg-emerald-100 text-agri-700">
-              🟢 {t.inTransitBadge}
+               {t.inTransitBadge}
             </span>
           </div>
 

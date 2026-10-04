@@ -192,7 +192,7 @@ export const AgriProvider = ({ children }) => {
       ...prev,
       crop: cropObj.name,
       tamilCrop: cropObj.tamilName || cropObj.name,
-      icon: cropObj.icon || "🌱",
+      icon: cropObj.icon || "",
       quantityKg: qty,
       ratePerKg: pricePerKg,
       totalValue: Math.round(pricePerKg * qty),

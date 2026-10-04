@@ -50,6 +50,11 @@ export const Step1AddCrop = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const searchContainerRef = useRef(null);
 
+  const [locQuery, setLocQuery] = useState("");
+  const [locSuggestions, setLocSuggestions] = useState([]);
+  const [isLocDropdownOpen, setIsLocDropdownOpen] = useState(false);
+  const locContainerRef = useRef(null);
+
   // Reverse mapping from Tamil display name to canonical English name
   const reverseCropTamil = Object.entries(cropTamilMap).reduce(
     (acc, [en, ta]) => {
@@ -79,6 +84,12 @@ export const Step1AddCrop = () => {
         !searchContainerRef.current.contains(e.target)
       ) {
         setIsDropdownOpen(false);
+      }
+      if (
+        locContainerRef.current &&
+        !locContainerRef.current.contains(e.target)
+      ) {
+        setIsLocDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -165,11 +176,31 @@ export const Step1AddCrop = () => {
     });
   };
 
-  // Handle location change with Tamil translation support
-  const handleLocationChange = (e) => {
+  // Handle location change with real-time Nominatim fetching
+  const handleLocationChange = async (e) => {
     const typed = e.target.value;
-    const canonical = reverseLocationTamil[typed.toLowerCase().trim()] || typed;
-    setCustomLocation(canonical);
+    setCustomLocation(typed);
+    setLocQuery(typed);
+    if (typed.length > 2) {
+      try {
+        const res = await axios.get(
+          `https://nominatim.openstreetmap.org/search?format=json&countrycodes=in&q=${encodeURIComponent(typed)}`,
+        );
+        setLocSuggestions(res.data);
+        setIsLocDropdownOpen(true);
+      } catch (err) {
+        console.warn("Location fetch error", err);
+      }
+    } else {
+      setIsLocDropdownOpen(false);
+    }
+  };
+
+  const handleSelectLocSuggestion = (s) => {
+    const displayName = s.display_name.split(",")[0];
+    setCustomLocation(displayName);
+    setLocQuery(displayName);
+    setIsLocDropdownOpen(false);
   };
 
   const handleContinue = async () => {
@@ -189,7 +220,7 @@ export const Step1AddCrop = () => {
           pricePerKg: expectedPrice ? Number(expectedPrice) : 28,
           sellerId: user.id,
         });
-        
+
         refreshMarketIntelligence({
           cropName: cropName,
           quantityKg: customQty,
@@ -336,11 +367,11 @@ export const Step1AddCrop = () => {
           </div>
 
           {/* Popular Crops Quick Chips */}
-          <div className="pt-1">
-            <p className="text-lg font-black  text-slate-400 mb-2">
+          <div className="pt-2">
+            <p className="text-sm font-semibold text-slate-400 mb-3 tracking-wide">
               {t.popularCropsLabel}
             </p>
-            <div className="flex flex-wrap gap-1.5 items-center">
+            <div className="flex flex-wrap gap-2 items-center">
               {popularCropChips.map((chip) => {
                 const isActive =
                   selectedCrop.name.toLowerCase() === chip.name.toLowerCase();
@@ -349,10 +380,10 @@ export const Step1AddCrop = () => {
                     key={chip.name}
                     type="button"
                     onClick={() => handleApplyCrop(chip.name)}
-                    className={`inline-flex items-center space-x-1.5 px-5 py-3.5 rounded-lg text-base font-bold transition-all ${
+                    className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
                       isActive
-                        ? "bg-agri-500 text-white shadow-xs scale-105"
-                        : "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200/60"
+                        ? "bg-agri-600 text-white shadow-md shadow-agri-500/30 scale-105"
+                        : "bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm"
                     }`}
                   >
                     <span>{chip.icon}</span>
@@ -361,9 +392,7 @@ export const Step1AddCrop = () => {
                 );
               })}
 
-              <span className="text-base text-slate-400 font-semibold mx-1">
-                {t.orLabel}
-              </span>
+              <div className="w-px h-6 bg-slate-200 mx-1"></div>
 
               {/* Add Custom Crop Quick Trigger */}
               <button
@@ -381,81 +410,14 @@ export const Step1AddCrop = () => {
                     handleApplyCrop(customName);
                   }
                 }}
-                className="inline-flex items-center space-x-1 px-5 py-3.5 rounded-lg text-base font-black text-agri-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 transition-all"
+                className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-full text-sm font-bold text-agri-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-all shadow-sm"
               >
-                <PlusCircle className="w-3.5 h-3.5" />
+                <PlusCircle className="w-4 h-4" />
                 <span>{t.addCustomCropBtn}</span>
               </button>
             </div>
           </div>
         </div>
-
-        <div className="h-px bg-slate-100"></div>
-
-        {/* ========================================================= */}
-        {/* SECTION 2: QUICK DEMO CROPS (3 Established Presets)       */}
-        {/* ========================================================= */}
-        <div>
-          <div className="flex items-center justify-between mb-2.5">
-            <div>
-              <label className="text-base font-black  text-slate-700 block">
-                {t.quickDemoCropsLabel}
-              </label>
-              <p className="text-base text-slate-400 font-medium">
-                {t.quickDemoCropsSubtitle}
-              </p>
-            </div>
-            <span className="text-lg font-bold text-slate-400 st">
-              {t.oneClickFillBadge}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {defaultCrops.map((c) => {
-              const isSelected = selectedCrop.id === c.id;
-              const cropTitle = lang === "ta" ? c.tamilName : c.name;
-              const locationTitle =
-                lang === "ta"
-                  ? locationTamilMap[c.defaultLocation] || c.defaultLocation
-                  : c.defaultLocation;
-              const gradeTitle =
-                lang === "ta" && c.grade === "Grade A" ? "கிரேடு A" : c.grade;
-
-              return (
-                <div
-                  key={c.id}
-                  onClick={() => handleSelectDemoPreset(c)}
-                  className={`p-3.5 rounded-lg border-2 text-left cursor-pointer transition-all ${
-                    isSelected
-                      ? "border-agri-500 bg-emerald-50/50 ring-2 ring-agri-500/20 shadow-xs"
-                      : "border-slate-200 hover:border-slate-300 bg-slate-50/50"
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl">{c.icon}</span>
-                    {isSelected && (
-                      <CheckCircle2 className="w-4 h-4 text-agri-600" />
-                    )}
-                  </div>
-                  <div className="mt-2">
-                    <p className="text-base font-black text-slate-900">
-                      {cropTitle}
-                    </p>
-                    <p className="text-base text-slate-500 font-bold mt-0.5">
-                      {c.defaultQty.toLocaleString()}{" "}
-                      {lang === "ta" ? "கிலோ" : "KG"} • {locationTitle}
-                    </p>
-                    <span className="inline-block mt-1.5 text-[9px] font-black  px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-600">
-                      {gradeTitle}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="h-px bg-slate-100"></div>
 
         {/* ========================================================= */}
         {/* SECTION 3: CROP DETAILS (Fully Editable Form)             */}
@@ -464,7 +426,7 @@ export const Step1AddCrop = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-2">
             <h3 className="text-lg font-black  text-slate-800 flex items-center space-x-2">
-              <span className="text-lg">🌱</span>
+              <span className="text-lg"></span>
               <span>{t.cropDetailsHeader}</span>
             </h3>
             <span className="text-base font-black text-slate-400 tracking-wider">
@@ -490,7 +452,7 @@ export const Step1AddCrop = () => {
                     className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 bg-white font-black text-slate-900 text-lg focus:outline-none focus:border-agri-500 transition-all pr-12"
                   />
                   <span className="absolute right-3.5 top-3 text-xl">
-                    {selectedCrop.icon || "🌱"}
+                    {selectedCrop.icon || ""}
                   </span>
                 </div>
               </div>
@@ -513,18 +475,35 @@ export const Step1AddCrop = () => {
             {/* ROW 2: Farm Location + Grade / Quality */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Farm Location */}
-              <div>
+              {/* Farm Location Autocomplete */}
+              <div ref={locContainerRef} className="relative">
                 <label className="block text-base font-bold  text-slate-700 mb-1.5 flex items-center space-x-1.5">
-                  <span className="text-lg">📍</span>
+                  <span className="text-lg"></span>
                   <span>{t.locationLabel}</span>
                 </label>
                 <input
                   type="text"
-                  value={displayLocation}
+                  value={locQuery || displayLocation}
                   onChange={handleLocationChange}
+                  onFocus={() => {
+                    if (locSuggestions.length > 0) setIsLocDropdownOpen(true);
+                  }}
                   placeholder={t.locationPlaceholder}
                   className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 bg-white font-black text-slate-900 text-lg focus:outline-none focus:border-agri-500 transition-all"
                 />
+                {isLocDropdownOpen && locSuggestions.length > 0 && (
+                  <ul className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                    {locSuggestions.map((s, idx) => (
+                      <li
+                        key={idx}
+                        onClick={() => handleSelectLocSuggestion(s)}
+                        className="px-4 py-2 hover:bg-emerald-50 cursor-pointer text-sm font-medium text-slate-700 border-b border-slate-100 last:border-0"
+                      >
+                        {s.display_name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               {/* Grade / Quality */}
@@ -556,7 +535,7 @@ export const Step1AddCrop = () => {
             {/* ROW 3: Expected Harvest Date */}
             <div>
               <label className="block text-base font-bold  text-slate-700 mb-1.5 flex items-center space-x-1.5">
-                <span className="text-lg">📅</span>
+                <span className="text-lg"></span>
                 <span>{t.harvestDateLabel}</span>
               </label>
               <input
@@ -571,7 +550,7 @@ export const Step1AddCrop = () => {
             <div>
               <div className="mb-1.5">
                 <label className="block text-base font-bold  text-slate-700 flex items-center space-x-1.5">
-                  <span className="text-lg">💰</span>
+                  <span className="text-lg"></span>
                   <span>{t.expectedPriceLabel}</span>
                 </label>
                 <span className="text-base text-slate-500 font-bold block ml-5">
@@ -588,8 +567,6 @@ export const Step1AddCrop = () => {
             </div>
           </div>
         </div>
-
-
 
         {/* Primary Action Button */}
         <div className="pt-2">

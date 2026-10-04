@@ -1,89 +1,125 @@
-// Official Government Mandi Dataset Feed (data.gov.in / DMI Agmarknet)
-const mandiRecords = [
-  { date: '2026-09-28', state: 'Tamil Nadu', district: 'Trichy', market: 'Trichy', commodity: 'Tomato', min_price: 2400, max_price: 3200, modal_price: 2800 },
-  { date: '2026-09-28', state: 'Tamil Nadu', district: 'Chennai', market: 'Koyambedu', commodity: 'Tomato', min_price: 3000, max_price: 4000, modal_price: 3500 },
-  { date: '2026-09-28', state: 'Tamil Nadu', district: 'Coimbatore', market: 'Coimbatore', commodity: 'Tomato', min_price: 2800, max_price: 3600, modal_price: 3200 },
-  { date: '2026-09-28', state: 'Tamil Nadu', district: 'Madurai', market: 'Madurai', commodity: 'Tomato', min_price: 2200, max_price: 3100, modal_price: 2700 },
-  { date: '2026-09-28', state: 'Tamil Nadu', district: 'Trichy', market: 'Trichy', commodity: 'Coconut', min_price: 2400, max_price: 3100, modal_price: 2800 },
-  { date: '2026-09-28', state: 'Tamil Nadu', district: 'Chennai', market: 'Koyambedu', commodity: 'Coconut', min_price: 3000, max_price: 3800, modal_price: 3400 },
-  { date: '2026-09-28', state: 'Tamil Nadu', district: 'Trichy', market: 'Trichy', commodity: 'Banana', min_price: 2000, max_price: 2700, modal_price: 2400 },
-  { date: '2026-09-28', state: 'Tamil Nadu', district: 'Chennai', market: 'Koyambedu', commodity: 'Banana', min_price: 2600, max_price: 3400, modal_price: 3000 },
-  { date: '2026-09-28', state: 'Tamil Nadu', district: 'Trichy', market: 'Trichy', commodity: 'Onion', min_price: 4600, max_price: 5600, modal_price: 5200 },
-  { date: '2026-09-28', state: 'Tamil Nadu', district: 'Chennai', market: 'Koyambedu', commodity: 'Onion', min_price: 5800, max_price: 6900, modal_price: 6400 }
-];
+import { GoogleGenAI } from '@google/genai';
 
-export function analyzeMarketOpportunity({
-  crop = 'Tomato',
+export async function analyzeMarketOpportunity({
+  crop = "Tomato",
   quantityKg = 2000,
-  location = 'Trichy',
+  location = "Trichy",
   expectedPrice = 28,
-  quality = 'Grade A'
+  quality = "Grade A",
 }) {
-  const cropQuery = crop.toLowerCase().trim();
-  const matched = mandiRecords.filter(r => r.commodity.toLowerCase().includes(cropQuery));
+  const apiKey = process.env.GEMINI_API_KEY;
 
-  const chennaiRecord = matched.find(r => r.district.toLowerCase() === 'chennai') || { modal_price: 3500 };
-  const trichyRecord = matched.find(r => r.district.toLowerCase() === 'trichy') || { modal_price: 2800 };
-  const coimbatoreRecord = matched.find(r => r.district.toLowerCase() === 'coimbatore') || { modal_price: 3200 };
-  const maduraiRecord = matched.find(r => r.district.toLowerCase() === 'madurai') || { modal_price: 2700 };
+  if (!apiKey) {
+    throw new Error(
+      "GEMINI_API_KEY is not set in the environment variables. Please set it to enable the AI Market Intelligence engine.",
+    );
+  }
 
-  const chennaiPerKg = chennaiRecord.modal_price / 100; // ₹35/kg
-  const trichyPerKg = trichyRecord.modal_price / 100; // ₹28/kg
-  const coimbatorePerKg = coimbatoreRecord.modal_price / 100; // ₹32/kg
-  const maduraiPerKg = maduraiRecord.modal_price / 100; // ₹27/kg
+  const ai = new GoogleGenAI({ apiKey: apiKey });
 
-  const farmerExp = Number(expectedPrice) || trichyPerKg;
-  const grossDiff = chennaiPerKg - farmerExp; // 35 - 28 = ₹7/kg
-  const transportPerKg = 2.0; // ₹2/kg for Trichy -> Chennai NH45 (330 KM)
-  const netAdvantage = Math.max(0, grossDiff - transportPerKg); // 7 - 2 = ₹5/kg
-  const totalOpportunity = Math.round(netAdvantage * quantityKg); // ₹10,000
+  const prompt = `
+  You are an expert Agricultural Market Intelligence AI for India (especially Tamil Nadu).
+  A farmer in ${location} is looking to sell ${quantityKg} KG of ${crop} (Quality: ${quality}).
+  They are hoping for a price of ₹${expectedPrice} per KG.
+  
+  Please analyze the current market conditions and return a JSON object with:
+  1. recommendedMarket: The best wholesale market (e.g. Chennai Koyambedu) and its current modal price per KG.
+  2. marketComparison: An array of 4 different markets comparing prices.
+  3. buyer: A realistic B2B buyer in the recommended market who would buy this quantity.
+  4. transport: Estimated logistics from ${location} to the recommended market.
+  5. aiInsight: Your summary of the opportunity.
+  
+  Use realistic current market prices for ${crop}. Transport costs should be roughly ₹1.5 to ₹3 per KM per Ton.
+  `;
 
-  return {
-    crop,
-    quantityKg,
-    farmerLocation: location,
-    farmerExpectedPrice: farmerExp,
-    recommendedMarket: {
-      market: 'Chennai',
-      marketFullName: 'Chennai Koyambedu Wholesale Mart',
-      modalPricePerKg: chennaiPerKg,
-      modalPriceQuintal: chennaiRecord.modal_price,
-      demand: 'High',
-      grossDiffPerKg: grossDiff,
-      estimatedTransportPerKg: transportPerKg,
-      netAdvantagePerKg: netAdvantage,
-      totalOpportunityAmount: totalOpportunity,
-      transitCorridor: 'Trichy ➔ Chennai (~330 KM via NH45)'
+  const responseSchema = {
+    type: "OBJECT",
+    properties: {
+      crop: { type: "STRING" },
+      quantityKg: { type: "INTEGER" },
+      farmerLocation: { type: "STRING" },
+      farmerExpectedPrice: { type: "NUMBER" },
+      recommendedMarket: {
+        type: "OBJECT",
+        properties: {
+          market: { type: "STRING" },
+          marketFullName: { type: "STRING" },
+          modalPricePerKg: { type: "NUMBER" },
+          modalPriceQuintal: { type: "NUMBER" },
+          demand: { type: "STRING" },
+          grossDiffPerKg: { type: "NUMBER" },
+          estimatedTransportPerKg: { type: "NUMBER" },
+          netAdvantagePerKg: { type: "NUMBER" },
+          totalOpportunityAmount: { type: "NUMBER" },
+          transitCorridor: { type: "STRING" },
+        },
+      },
+      marketComparison: {
+        type: "ARRAY",
+        items: {
+          type: "OBJECT",
+          properties: {
+            market: { type: "STRING" },
+            shortName: { type: "STRING" },
+            pricePerKg: { type: "NUMBER" },
+            modalPriceQuintal: { type: "NUMBER" },
+            note: { type: "STRING" },
+            isLocal: { type: "BOOLEAN" },
+          },
+        },
+      },
+      buyer: {
+        type: "OBJECT",
+        properties: {
+          id: { type: "STRING" },
+          name: { type: "STRING" },
+          requiredQuantityKg: { type: "NUMBER" },
+          targetPrice: { type: "NUMBER" },
+        },
+      },
+      transport: {
+        type: "OBJECT",
+        properties: {
+          partner: { type: "STRING" },
+          vehicle: { type: "STRING" },
+          estimatedCost: { type: "NUMBER" },
+          distanceKm: { type: "NUMBER" },
+        },
+      },
+      aiInsight: {
+        type: "OBJECT",
+        properties: {
+          recommendation: { type: "STRING" },
+          summary: { type: "STRING" },
+          whyReasons: {
+            type: "ARRAY",
+            items: { type: "STRING" },
+          },
+          disclaimer: { type: "STRING" },
+        },
+      },
     },
-    marketComparison: [
-      { market: 'Trichy', shortName: 'TRICHY', pricePerKg: trichyPerKg, modalPriceQuintal: trichyRecord.modal_price, note: 'Local Base', isLocal: true },
-      { market: 'Chennai', shortName: 'CHENNAI', pricePerKg: chennaiPerKg, modalPriceQuintal: chennaiRecord.modal_price, note: `Best Market (+₹${grossDiff}/kg)`, isLocal: false },
-      { market: 'Coimbatore', shortName: 'COIMBATORE', pricePerKg: coimbatorePerKg, modalPriceQuintal: coimbatoreRecord.modal_price, note: '+₹4/kg', isLocal: false },
-      { market: 'Madurai', shortName: 'MADURAI', pricePerKg: maduraiPerKg, modalPriceQuintal: maduraiRecord.modal_price, note: '-₹1/kg', isLocal: false }
-    ],
-    buyer: {
-      id: 'buyer-koyambedu',
-      name: 'Koyambedu Wholesale Mart',
-      requiredQuantityKg: quantityKg,
-      targetPrice: chennaiPerKg
-    },
-    transport: {
-      partner: 'Tamil Nadu Agro Logistics',
-      vehicle: 'Eicher Pro 2049 (14 FT)',
-      estimatedCost: 3600,
-      distanceKm: 330
-    },
-    aiInsight: {
-      recommendation: 'CHENNAI HAS THE BEST ESTIMATED OPPORTUNITY',
-      summary: `Chennai shows a higher observed mandi price (+₹${grossDiff}/kg over expected) offsetting the ~₹2/kg NH45 freight and unlocking +₹${totalOpportunity.toLocaleString()} net opportunity.`,
-      whyReasons: [
-        `Higher indicative wholesale APMC price (+₹${grossDiff}/kg gross)`,
-        'High B2B wholesale demand in Koyambedu corridor',
-        `Exact volume match for ${quantityKg.toLocaleString()} KG lot size`,
-        'Direct express NH45 transit route available (~330 KM)',
-        `Estimated transport accounted for (~₹${transportPerKg}/kg deduction)`
-      ],
-      disclaimer: 'AI estimate — not a guaranteed selling price.'
-    }
   };
+
+  const response = await ai.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents: prompt,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: responseSchema,
+      temperature: 0.2,
+    },
+  });
+
+  if (response.text) {
+    try {
+      const data = JSON.parse(response.text);
+      return data;
+    } catch (e) {
+      console.error("Failed to parse Gemini output", e);
+      throw new Error("AI engine returned malformed JSON");
+    }
+  } else {
+    throw new Error("AI engine failed to generate a response");
+  }
 }

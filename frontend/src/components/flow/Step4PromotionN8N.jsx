@@ -47,7 +47,7 @@ export const Step4PromotionN8N = () => {
   const [showJsonPayload, setShowJsonPayload] = useState(false);
   const crop = selectedCrop;
 
-  const cropIcon = crop.icon || "🌱";
+  const cropIcon = crop.icon || "";
   const cropName = crop.name;
   const cropNameTa = getCropDisplayName(crop.name, "ta");
   const displayLocation = getLocationDisplayName(customLocation, lang);
@@ -57,9 +57,9 @@ export const Step4PromotionN8N = () => {
     crop.localPrice ||
     35;
 
-  const promoCopyEn = `${cropIcon} Fresh ${cropQuality} ${cropName}\n📦 Quantity: ${customQty.toLocaleString()} KG\n📍 Farm-origin: ${customLocation}, Tamil Nadu\n💰 Indicative Market Rate: ₹${priceDisplay} / KG\n🤝 Available for verified B2B purchase via AgriLink AI.\n#AgriLinkAI #${cropName.replace(/\s+/g, "")} #B2BAgriculture #TamilNadu`;
+  const promoCopyEn = `${cropIcon} Fresh ${cropQuality} ${cropName}\n Quantity: ${customQty.toLocaleString()} KG\n Farm-origin: ${customLocation}, Tamil Nadu\n Indicative Market Rate: ₹${priceDisplay} / KG\n Available for verified B2B purchase via AgriLink AI.\n#AgriLinkAI #${cropName.replace(/\s+/g, "")} #B2BAgriculture #TamilNadu`;
 
-  const promoCopyTa = `${cropIcon} புதிய ${cropQuality === "Grade A" ? "கிரேடு A" : cropQuality} ${cropNameTa}\n📦 அளவு: ${customQty.toLocaleString()} கிலோ\n📍 தோட்டம்: ${displayLocation}, தமிழ்நாடு\n💰 உத்தேச மண்டி விலை: ₹${priceDisplay} / கிலோ\n🤝 AGRILINK AI தளம் மூலம் B2B கொள்முதல் செய்யலாம்.\n#AgriLinkAI #${cropNameTa.replace(/\s+/g, "")} #விவசாயம் #தமிழ்நாடு`;
+  const promoCopyTa = `${cropIcon} புதிய ${cropQuality === "Grade A" ? "கிரேடு A" : cropQuality} ${cropNameTa}\n அளவு: ${customQty.toLocaleString()} கிலோ\n தோட்டம்: ${displayLocation}, தமிழ்நாடு\n உத்தேச மண்டி விலை: ₹${priceDisplay} / கிலோ\n AGRILINK AI தளம் மூலம் B2B கொள்முதல் செய்யலாம்.\n#AgriLinkAI #${cropNameTa.replace(/\s+/g, "")} #விவசாயம் #தமிழ்நாடு`;
 
   const promoCopy = lang === "ta" ? promoCopyTa : promoCopyEn;
 
@@ -197,7 +197,7 @@ export const Step4PromotionN8N = () => {
       <div className="bg-white rounded-lg p-6 sm:p-7 border border-slate-200/90 shadow-xl space-y-4">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center space-x-2">
-            <span className="text-xl">📢</span>
+            <span className="text-xl"></span>
             <h3 className="text-lg font-black text-slate-900 ">
               {lang === "ta"
                 ? "மொத்த வியாபாரிகளுக்கான விளம்பர உரை"

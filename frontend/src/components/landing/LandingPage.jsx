@@ -129,7 +129,7 @@ export const LandingPage = () => {
                       : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
                   }`}
                 >
-                  🌾 {lang === "ta" ? "விவசாயி" : "Farmer"}
+                   {lang === "ta" ? "விவசாயி" : "Farmer"}
                 </button>
                 <button
                   type="button"
@@ -140,7 +140,7 @@ export const LandingPage = () => {
                       : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
                   }`}
                 >
-                  🏢 {lang === "ta" ? "வியாபாரி" : "Buyer"}
+                   {lang === "ta" ? "வியாபாரி" : "Buyer"}
                 </button>
               </div>
 

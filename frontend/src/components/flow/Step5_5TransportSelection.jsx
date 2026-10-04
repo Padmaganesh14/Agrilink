@@ -97,7 +97,7 @@ export const Step5_5TransportSelection = () => {
                 <div className="flex items-center space-x-2 self-start sm:self-auto">
                   <span className="text-base font-bold text-agri-600 flex items-center space-x-1">
                     <span className="w-2 h-2 rounded-full bg-agri-500 animate-pulse"></span>
-                    <span>🟢 {lang === 'ta' ? 'கிடைக்கும்' : 'Available'}</span>
+                    <span> {lang === 'ta' ? 'கிடைக்கும்' : 'Available'}</span>
                   </span>
 
                   <button
