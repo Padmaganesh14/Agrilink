@@ -18,13 +18,7 @@ import {
 } from "lucide-react";
 
 export const BuyerMarketplaceView = () => {
-  const {
-    t,
-    lang,
-    user,
-    setActiveOrderId,
-    setCurrentView,
-  } = useAgri();
+  const { t, lang, user, setActiveOrderId, setCurrentView } = useAgri();
 
   const [crops, setCrops] = useState([]);
   const [myOrders, setMyOrders] = useState([]);
@@ -44,9 +38,11 @@ export const BuyerMarketplaceView = () => {
         if (res.data.success) {
           setCrops(res.data.data);
         }
-        
+
         if (user && user.name) {
-          const orderRes = await axios.get(`http://localhost:8000/api/order/buyer/${user.name}`);
+          const orderRes = await axios.get(
+            `http://localhost:8000/api/order/buyer/${user.name}`,
+          );
           if (orderRes.data.success) {
             setMyOrders(orderRes.data.data);
           }
@@ -78,7 +74,11 @@ export const BuyerMarketplaceView = () => {
   };
 
   const confirmBuyerOrder = async () => {
-    if (!purchaseQuantity || isNaN(purchaseQuantity) || Number(purchaseQuantity) <= 0) {
+    if (
+      !purchaseQuantity ||
+      isNaN(purchaseQuantity) ||
+      Number(purchaseQuantity) <= 0
+    ) {
       alert("Please enter a valid quantity");
       return;
     }
@@ -101,12 +101,18 @@ export const BuyerMarketplaceView = () => {
 
       const result = await api.createOrder(orderData);
       if (result.success) {
-        alert(lang === "ta" ? "ஆர்டர் வெற்றிகரமாக செய்யப்பட்டது!" : "Order placed successfully! The farmer has been notified.");
+        alert(
+          lang === "ta"
+            ? "ஆர்டர் வெற்றிகரமாக செய்யப்பட்டது!"
+            : "Order placed successfully! The farmer has been notified.",
+        );
         setIsCheckoutModalOpen(false);
         setActiveModalCrop(null);
         // Refresh orders
         if (user && user.name) {
-          const orderRes = await axios.get(`http://localhost:8000/api/order/buyer/${user.name}`);
+          const orderRes = await axios.get(
+            `http://localhost:8000/api/order/buyer/${user.name}`,
+          );
           if (orderRes.data.success) {
             setMyOrders(orderRes.data.data);
           }
@@ -186,107 +192,114 @@ export const BuyerMarketplaceView = () => {
       {activeTab === "marketplace" ? (
         <>
           {/* Search & Filter Bar */}
-        <div className="mt-4 sm:mt-5 grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
-          <div className="sm:col-span-2 relative">
-            <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 absolute left-3 top-2.5" />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search crops..."
-              className="w-full pl-8 sm:pl-9 pr-3 py-1.5 sm:py-2 rounded-md bg-slate-950 border border-slate-700 text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-shadow"
-            />
-          </div>
-
-          <div>
-            <select
-              value={selectedDistrict}
-              onChange={(e) => setSelectedDistrict(e.target.value)}
-              className="w-full px-2 sm:px-3 py-1.5 sm:py-2 rounded-md bg-slate-950 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-shadow"
-            >
-              <option value="All">All Districts</option>
-              <option value="Trichy">Trichy</option>
-              <option value="Madurai">Madurai</option>
-              <option value="Coimbatore">Coimbatore</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Available Crops Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-        {loading ? (
-          <div className="col-span-full py-12 text-center text-slate-500">Loading crops...</div>
-        ) : filteredCrops.length === 0 ? (
-          <div className="col-span-full py-12 text-center text-slate-500">No crops found matching your criteria.</div>
-        ) : filteredCrops.map((crop) => (
-          <div
-            key={crop._id || crop.id}
-            className="bg-white rounded-lg p-3.5 sm:p-5 border border-slate-200 shadow-sm hover:shadow transition-shadow flex flex-col justify-between space-y-3 sm:space-y-4"
-          >
-            <div>
-              <div className="flex items-start justify-between border-b border-slate-100 pb-2 sm:pb-3 mb-2 sm:mb-3">
-                <div className="flex items-center space-x-2 sm:space-x-3">
-                  <span className="text-xl sm:text-2xl leading-none">
-                    {crop.icon || ""}
-                  </span>
-                  <div>
-                    <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-tight">
-                      {lang === "ta" && crop.tamilName ? crop.tamilName : crop.cropName}
-                    </h3>
-                    <p className="text-[10px] sm:text-xs text-slate-500 font-medium mt-0.5">
-                      {crop.grade}
-                    </p>
-                  </div>
-                </div>
-                <span className="px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-semibold bg-emerald-100 text-emerald-800 uppercase tracking-wide whitespace-nowrap">
-                  Ready
-                </span>
-              </div>
-
-              <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
-                <div className="flex items-center justify-between text-slate-600 bg-slate-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md border border-slate-100">
-                  <span className="flex items-center space-x-1 sm:space-x-1.5 font-medium">
-                    <Scale className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
-                    <span>Qty</span>
-                  </span>
-                  <span className="font-semibold text-slate-900">
-                    {crop.quantityAvailable?.toLocaleString()} KG
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between text-slate-600 bg-slate-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md border border-slate-100">
-                  <span className="flex items-center space-x-1 sm:space-x-1.5 font-medium">
-                    <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
-                    <span>Loc</span>
-                  </span>
-                  <span className="font-semibold text-slate-900 truncate max-w-[100px] sm:max-w-none text-right">
-                    {crop.location}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between text-slate-600 bg-slate-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md border border-slate-100">
-                  <span className="flex items-center space-x-1 sm:space-x-1.5 font-medium">
-                    <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
-                    <span>Price</span>
-                  </span>
-                  <span className="font-bold text-emerald-700">
-                    ₹{crop.pricePerKg}/KG
-                  </span>
-                </div>
-              </div>
+          <div className="mt-4 sm:mt-5 grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+            <div className="sm:col-span-2 relative">
+              <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 absolute left-3 top-2.5" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search crops..."
+                className="w-full pl-8 sm:pl-9 pr-3 py-1.5 sm:py-2 rounded-md bg-slate-950 border border-slate-700 text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-shadow"
+              />
             </div>
 
-            <button
-              onClick={() => setActiveModalCrop(crop)}
-              className="w-full py-1.5 sm:py-2 px-3 sm:px-4 rounded-md bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs sm:text-sm flex items-center justify-center space-x-1.5 transition-colors"
-            >
-              <span>{t.viewLotBtn}</span>
-              <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-400" />
-            </button>
+            <div>
+              <select
+                value={selectedDistrict}
+                onChange={(e) => setSelectedDistrict(e.target.value)}
+                className="w-full px-2 sm:px-3 py-1.5 sm:py-2 rounded-md bg-slate-950 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-shadow"
+              >
+                <option value="All">All Districts</option>
+                <option value="Trichy">Trichy</option>
+                <option value="Madurai">Madurai</option>
+                <option value="Coimbatore">Coimbatore</option>
+              </select>
+            </div>
           </div>
-        ))}
-      </div>
+
+          {/* Available Crops Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+            {loading ? (
+              <div className="col-span-full py-12 text-center text-slate-500">
+                Loading crops...
+              </div>
+            ) : filteredCrops.length === 0 ? (
+              <div className="col-span-full py-12 text-center text-slate-500">
+                No crops found matching your criteria.
+              </div>
+            ) : (
+              filteredCrops.map((crop) => (
+                <div
+                  key={crop._id || crop.id}
+                  className="bg-white rounded-lg p-3.5 sm:p-5 border border-slate-200 shadow-sm hover:shadow transition-shadow flex flex-col justify-between space-y-3 sm:space-y-4"
+                >
+                  <div>
+                    <div className="flex items-start justify-between border-b border-slate-100 pb-2 sm:pb-3 mb-2 sm:mb-3">
+                      <div className="flex items-center space-x-2 sm:space-x-3">
+                        <span className="text-xl sm:text-2xl leading-none">
+                          {crop.icon || ""}
+                        </span>
+                        <div>
+                          <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-tight">
+                            {lang === "ta" && crop.tamilName
+                              ? crop.tamilName
+                              : crop.cropName}
+                          </h3>
+                          <p className="text-[10px] sm:text-xs text-slate-500 font-medium mt-0.5">
+                            {crop.grade}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-semibold bg-emerald-100 text-emerald-800 uppercase tracking-wide whitespace-nowrap">
+                        Ready
+                      </span>
+                    </div>
+
+                    <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
+                      <div className="flex items-center justify-between text-slate-600 bg-slate-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md border border-slate-100">
+                        <span className="flex items-center space-x-1 sm:space-x-1.5 font-medium">
+                          <Scale className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
+                          <span>Qty</span>
+                        </span>
+                        <span className="font-semibold text-slate-900">
+                          {crop.quantityAvailable?.toLocaleString()} KG
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between text-slate-600 bg-slate-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md border border-slate-100">
+                        <span className="flex items-center space-x-1 sm:space-x-1.5 font-medium">
+                          <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
+                          <span>Loc</span>
+                        </span>
+                        <span className="font-semibold text-slate-900 truncate max-w-[100px] sm:max-w-none text-right">
+                          {crop.location}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between text-slate-600 bg-slate-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md border border-slate-100">
+                        <span className="flex items-center space-x-1 sm:space-x-1.5 font-medium">
+                          <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
+                          <span>Price</span>
+                        </span>
+                        <span className="font-bold text-emerald-700">
+                          ₹{crop.pricePerKg}/KG
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setActiveModalCrop(crop)}
+                    className="w-full py-1.5 sm:py-2 px-3 sm:px-4 rounded-md bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs sm:text-sm flex items-center justify-center space-x-1.5 transition-colors"
+                  >
+                    <span>{t.viewLotBtn}</span>
+                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-400" />
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
         </>
       ) : (
         <div className="space-y-4">
@@ -295,11 +308,16 @@ export const BuyerMarketplaceView = () => {
           </h2>
           {myOrders.length === 0 ? (
             <div className="py-12 text-center text-slate-500 bg-white rounded-lg border border-slate-200 shadow-sm">
-              {lang === "ta" ? "எந்த ஆர்டரும் இல்லை" : "You haven't placed any orders yet."}
+              {lang === "ta"
+                ? "எந்த ஆர்டரும் இல்லை"
+                : "You haven't placed any orders yet."}
             </div>
           ) : (
             myOrders.map((order) => (
-              <div key={order.orderId} className="bg-white rounded-lg p-5 border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div
+                key={order.orderId}
+                className="bg-white rounded-lg p-5 border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              >
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 shrink-0">
                     <Truck className="w-6 h-6" />
@@ -316,8 +334,12 @@ export const BuyerMarketplaceView = () => {
 
                 <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
                   <div className="bg-slate-50 border border-slate-100 rounded-md px-4 py-2 text-center w-full sm:w-auto">
-                    <span className="block text-[10px] text-slate-400 font-semibold uppercase">Total Value</span>
-                    <span className="block font-bold text-slate-900">₹{order.totalValue?.toLocaleString()}</span>
+                    <span className="block text-[10px] text-slate-400 font-semibold uppercase">
+                      Total Value
+                    </span>
+                    <span className="block font-bold text-slate-900">
+                      ₹{order.totalValue?.toLocaleString()}
+                    </span>
                   </div>
                   <button
                     onClick={() => {
@@ -358,7 +380,8 @@ export const BuyerMarketplaceView = () => {
                     : activeModalCrop.cropName}
                 </h3>
                 <p className="text-xs sm:text-sm font-medium text-emerald-700 mt-0.5">
-                  {activeModalCrop.quantityAvailable?.toLocaleString()} KG • Farm Lot
+                  {activeModalCrop.quantityAvailable?.toLocaleString()} KG •
+                  Farm Lot
                 </p>
               </div>
             </div>
@@ -436,15 +459,25 @@ export const BuyerMarketplaceView = () => {
             </button>
 
             <div>
-              <h2 className="text-xl font-bold text-slate-900">Confirm Purchase</h2>
-              <p className="text-sm text-slate-500 mt-1">Specify quantity and delivery location</p>
+              <h2 className="text-xl font-bold text-slate-900">
+                Confirm Purchase
+              </h2>
+              <p className="text-sm text-slate-500 mt-1">
+                Specify quantity and delivery location
+              </p>
             </div>
 
             <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 flex items-center space-x-3">
-              <span className="text-3xl leading-none">{activeModalCrop.icon}</span>
+              <span className="text-3xl leading-none">
+                {activeModalCrop.icon}
+              </span>
               <div>
-                <p className="font-bold text-slate-900">{activeModalCrop.cropName}</p>
-                <p className="text-xs text-slate-500">{activeModalCrop.location} • ₹{activeModalCrop.pricePerKg}/kg</p>
+                <p className="font-bold text-slate-900">
+                  {activeModalCrop.cropName}
+                </p>
+                <p className="text-xs text-slate-500">
+                  {activeModalCrop.location} • ₹{activeModalCrop.pricePerKg}/kg
+                </p>
               </div>
             </div>
 
