@@ -32,6 +32,7 @@ export const Step1AddCrop = () => {
     lang,
     setFlowStep,
     selectedCrop,
+    setSelectedCrop,
     customQty,
     setCustomQty,
     customLocation,
