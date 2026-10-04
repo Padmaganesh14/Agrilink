@@ -715,7 +715,7 @@ export function calculateMarketIntelligence({
     orderId: "AGRI-2026-8842",
     status: "Ready for Dispatch",
     totalValue: Math.round(marketPrice * qty),
-    buyerName: buyer.name,
+    buyerName: buyers[0].name,
     paymentCoordinated: true,
   };
 
