@@ -52,42 +52,14 @@ export const Step6LogisticsTracking = () => {
     }
   }, [activeOrderId]);
 
-  if (isLoading) {
-    return (
-      <div className="text-center py-20 text-slate-500 font-bold">
-        Loading Tracking Details...
-      </div>
-    );
-  }
-
-  if (!orderData || !trackingData) {
-    return (
-      <div className="text-center py-20 text-red-500 font-bold">
-        Failed to load tracking data. Please return to the previous step.
-        <br />
-        <button
-          onClick={() => {
-            if (userRole === "buyer") {
-              setCurrentView("buyer-marketplace");
-            } else {
-              setFlowStep(5);
-            }
-          }}
-          className="mt-4 px-4 py-2 bg-slate-200 text-slate-800 rounded"
-        >
-          Go Back
-        </button>
-      </div>
-    );
-  }
-
   const transport = {
-    name: orderData.transportName,
-    vehicle: orderData.transportVehicle,
+    name: orderData?.transportName || selectedTransport?.name || "Transport",
+    vehicle:
+      orderData?.transportVehicle || selectedTransport?.vehicle || "Vehicle",
   };
   const buyer = {
-    name: orderData.buyerName,
-    location: orderData.buyerLocation,
+    name: orderData?.buyerName || selectedBuyer?.name || "Buyer",
+    location: orderData?.buyerLocation || selectedBuyer?.location || "Chennai",
   };
 
   const mapContainerRef = useRef(null);
@@ -203,7 +175,9 @@ export const Step6LogisticsTracking = () => {
       }
     };
 
-    initMap();
+    if (!isLoading && orderData) {
+      initMap();
+    }
 
     return () => {
       if (mapInstanceRef.current) {
@@ -211,7 +185,15 @@ export const Step6LogisticsTracking = () => {
         mapInstanceRef.current = null;
       }
     };
-  }, [transport]);
+  }, [
+    transport.name,
+    transport.vehicle,
+    buyer.name,
+    buyer.location,
+    customLocation,
+    isLoading,
+    orderData,
+  ]);
 
   if (isLoading) {
     return (
@@ -220,10 +202,24 @@ export const Step6LogisticsTracking = () => {
       </div>
     );
   }
+
   if (!orderData || !trackingData) {
     return (
       <div className="text-center py-20 text-red-500 font-bold">
-        Failed to load tracking information. Did you create an order?
+        Failed to load tracking data. Please return to the previous step.
+        <br />
+        <button
+          onClick={() => {
+            if (userRole === "buyer") {
+              setCurrentView("buyer-marketplace");
+            } else {
+              setFlowStep(5);
+            }
+          }}
+          className="mt-4 px-4 py-2 bg-slate-200 text-slate-800 rounded"
+        >
+          Go Back
+        </button>
       </div>
     );
   }
