@@ -57,35 +57,95 @@ export const AgriProvider = ({ children }) => {
   // 5: Order Confirmed
   // 'transport': Arrange Transport (between Order and Track)
   // 6: Logistics & Track
-  const [flowStep, setFlowStep] = useState(1);
+  const initialDraft = (() => {
+    try {
+      const d = localStorage.getItem("agri_draft");
+      return d ? JSON.parse(d) : {};
+    } catch {
+      return {};
+    }
+  })();
 
-  const [selectedCrop, setSelectedCrop] = useState({
-    name: "",
-    icon: "",
-    defaultQty: "",
-    defaultLocation: "",
-    grade: "",
-    localPrice: "",
-    matchedBuyers: [],
-  });
-  const [customQty, setCustomQty] = useState("");
-  const [customLocation, setCustomLocation] = useState("");
-  const [cropQuality, setCropQuality] = useState("Grade A");
-  const [harvestDate, setHarvestDate] = useState("");
-  const [expectedPrice, setExpectedPrice] = useState("");
+  const [flowStep, setFlowStep] = useState(initialDraft.flowStep || 1);
 
-  const [selectedBuyer, setSelectedBuyer] = useState(null);
-  const [selectedTransport, setSelectedTransport] = useState(null);
-  const [transportConfirmed, setTransportConfirmed] = useState(false);
+  const [selectedCrop, setSelectedCrop] = useState(
+    initialDraft.selectedCrop || {
+      name: "",
+      icon: "",
+      defaultQty: "",
+      defaultLocation: "",
+      grade: "",
+      localPrice: "",
+      matchedBuyers: [],
+    },
+  );
+  const [customQty, setCustomQty] = useState(initialDraft.customQty || "");
+  const [customLocation, setCustomLocation] = useState(
+    initialDraft.customLocation || "",
+  );
+  const [cropQuality, setCropQuality] = useState(
+    initialDraft.cropQuality || "Grade A",
+  );
+  const [harvestDate, setHarvestDate] = useState(
+    initialDraft.harvestDate || "",
+  );
+  const [expectedPrice, setExpectedPrice] = useState(
+    initialDraft.expectedPrice || "",
+  );
 
-  const [activeOrderId, setActiveOrderId] = useState(null);
+  const [selectedBuyer, setSelectedBuyer] = useState(
+    initialDraft.selectedBuyer || null,
+  );
+  const [selectedTransport, setSelectedTransport] = useState(
+    initialDraft.selectedTransport || null,
+  );
+  const [transportConfirmed, setTransportConfirmed] = useState(
+    initialDraft.transportConfirmed || false,
+  );
+
+  const [activeOrderId, setActiveOrderId] = useState(
+    initialDraft.activeOrderId || null,
+  );
 
   // Auth state
   const [isFarmerAuth, setIsFarmerAuth] = useState(false);
   const [isBuyerAuth, setIsBuyerAuth] = useState(false);
 
   // Market Intelligence state
-  const [marketIntelligence, setMarketIntelligence] = useState(null);
+  const [marketIntelligence, setMarketIntelligence] = useState(
+    initialDraft.marketIntelligence || null,
+  );
+
+  useEffect(() => {
+    const draft = {
+      flowStep,
+      selectedCrop,
+      customQty,
+      customLocation,
+      cropQuality,
+      harvestDate,
+      expectedPrice,
+      selectedBuyer,
+      selectedTransport,
+      transportConfirmed,
+      activeOrderId,
+      marketIntelligence,
+    };
+    localStorage.setItem("agri_draft", JSON.stringify(draft));
+  }, [
+    flowStep,
+    selectedCrop,
+    customQty,
+    customLocation,
+    cropQuality,
+    harvestDate,
+    expectedPrice,
+    selectedBuyer,
+    selectedTransport,
+    transportConfirmed,
+    activeOrderId,
+    marketIntelligence,
+  ]);
   const [isMarketIntelLoading, setIsMarketIntelLoading] = useState(false);
 
   const refreshMarketIntelligence = async (overrideParams = {}) => {
@@ -186,6 +246,21 @@ export const AgriProvider = ({ children }) => {
   };
 
   const startSellMyCrop = (crop = {}) => {
+    // Check if user is in the middle of a draft (Steps 2, 3, or 4)
+    if (flowStep > 1 && flowStep < 5) {
+      const confirmDiscard = window.confirm(
+        lang === "ta"
+          ? "உங்களிடம் ஏற்கனவே ஒரு வரைவு (draft) உள்ளது. அதை நிராகரித்து புதிதாக தொடங்க விரும்புகிறீர்களா?"
+          : "You already have something in draft. Are you sure you want to discard it and start a new crop?",
+      );
+      if (!confirmDiscard) {
+        // User chose to continue with the draft
+        setCurrentView("flow");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+    }
+
     setArbitraryCrop({
       name: crop.name || "Tomato",
       quantity: crop.defaultQty || 2000,

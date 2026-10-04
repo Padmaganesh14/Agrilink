@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 export const CommandCenterDashboard = () => {
-  const { t, lang, user, startSellMyCrop, jumpToFlowStep, selectedTransport } =
+  const { t, lang, user, startSellMyCrop, jumpToFlowStep, selectedTransport, flowStep } =
     useAgri();
 
   const [myCrops, setMyCrops] = useState([]);
@@ -132,7 +132,7 @@ export const CommandCenterDashboard = () => {
 
         <div className="pt-4 border-t border-slate-800 flex justify-end">
           <button
-            onClick={() => jumpToFlowStep(1)}
+            onClick={() => jumpToFlowStep(flowStep)}
             className="px-5 py-2.5 rounded-md bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-medium text-sm transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto"
           >
             <span>{t.continueSellingBtn}</span>
