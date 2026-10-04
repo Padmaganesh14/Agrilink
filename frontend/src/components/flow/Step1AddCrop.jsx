@@ -175,39 +175,39 @@ export const Step1AddCrop = () => {
       
       {/* Header */}
       <div className="text-center mb-4">
-        <div className="inline-flex items-center space-x-2 bg-emerald-50 text-agri-700 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2 border border-emerald-200">
+        <div className="inline-flex items-center space-x-2 bg-emerald-50 text-agri-700 px-5 py-3 rounded-md text-base font-black  mb-2 border border-emerald-200">
           <span>{t.step01Pill}</span>
           <span>•</span>
           <span>{lang === 'ta' ? 'படி 1 / 6' : 'Step 1 of 6'}</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black text-[#0F172A] tracking-tight uppercase">
+        <h1 className="text-3xl sm:text-4xl font-black text-[#0F172A] tracking-tight ">
           {t.step01Title}
         </h1>
-        <p className="text-xs sm:text-sm font-medium text-slate-500 mt-1 max-w-xl mx-auto">
+        <p className="text-base sm:text-lg font-medium text-slate-500 mt-1 max-w-xl mx-auto">
           {t.step01Subtitle}
         </p>
       </div>
 
       {/* Main Container Card */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xl space-y-6">
+      <div className="bg-white rounded-lg p-6 sm:p-8 border border-slate-200/90 shadow-xl space-y-6">
         
         {/* ========================================================= */}
         {/* SECTION 1: SEARCH OR ENTER ANY CROP (Combobox + Custom)   */}
         {/* ========================================================= */}
         <div className="space-y-3" ref={searchContainerRef}>
           <div className="flex items-center justify-between">
-            <label className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center space-x-1.5">
+            <label className="text-base font-black  text-slate-700 flex items-center space-x-1.5">
               <Search className="w-3.5 h-3.5 text-agri-600" />
               <span>{t.chooseYourCrop}</span>
             </label>
-            <span className="text-[11px] font-bold text-agri-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+            <span className="text-base font-bold text-agri-700 bg-emerald-50 px-4 py-2 rounded-md border border-emerald-200">
               {lang === 'ta' ? 'அனைத்து பயிர்களுக்கும் பொருந்தும்' : 'Crop-Agnostic Engine'}
             </span>
           </div>
 
           {/* Searchable Combobox Input */}
           <div className="relative">
-            <div className="flex items-center w-full px-4 py-3.5 rounded-2xl border-2 border-slate-200 focus-within:border-agri-500 focus-within:ring-2 focus-within:ring-agri-500/20 bg-slate-50/50 transition-all">
+            <div className="flex items-center w-full px-4 py-3.5 rounded-lg border-2 border-slate-200 focus-within:border-agri-500 focus-within:ring-2 focus-within:ring-agri-500/20 bg-slate-50/50 transition-all">
               <Search className="w-5 h-5 text-slate-400 mr-3 shrink-0" />
               <input
                 type="text"
@@ -223,7 +223,7 @@ export const Step1AddCrop = () => {
                   }
                 }}
                 placeholder={t.searchCropPlaceholder}
-                className="w-full bg-transparent font-black text-slate-900 text-sm focus:outline-none placeholder:text-slate-400 placeholder:font-normal"
+                className="w-full bg-transparent font-black text-slate-900 text-lg focus:outline-none placeholder:text-slate-400 placeholder:font-normal"
               />
               {selectedCrop.icon && (
                 <span className="text-2xl ml-2">{selectedCrop.icon}</span>
@@ -232,7 +232,7 @@ export const Step1AddCrop = () => {
 
             {/* Dropdown Suggestions Menu */}
             {isDropdownOpen && (
-              <div className="absolute z-50 left-0 right-0 mt-2 bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden max-h-64 overflow-y-auto">
+              <div className="absolute z-50 left-0 right-0 mt-2 bg-white rounded-lg border border-slate-200 shadow-2xl overflow-hidden max-h-64 overflow-y-auto">
                 {/* Custom add action if typed text doesn't exist */}
                 {searchQuery.trim() && !exactMatchExists && (
                   <div
@@ -241,11 +241,11 @@ export const Step1AddCrop = () => {
                   >
                     <div className="flex items-center space-x-2">
                       <PlusCircle className="w-4 h-4 text-agri-600" />
-                      <span className="text-xs font-black">
+                      <span className="text-base font-black">
                         + {lang === 'ta' ? `"${searchQuery}" பயிரைச் சேர்` : `Add "${searchQuery}" as Custom Crop`}
                       </span>
                     </div>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-emerald-200">
+                    <span className="text-lg font-bold px-2 py-0.5 rounded-md bg-white border border-emerald-200">
                       {lang === 'ta' ? 'புதிய பயிர்' : 'Arbitrary Crop'}
                     </span>
                   </div>
@@ -253,33 +253,33 @@ export const Step1AddCrop = () => {
 
                 {/* Filtered known crops */}
                 <div className="p-2 space-y-1">
-                  <p className="text-[10px] font-black uppercase text-slate-400 px-3 py-1">
+                  <p className="text-lg font-black  text-slate-400 px-5 py-3">
                     {lang === 'ta' ? `பரிந்துரைக்கப்பட்ட பயிர்கள் (${filteredSuggestions.length})` : `Suggested Agricultural Commodities (${filteredSuggestions.length})`}
                   </p>
                   {filteredSuggestions.map((c) => (
                     <div
                       key={c.id}
                       onClick={() => handleApplyCrop(c.name)}
-                      className="px-3 py-2 rounded-xl hover:bg-slate-100 cursor-pointer flex items-center justify-between transition-colors"
+                      className="px-3 py-2 rounded-lg hover:bg-slate-100 cursor-pointer flex items-center justify-between transition-colors"
                     >
                       <div className="flex items-center space-x-2.5">
                         <span className="text-xl">{c.icon}</span>
                         <div>
-                          <p className="text-xs font-black text-slate-900">
+                          <p className="text-base font-black text-slate-900">
                             {lang === 'ta' ? c.tamilName : c.name}
                           </p>
-                          <p className="text-[10px] font-bold text-slate-400">
+                          <p className="text-lg font-bold text-slate-400">
                             {lang === 'ta' ? c.name : c.tamilName}
                           </p>
                         </div>
                       </div>
-                      <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
+                      <span className="text-lg font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
                         {lang === 'ta' && c.grade === 'Grade A' ? 'கிரேடு A' : c.grade || 'Standard'}
                       </span>
                     </div>
                   ))}
                   {filteredSuggestions.length === 0 && !searchQuery.trim() && (
-                    <p className="text-xs text-slate-400 p-3 text-center">
+                    <p className="text-base text-slate-400 p-3 text-center">
                       {lang === 'ta' ? 'பயிரின் பெயரை மேலே தட்டச்சு செய்யவும்.' : 'Type any agricultural crop name above.'}
                     </p>
                   )}
@@ -290,7 +290,7 @@ export const Step1AddCrop = () => {
 
           {/* Popular Crops Quick Chips */}
           <div className="pt-1">
-            <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2">
+            <p className="text-lg font-black  text-slate-400 mb-2">
               {t.popularCropsLabel}
             </p>
             <div className="flex flex-wrap gap-1.5 items-center">
@@ -301,7 +301,7 @@ export const Step1AddCrop = () => {
                     key={chip.name}
                     type="button"
                     onClick={() => handleApplyCrop(chip.name)}
-                    className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    className={`inline-flex items-center space-x-1.5 px-5 py-3.5 rounded-lg text-base font-bold transition-all ${
                       isActive
                         ? 'bg-agri-500 text-white shadow-xs scale-105'
                         : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200/60'
@@ -313,7 +313,7 @@ export const Step1AddCrop = () => {
                 );
               })}
 
-              <span className="text-xs text-slate-400 font-semibold mx-1">{t.orLabel}</span>
+              <span className="text-base text-slate-400 font-semibold mx-1">{t.orLabel}</span>
 
               {/* Add Custom Crop Quick Trigger */}
               <button
@@ -327,7 +327,7 @@ export const Step1AddCrop = () => {
                     handleApplyCrop(customName);
                   }
                 }}
-                className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-xl text-xs font-black text-agri-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 transition-all"
+                className="inline-flex items-center space-x-1 px-5 py-3.5 rounded-lg text-base font-black text-agri-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 transition-all"
               >
                 <PlusCircle className="w-3.5 h-3.5" />
                 <span>{t.addCustomCropBtn}</span>
@@ -344,14 +344,14 @@ export const Step1AddCrop = () => {
         <div>
           <div className="flex items-center justify-between mb-2.5">
             <div>
-              <label className="text-xs font-black uppercase tracking-wider text-slate-700 block">
+              <label className="text-base font-black  text-slate-700 block">
                 {t.quickDemoCropsLabel}
               </label>
-              <p className="text-[11px] text-slate-400 font-medium">
+              <p className="text-base text-slate-400 font-medium">
                 {t.quickDemoCropsSubtitle}
               </p>
             </div>
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+            <span className="text-lg font-bold text-slate-400 st">
               {t.oneClickFillBadge}
             </span>
           </div>
@@ -367,7 +367,7 @@ export const Step1AddCrop = () => {
                 <div
                   key={c.id}
                   onClick={() => handleSelectDemoPreset(c)}
-                  className={`p-3.5 rounded-2xl border-2 text-left cursor-pointer transition-all ${
+                  className={`p-3.5 rounded-lg border-2 text-left cursor-pointer transition-all ${
                     isSelected
                       ? 'border-agri-500 bg-emerald-50/50 ring-2 ring-agri-500/20 shadow-xs'
                       : 'border-slate-200 hover:border-slate-300 bg-slate-50/50'
@@ -380,13 +380,13 @@ export const Step1AddCrop = () => {
                     )}
                   </div>
                   <div className="mt-2">
-                    <p className="text-xs font-black text-slate-900">
+                    <p className="text-base font-black text-slate-900">
                       {cropTitle}
                     </p>
-                    <p className="text-[11px] text-slate-500 font-bold mt-0.5">
+                    <p className="text-base text-slate-500 font-bold mt-0.5">
                       {c.defaultQty.toLocaleString()} {lang === 'ta' ? 'கிலோ' : 'KG'} • {locationTitle}
                     </p>
-                    <span className="inline-block mt-1.5 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-600">
+                    <span className="inline-block mt-1.5 text-[9px] font-black  px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-600">
                       {gradeTitle}
                     </span>
                   </div>
@@ -404,11 +404,11 @@ export const Step1AddCrop = () => {
         {/* ========================================================= */}
         <div className="space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-            <h3 className="text-sm font-black uppercase tracking-wider text-slate-800 flex items-center space-x-2">
+            <h3 className="text-lg font-black  text-slate-800 flex items-center space-x-2">
               <span className="text-lg">🌱</span>
               <span>{t.cropDetailsHeader}</span>
             </h3>
-            <span className="text-xs font-black text-slate-400 tracking-wider">
+            <span className="text-base font-black text-slate-400 tracking-wider">
               {t.editableParamsLabel}
             </span>
           </div>
@@ -420,7 +420,7 @@ export const Step1AddCrop = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Crop Name */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-base font-bold  text-slate-700 mb-1.5">
                   {t.cropNameLabel}
                 </label>
                 <div className="relative">
@@ -429,7 +429,7 @@ export const Step1AddCrop = () => {
                     value={displayCropName}
                     onChange={handleNameChange}
                     placeholder={t.cropNamePlaceholder}
-                    className="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 bg-white font-black text-slate-900 text-sm focus:outline-none focus:border-agri-500 transition-all pr-12"
+                    className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 bg-white font-black text-slate-900 text-lg focus:outline-none focus:border-agri-500 transition-all pr-12"
                   />
                   <span className="absolute right-3.5 top-3 text-xl">
                     {selectedCrop.icon || '🌱'}
@@ -439,15 +439,15 @@ export const Step1AddCrop = () => {
 
               {/* Quantity */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center space-x-1.5">
-                  <span className="text-sm">⚖</span>
+                <label className="block text-base font-bold  text-slate-700 mb-1.5 flex items-center space-x-1.5">
+                  <span className="text-lg">⚖</span>
                   <span>{t.quantityLabel}</span>
                 </label>
                 <input
                   type="number"
                   value={customQty}
                   onChange={(e) => setCustomQty(Number(e.target.value) || 0)}
-                  className="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 bg-white font-black text-slate-900 text-sm focus:outline-none focus:border-agri-500 transition-all"
+                  className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 bg-white font-black text-slate-900 text-lg focus:outline-none focus:border-agri-500 transition-all"
                 />
               </div>
             </div>
@@ -456,8 +456,8 @@ export const Step1AddCrop = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Farm Location */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center space-x-1.5">
-                  <span className="text-sm">📍</span>
+                <label className="block text-base font-bold  text-slate-700 mb-1.5 flex items-center space-x-1.5">
+                  <span className="text-lg">📍</span>
                   <span>{t.locationLabel}</span>
                 </label>
                 <input
@@ -465,21 +465,21 @@ export const Step1AddCrop = () => {
                   value={displayLocation}
                   onChange={handleLocationChange}
                   placeholder={t.locationPlaceholder}
-                  className="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 bg-white font-black text-slate-900 text-sm focus:outline-none focus:border-agri-500 transition-all"
+                  className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 bg-white font-black text-slate-900 text-lg focus:outline-none focus:border-agri-500 transition-all"
                 />
               </div>
 
               {/* Grade / Quality */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center space-x-1.5">
-                  <span className="text-sm">🏷</span>
+                <label className="block text-base font-bold  text-slate-700 mb-1.5 flex items-center space-x-1.5">
+                  <span className="text-lg">🏷</span>
                   <span>{t.qualityLabel}</span>
                 </label>
                 <div className="relative">
                   <select
                     value={cropQuality}
                     onChange={(e) => setCropQuality(e.target.value)}
-                    className="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 bg-white font-black text-slate-900 text-sm focus:outline-none focus:border-agri-500 appearance-none transition-all"
+                    className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 bg-white font-black text-slate-900 text-lg focus:outline-none focus:border-agri-500 appearance-none transition-all"
                   >
                     <option value="Grade A">{t.gradeAStandard}</option>
                     <option value="Grade B">{t.gradeB}</option>
@@ -493,26 +493,26 @@ export const Step1AddCrop = () => {
 
             {/* ROW 3: Expected Harvest Date */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center space-x-1.5">
-                <span className="text-sm">📅</span>
+              <label className="block text-base font-bold  text-slate-700 mb-1.5 flex items-center space-x-1.5">
+                <span className="text-lg">📅</span>
                 <span>{t.harvestDateLabel}</span>
               </label>
               <input
                 type="date"
                 value={harvestDate}
                 onChange={(e) => setHarvestDate(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 bg-white font-black text-slate-900 text-sm focus:outline-none focus:border-agri-500 transition-all"
+                className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 bg-white font-black text-slate-900 text-lg focus:outline-none focus:border-agri-500 transition-all"
               />
             </div>
 
             {/* ROW 4: Expected Price (Optional) */}
             <div>
               <div className="mb-1.5">
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center space-x-1.5">
-                  <span className="text-sm">💰</span>
+                <label className="block text-base font-bold  text-slate-700 flex items-center space-x-1.5">
+                  <span className="text-lg">💰</span>
                   <span>{t.expectedPriceLabel}</span>
                 </label>
-                <span className="text-[11px] text-slate-500 font-bold block ml-5">
+                <span className="text-base text-slate-500 font-bold block ml-5">
                   {t.expectedPriceSub}
                 </span>
               </div>
@@ -521,7 +521,7 @@ export const Step1AddCrop = () => {
                 value={expectedPrice}
                 onChange={(e) => setExpectedPrice(e.target.value)}
                 placeholder={t.expectedPricePlaceholder}
-                className="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 bg-white font-black text-slate-900 text-sm focus:outline-none focus:border-agri-500 transition-all placeholder:font-normal placeholder:text-slate-400"
+                className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 bg-white font-black text-slate-900 text-lg focus:outline-none focus:border-agri-500 transition-all placeholder:font-normal placeholder:text-slate-400"
               />
             </div>
 
@@ -532,24 +532,24 @@ export const Step1AddCrop = () => {
         {/* ARCHITECTURE TRANSPARENCY CALLOUT (For Judges/Demo)       */}
         {/* Exact Layout Matching Specification                      */}
         {/* ========================================================= */}
-        <div className="bg-[#0F172A] text-white rounded-2xl p-5 border border-slate-800 space-y-3 shadow-lg">
+        <div className="bg-[#0F172A] text-white rounded-lg p-5 border border-slate-800 space-y-3 shadow-lg">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
             <div className="flex items-center space-x-2">
               <span className="text-base">⚙</span>
-              <span className="text-xs font-black uppercase tracking-wider text-agri-400">
+              <span className="text-base font-black  text-agri-400">
                 {t.aiMarketIntelBox}
               </span>
             </div>
-            <span className="text-[10px] font-mono bg-indigo-950/90 text-indigo-300 px-2.5 py-1 rounded-md border border-indigo-700 self-start sm:self-auto">
+            <span className="text-lg font-mono bg-indigo-950/90 text-indigo-300 px-2.5 py-1 rounded-md border border-indigo-700 self-start sm:self-auto">
               {t.n8nDynamicSchema}
             </span>
           </div>
 
-          <p className="text-[11px] text-slate-300 leading-relaxed">
+          <p className="text-base text-slate-300 leading-relaxed">
             {t.cropAgnosticDesc}
           </p>
 
-          <div className="p-3 bg-black/60 rounded-xl font-mono text-[10px] text-emerald-400 overflow-x-auto border border-slate-800">
+          <div className="p-3 bg-black/60 rounded-lg font-mono text-lg text-emerald-400 overflow-x-auto border border-slate-800">
             <pre>
 {JSON.stringify({
   crop: selectedCrop.name,
@@ -568,7 +568,7 @@ export const Step1AddCrop = () => {
           <button
             type="button"
             onClick={handleContinue}
-            className="w-full py-4 px-6 rounded-2xl bg-agri-500 hover:bg-agri-600 text-white font-black text-base shadow-lg shadow-agri-500/25 flex items-center justify-center space-x-2 transition-all hover:scale-[1.01] active:scale-95"
+            className="w-full py-4 px-6 rounded-lg bg-[#166534] hover:bg-[#14532d] text-white border-2 border-[#14532d] text-white font-black text-base shadow-lg shadow-md flex items-center justify-center space-x-2 transition-all hover:scale-[1.01] active:scale-95"
           >
             <span>{t.findMarketBtn}</span>
             <ArrowRight className="w-5 h-5" />

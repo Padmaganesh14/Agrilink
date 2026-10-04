@@ -10,8 +10,7 @@ export const JudgeDemoDock = () => {
     jumpToFlowStep, 
     resetDemo, 
     lang, 
-    toggleLang, 
-    t 
+    toggleLang 
   } = useAgri();
 
   const demoSteps = lang === 'ta' ? [
@@ -22,59 +21,44 @@ export const JudgeDemoDock = () => {
     { num: 5, label: '05 ஆர்டர்' },
     { num: 6, label: '06 போக்குவரத்து' },
   ] : [
-    { num: 1, label: '01 CROP' },
-    { num: 2, label: '02 MARKET' },
-    { num: 3, label: '03 BUYER' },
-    { num: 4, label: '04 AI+n8n' },
-    { num: 5, label: '05 ORDER' },
-    { num: 6, label: '06 LOGISTICS' },
+    { num: 1, label: '1. Crop' },
+    { num: 2, label: '2. Market' },
+    { num: 3, label: '3. Buyer' },
+    { num: 4, label: '4. AI+n8n' },
+    { num: 5, label: '5. Order' },
+    { num: 6, label: '6. Logistics' },
   ];
 
   return (
-    <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 w-auto max-w-[96vw]">
-      <div className="bg-[#0F172A]/95 backdrop-blur-md text-white px-3 sm:px-4 py-2 rounded-full shadow-2xl border border-slate-700/80 flex items-center space-x-1.5 sm:space-x-2">
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-auto max-w-[96vw]">
+      {/* Floating pill dock */}
+      <div className="bg-slate-900 text-white px-6 py-3 rounded-full shadow-xl border border-slate-700 flex items-center justify-between space-x-4 overflow-x-auto hide-scrollbar">
         
-        {/* Badge */}
-        <div className="flex items-center space-x-1 pl-1 pr-1.5 border-r border-slate-700">
-          <span className="w-2 h-2 rounded-full bg-agri-400 animate-ping"></span>
-          <span className="text-[10px] font-black tracking-wider text-agri-400 uppercase hidden sm:inline">
-            ✦ {t.demoModeLabel}
-          </span>
-          <span className="text-[9px] font-black text-agri-400 sm:hidden">
-            DEMO
-          </span>
+        {/* Navigation Shortcuts */}
+        <div className="flex items-center space-x-2 border-r border-slate-700 pr-4">
+          <button
+            onClick={() => setCurrentView('landing')}
+            className={`p-2 rounded-full transition-colors ${
+              currentView === 'landing' ? 'bg-slate-700' : 'hover:bg-slate-800'
+            }`}
+            title="Landing Page"
+          >
+            <Home className="w-5 h-5" />
+          </button>
+
+          <button
+            onClick={() => setCurrentView('command-center')}
+            className={`p-2 rounded-full transition-colors ${
+              currentView === 'command-center' ? 'bg-emerald-600' : 'hover:bg-slate-800'
+            }`}
+            title="Farmer Dashboard"
+          >
+            <LayoutDashboard className="w-5 h-5" />
+          </button>
         </div>
 
-        {/* Landing Shortcut */}
-        <button
-          onClick={() => setCurrentView('landing')}
-          className={`p-1.5 rounded-full transition-all ${
-            currentView === 'landing'
-              ? 'bg-slate-700 text-white'
-              : 'text-slate-400 hover:text-white hover:bg-slate-800'
-          }`}
-          title="Landing Page"
-        >
-          <Home className="w-3.5 h-3.5" />
-        </button>
-
-        {/* Dashboard Shortcut */}
-        <button
-          onClick={() => setCurrentView('command-center')}
-          className={`p-1.5 rounded-full transition-all ${
-            currentView === 'command-center'
-              ? 'bg-agri-500 text-white'
-              : 'text-slate-400 hover:text-white hover:bg-slate-800'
-          }`}
-          title="Command Center"
-        >
-          <LayoutDashboard className="w-3.5 h-3.5" />
-        </button>
-
-        <div className="h-3 w-px bg-slate-700"></div>
-
-        {/* 6 Demo Steps (01 CROP -> 06 LOGISTICS) */}
-        <div className="flex items-center space-x-1">
+        {/* 6 Demo Steps */}
+        <div className="flex items-center space-x-2 pl-2">
           {demoSteps.map((step) => {
             const isActive = currentView === 'flow' && (flowStep === step.num || (step.num === 5 && flowStep === 'transport'));
 
@@ -82,39 +66,38 @@ export const JudgeDemoDock = () => {
               <button
                 key={step.num}
                 onClick={() => jumpToFlowStep(step.num)}
-                className={`px-2 sm:px-2.5 py-1 text-[11px] font-black rounded-full transition-all whitespace-nowrap ${
+                className={`px-4 py-1.5 rounded-full text-sm font-bold transition-colors whitespace-nowrap ${
                   isActive
-                    ? 'bg-agri-500 text-white shadow-xs scale-105'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                    ? 'bg-emerald-500 text-slate-900'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-700'
                 }`}
               >
-                <span>{step.label}</span>
+                {step.label}
               </button>
             );
           })}
         </div>
 
-        <div className="h-3 w-px bg-slate-700"></div>
-
-        {/* Reset Demo button */}
-        <button
-          onClick={resetDemo}
-          className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors"
-          title={t.resetDemoBtn}
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-        </button>
-
-        {/* Compact Language Toggle */}
-        <button
-          onClick={toggleLang}
-          className="px-2 py-0.5 text-[10px] font-extrabold rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700"
-          title="Toggle Language"
-        >
-          {lang === 'en' ? 'தமிழ்' : 'EN'}
-        </button>
+        {/* Global Controls */}
+        <div className="flex items-center space-x-3 border-l border-slate-700 pl-4">
+          <button
+            onClick={toggleLang}
+            className="px-3 py-1.5 rounded-full text-sm font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+          >
+            {lang === 'en' ? 'தமிழ்' : 'EN'}
+          </button>
+          
+          <button
+            onClick={resetDemo}
+            className="p-2 text-slate-400 hover:text-white hover:bg-red-500 rounded-full transition-colors"
+            title="Reset Data"
+          >
+            <RotateCcw className="w-5 h-5" />
+          </button>
+        </div>
 
       </div>
     </div>
   );
 };
+

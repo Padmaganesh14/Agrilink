@@ -104,16 +104,16 @@ export const Step6LogisticsTracking = () => {
       
       {/* Header */}
       <div className="text-center mb-6">
-        <div className="inline-flex items-center space-x-2 bg-emerald-50 text-agri-700 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2 border border-emerald-200">
+        <div className="inline-flex items-center space-x-2 bg-emerald-50 text-agri-700 px-5 py-3 rounded-md text-base font-black  mb-2 border border-emerald-200">
           <Truck className="w-3.5 h-3.5 text-agri-500" />
           <span>{t.step06Pill}</span>
           <span>•</span>
           <span>{lang === 'ta' ? 'படி 6 / 6' : 'Step 6 of 6'}</span>
         </div>
-        <h1 className="text-3xl font-black text-[#0F172A] tracking-tight uppercase">
+        <h1 className="text-3xl font-black text-[#0F172A] tracking-tight ">
           {t.step06Title}
         </h1>
-        <p className="text-xs sm:text-sm font-medium text-slate-500 mt-1">
+        <p className="text-base sm:text-lg font-medium text-slate-500 mt-1">
           {lang === 'ta' ? 'திருச்சி பண்ணை முதல் சென்னை கோயம்பேடு வரையிலான நேரலை நெடுஞ்சாலை போக்குவரத்து கண்காணிப்பு.' : 'Real-time highway transit visualization from Trichy Farm Gate to Chennai Koyambedu.'}
         </p>
       </div>
@@ -122,42 +122,42 @@ export const Step6LogisticsTracking = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         {/* LEFT COLUMN: OpenStreetMap Card */}
-        <div className="lg:col-span-7 bg-white rounded-3xl p-5 border border-slate-200/90 shadow-lg space-y-4">
+        <div className="lg:col-span-7 bg-white rounded-lg p-5 border border-slate-200/90 shadow-lg space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-black text-slate-800 uppercase tracking-wide">
+              <span className="text-base font-black text-slate-800 ">
                 {lang === 'ta' ? 'திருச்சி ➔ சென்னை வழித்தடம்' : 'TRICHY ➔ CHENNAI ROUTE'}
               </span>
-              <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 font-mono">
+              <span className="text-[9px] font-black  px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 font-mono">
                 {t.simulatedDemoTrackingBadge}
               </span>
             </div>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-agri-700">
+            <span className="px-4 py-2 rounded-md text-lg font-black  bg-emerald-100 text-agri-700">
               🟢 {t.inTransitBadge}
             </span>
           </div>
 
           {/* Map Container */}
-          <div className="relative h-80 w-full rounded-2xl overflow-hidden border border-slate-200 shadow-inner bg-slate-100">
+          <div className="relative h-80 w-full rounded-lg overflow-hidden border border-slate-200 shadow-inner bg-slate-100">
             <div ref={mapContainerRef} className="w-full h-full" />
 
-            <div className="absolute top-3 left-3 z-[400] bg-[#0F172A]/90 backdrop-blur-md text-white p-3 rounded-2xl border border-slate-700 text-xs space-y-1">
+            <div className="absolute top-3 left-3 z-[400] bg-[#0F172A]/90 backdrop-blur-md text-white p-3 rounded-lg border border-slate-700 text-base space-y-1">
               <div className="flex items-center space-x-1.5">
                 <span className="w-2 h-2 rounded-full bg-agri-400 animate-ping"></span>
-                <span className="font-black text-agri-400 uppercase tracking-wider text-[10px]">
+                <span className="font-black text-agri-400  text-lg">
                   {lang === 'ta' ? 'நெடுஞ்சாலை தொலை அளவீடு' : 'Highway Telemetry'}
                 </span>
               </div>
-              <p className="font-bold text-slate-100 text-xs">
+              <p className="font-bold text-slate-100 text-base">
                 {lang === 'ta' ? 'இணைப்பு மையம்: விழுப்புரம் (NH45)' : 'Node: Villupuram (NH45)'}
               </p>
-              <p className="text-[10px] text-slate-400">
+              <p className="text-lg text-slate-400">
                 {lang === 'ta' ? 'வழித்தடம்: 330 கி.மீ • ~6 மணிநேரம்' : 'Corridor: 330 KM • ~6 Hours'}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-xs text-slate-500 font-medium pt-1">
+          <div className="flex items-center justify-between text-base text-slate-500 font-medium pt-1">
             <span>{lang === 'ta' ? 'தூரம்:' : 'Distance:'} <b className="text-slate-800">330 KM</b></span>
             <span>{lang === 'ta' ? 'நேரம்:' : 'Duration:'} <b className="text-slate-800">{lang === 'ta' ? '~6 மணிநேரம்' : '~6 Hours'}</b></span>
             <span>{lang === 'ta' ? 'வேகம்:' : 'Speed:'} <b className="text-agri-600">52 km/h</b></span>
@@ -167,10 +167,10 @@ export const Step6LogisticsTracking = () => {
         {/* RIGHT COLUMN: Order Specs & 7-Stage Timeline */}
         <div className="lg:col-span-5 space-y-4">
           
-          <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-lg space-y-5">
+          <div className="bg-white rounded-lg p-6 border border-slate-200/90 shadow-lg space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                <span className="text-lg font-black  text-slate-400">
                   {lang === 'ta' ? 'பரிவர்த்தனை' : 'Transaction'}
                 </span>
                 <h3 className="text-base font-black text-[#0F172A]">
@@ -180,7 +180,7 @@ export const Step6LogisticsTracking = () => {
 
               <button
                 onClick={advanceOrderStage}
-                className="px-3 py-1.5 rounded-xl bg-agri-500 hover:bg-agri-600 text-white font-black text-[11px] uppercase tracking-wider shadow-xs flex items-center space-x-1.5 transition-all"
+                className="px-5 py-3.5 rounded-lg bg-[#166534] hover:bg-[#14532d] text-white border-2 border-[#14532d] text-white font-black text-base  shadow-xs flex items-center space-x-1.5 transition-all"
               >
                 <Sparkles className="w-3 h-3 text-amber-300" />
                 <span>{t.advanceStageBtn}</span>
@@ -188,7 +188,7 @@ export const Step6LogisticsTracking = () => {
             </div>
 
             {/* Spec lines */}
-            <div className="space-y-2 text-xs">
+            <div className="space-y-2 text-base">
               <div className="flex justify-between py-1 border-b border-slate-100">
                 <span className="text-slate-500 font-bold">{lang === 'ta' ? 'பயிர் விவரம்:' : 'Crop Lot:'}</span>
                 <span className="font-black text-slate-900">{getCropDisplayName(selectedCrop.name, lang)} • {customQty.toLocaleString()} {lang === 'ta' ? 'கிலோ' : 'KG'}</span>
@@ -212,7 +212,7 @@ export const Step6LogisticsTracking = () => {
 
             {/* Vertical 7-Stage Timeline */}
             <div className="space-y-2 pt-2 border-t border-slate-100">
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-2">
+              <span className="text-lg font-black  text-slate-400 block mb-2">
                 {lang === 'ta' ? 'ஆர்டர் வாழ்க்கைச் சுழற்சி காலவரிசை' : 'Order Lifecycle Timeline'}
               </span>
 
@@ -221,7 +221,7 @@ export const Step6LogisticsTracking = () => {
                 return (
                   <div
                     key={stage.id}
-                    className={`flex items-center justify-between p-2 rounded-xl text-xs transition-all ${
+                    className={`flex items-center justify-between p-2 rounded-lg text-base transition-all ${
                       stage.done
                         ? 'bg-emerald-50 text-agri-800 font-bold'
                         : stage.current
@@ -237,10 +237,10 @@ export const Step6LogisticsTracking = () => {
                       ) : (
                         <span className="w-2 h-2 rounded-full bg-slate-300 ml-1 mr-1"></span>
                       )}
-                      <span className="text-[11px] uppercase">{label}</span>
+                      <span className="text-base ">{label}</span>
                     </div>
 
-                    <span className="text-[10px] opacity-70 font-mono">{stage.time}</span>
+                    <span className="text-lg opacity-70 font-mono">{stage.time}</span>
                   </div>
                 );
               })}
@@ -253,25 +253,25 @@ export const Step6LogisticsTracking = () => {
       </div>
 
       {/* FINAL SUCCESS STATE: SALE IN MOTION Banner */}
-      <div className="bg-[#0F172A] text-white rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-4">
+      <div className="bg-[#0F172A] text-white rounded-lg p-6 sm:p-8 border border-slate-800 shadow-xl space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
           <div>
             <div className="flex items-center space-x-2">
-              <h3 className="text-xl font-black uppercase text-agri-400">
+              <h3 className="text-xl font-black  text-agri-400">
                 {t.saleInMotionTitle}
               </h3>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-950 text-agri-300 border border-emerald-500/40">
+              <span className="px-4 py-2 rounded-md text-lg font-black bg-emerald-950 text-agri-300 border border-emerald-500/40">
                 {lang === 'ta' ? 'சரிபார்க்கப்பட்ட B2B பரிமாற்றம்' : 'Verified B2B Transition'}
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-base text-slate-400 mt-1">
               {t.saleInMotionSub}
             </p>
           </div>
 
           <button
             onClick={resetDemo}
-            className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold flex items-center space-x-1.5 transition-colors self-start sm:self-auto border border-slate-700"
+            className="px-6 py-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-base font-bold flex items-center space-x-1.5 transition-colors self-start sm:self-auto border border-slate-700"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>{t.resetDemoBtn}</span>
@@ -279,24 +279,24 @@ export const Step6LogisticsTracking = () => {
         </div>
 
         {/* 4 Final Checkpoints */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-1">
-          <div className="p-3 bg-slate-850/80 rounded-2xl border border-slate-800">
-            <span className="text-slate-400 text-[10px] font-bold uppercase block">{lang === 'ta' ? 'வாங்குபவர் நிலை' : 'Buyer Status'}</span>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-base pt-1">
+          <div className="p-3 bg-slate-850/80 rounded-lg border border-slate-800">
+            <span className="text-slate-400 text-lg font-bold  block">{lang === 'ta' ? 'வாங்குபவர் நிலை' : 'Buyer Status'}</span>
             <span className="font-black text-emerald-400 mt-1 block">{lang === 'ta' ? 'வாங்குபவர் உறுதி செய்தார் ✓' : 'Buyer Confirmed ✓'}</span>
           </div>
 
-          <div className="p-3 bg-slate-850/80 rounded-2xl border border-slate-800">
-            <span className="text-slate-400 text-[10px] font-bold uppercase block">{lang === 'ta' ? 'பணம் செலுத்தும் நிலை' : 'Payment Status'}</span>
+          <div className="p-3 bg-slate-850/80 rounded-lg border border-slate-800">
+            <span className="text-slate-400 text-lg font-bold  block">{lang === 'ta' ? 'பணம் செலுத்தும் நிலை' : 'Payment Status'}</span>
             <span className="font-black text-amber-300 mt-1 block">{lang === 'ta' ? 'ஒருங்கிணைக்கப்பட்டது ✓' : 'Coordinated ✓'}</span>
           </div>
 
-          <div className="p-3 bg-slate-850/80 rounded-2xl border border-slate-800">
-            <span className="text-slate-400 text-[10px] font-bold uppercase block">{lang === 'ta' ? 'போக்குவரத்து நிலை' : 'Transport Status'}</span>
+          <div className="p-3 bg-slate-850/80 rounded-lg border border-slate-800">
+            <span className="text-slate-400 text-lg font-bold  block">{lang === 'ta' ? 'போக்குவரத்து நிலை' : 'Transport Status'}</span>
             <span className="font-black text-emerald-400 mt-1 block">{lang === 'ta' ? 'உறுதி செய்யப்பட்டது ✓' : 'Confirmed ✓'}</span>
           </div>
 
-          <div className="p-3 bg-slate-850/80 rounded-2xl border border-slate-800">
-            <span className="text-slate-400 text-[10px] font-bold uppercase block">{lang === 'ta' ? 'டெலிவரி நிலை' : 'Delivery Status'}</span>
+          <div className="p-3 bg-slate-850/80 rounded-lg border border-slate-800">
+            <span className="text-slate-400 text-lg font-bold  block">{lang === 'ta' ? 'டெலிவரி நிலை' : 'Delivery Status'}</span>
             <span className="font-black text-blue-400 mt-1 block">{lang === 'ta' ? 'கண்காணிப்பு செயலில் உள்ளது ✓' : 'Tracking Active ✓'}</span>
           </div>
         </div>
@@ -306,7 +306,7 @@ export const Step6LogisticsTracking = () => {
       <div className="flex items-center justify-between pt-2">
         <button
           onClick={() => setFlowStep('transport')}
-          className="px-5 py-3 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs flex items-center space-x-1.5 transition-colors"
+          className="px-5 py-3 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-base flex items-center space-x-1.5 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{t.back}</span>
@@ -314,7 +314,7 @@ export const Step6LogisticsTracking = () => {
 
         <button
           onClick={() => setCurrentView('command-center')}
-          className="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center space-x-2 transition-colors"
+          className="px-6 py-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-base flex items-center space-x-2 transition-colors"
         >
           <span>{lang === 'ta' ? 'கட்டுப்பாட்டு மையத்திற்குத் திரும்பு' : 'Return to Command Center'}</span>
           <ChevronRight className="w-4 h-4 text-emerald-400" />

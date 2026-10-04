@@ -14,7 +14,7 @@ export const BuyerLoginView = () => {
       <div className="max-w-md mx-auto w-full px-4 flex items-center justify-between mb-4">
         <button
           onClick={() => setCurrentView('landing')}
-          className="flex items-center space-x-1.5 text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors"
+          className="flex items-center space-x-1.5 text-base font-bold text-slate-500 hover:text-slate-900 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Landing</span>
@@ -22,7 +22,7 @@ export const BuyerLoginView = () => {
 
         <button
           onClick={toggleLang}
-          className="flex items-center space-x-1 px-2.5 py-1 rounded-lg border border-slate-300 text-xs font-bold text-slate-700 hover:bg-white transition-colors"
+          className="flex items-center space-x-1 px-2.5 py-1 rounded-lg border border-slate-300 text-base font-bold text-slate-700 hover:bg-white transition-colors"
         >
           <Globe className="w-3.5 h-3.5 text-ai-600" />
           <span>{lang === 'en' ? 'தமிழ்' : 'English'}</span>
@@ -31,23 +31,23 @@ export const BuyerLoginView = () => {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md px-4">
         
-        <div className="bg-white py-8 px-6 sm:px-10 rounded-3xl border border-slate-200/90 shadow-xl space-y-6">
+        <div className="bg-white py-8 px-6 sm:px-10 rounded-lg border border-slate-200/90 shadow-xl space-y-6">
           
           {/* Header */}
           <div className="text-center space-y-1.5">
-            <div className="w-12 h-12 rounded-xl bg-[#0F172A] text-white flex items-center justify-center mx-auto shadow-md">
+            <div className="w-12 h-12 rounded-lg bg-[#0F172A] text-white flex items-center justify-center mx-auto shadow-md">
               <Building2 className="w-6 h-6 text-indigo-300" />
             </div>
 
-            <div className="text-[10px] font-black uppercase tracking-widest text-ai-600">
+            <div className="text-lg font-black st text-ai-600">
               AGRILINK AI
             </div>
 
-            <h2 className="text-2xl font-black text-[#0F172A] tracking-tight uppercase">
+            <h2 className="text-2xl font-black text-[#0F172A] tracking-tight ">
               {t.buyerLoginHeader}
             </h2>
 
-            <p className="text-xs text-slate-500 font-medium">
+            <p className="text-base text-slate-500 font-medium">
               "{t.buyerLoginSubtitle}"
             </p>
           </div>
@@ -55,7 +55,7 @@ export const BuyerLoginView = () => {
           {/* Form */}
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+              <label className="block text-base font-bold  text-slate-600 mb-1.5">
                 {t.businessNumberLabel}
               </label>
               <input
@@ -63,7 +63,7 @@ export const BuyerLoginView = () => {
                 value={buyerNumber}
                 onChange={(e) => setBuyerNumber(e.target.value)}
                 placeholder="+91 94440 12890"
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 font-bold text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-ai-500"
+                className="w-full px-4 py-3 rounded-lg border border-slate-300 font-bold text-slate-800 text-lg focus:outline-none focus:ring-2 focus:ring-ai-500"
               />
             </div>
 
@@ -73,7 +73,7 @@ export const BuyerLoginView = () => {
                 setOtpSent(true);
                 setTimeout(() => loginAsDemoBuyer(), 600);
               }}
-              className="w-full py-3.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center space-x-2 transition-all"
+              className="w-full py-3.5 px-4 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-base  shadow-md flex items-center justify-center space-x-2 transition-all"
             >
               <span>{otpSent ? 'VERIFYING...' : t.sendOtpBtn}</span>
               <ArrowRight className="w-4 h-4 text-indigo-400" />
@@ -82,7 +82,7 @@ export const BuyerLoginView = () => {
 
           <div className="relative flex py-1 items-center">
             <div className="flex-grow border-t border-slate-200"></div>
-            <span className="flex-shrink mx-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+            <span className="flex-shrink mx-3 text-lg font-bold  text-slate-400">
               DEMO ACCESS
             </span>
             <div className="flex-grow border-t border-slate-200"></div>
@@ -93,12 +93,12 @@ export const BuyerLoginView = () => {
             <button
               type="button"
               onClick={loginAsDemoBuyer}
-              className="w-full py-3.5 px-4 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-950 border-2 border-indigo-400/40 font-black text-xs uppercase tracking-wider shadow-xs flex items-center justify-center space-x-2 transition-all hover:scale-[1.01]"
+              className="w-full py-3.5 px-4 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-950 border-2 border-indigo-400/40 font-black text-base  shadow-xs flex items-center justify-center space-x-2 transition-all hover:scale-[1.01]"
             >
               <Sparkles className="w-4 h-4 text-ai-600" />
               <span>{t.continueDemoBuyerBtn}</span>
             </button>
-            <p className="text-[11px] text-center text-slate-500 mt-2 font-medium">
+            <p className="text-base text-center text-slate-500 mt-2 font-medium">
               {t.demoBuyerInfo}
             </p>
           </div>

@@ -105,16 +105,16 @@ export const Step4PromotionN8N = () => {
       
       {/* Header */}
       <div className="text-center mb-6">
-        <div className="inline-flex items-center space-x-2 bg-indigo-50 text-ai-700 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2 border border-indigo-200">
+        <div className="inline-flex items-center space-x-2 bg-indigo-50 text-ai-700 px-5 py-3 rounded-md text-base font-black  mb-2 border border-indigo-200">
           <Sparkles className="w-3.5 h-3.5 text-ai-600" />
           <span>{t.step04Pill}</span>
           <span>•</span>
           <span>{lang === 'ta' ? 'படி 4 / 6' : 'Step 4 of 6'}</span>
         </div>
-        <h1 className="text-3xl font-black text-[#0F172A] tracking-tight uppercase">
+        <h1 className="text-3xl font-black text-[#0F172A] tracking-tight ">
           {lang === 'ta' ? 'ஒற்றை அடுக்கு n8n முதன்மை பணிப்பாய்வு' : 'Single-Layer n8n Master Workflow'}
         </h1>
-        <p className="text-xs sm:text-sm font-medium text-slate-500 mt-1">
+        <p className="text-base sm:text-lg font-medium text-slate-500 mt-1">
           {lang === 'ta' 
             ? 'ஒரே பணிப்பாய்வில்: விவசாயி உள்ளீடு ➔ மண்டி பகுப்பாய்வு ➔ வாங்குபவர் பொருத்தம் ➔ சரக்கு கட்டணம் ➔ வாட்ஸ்அப் ஆர்டர் ➔ நேரலை கண்காணிப்பு.'
             : 'One unified orchestration pipeline: Farmer Ingestion ➔ Mandi Analysis ➔ Buyer Matching ➔ Freight ➔ WhatsApp Order ➔ Logistics.'}
@@ -122,16 +122,16 @@ export const Step4PromotionN8N = () => {
       </div>
 
       {/* The WOW Visualizer: n8n Node Workflow Graph */}
-      <div className="bg-[#0F172A] rounded-3xl p-6 sm:p-8 text-white border border-slate-800 shadow-2xl relative overflow-hidden space-y-6">
+      <div className="bg-[#0F172A] rounded-lg p-6 sm:p-8 text-white border border-slate-800 shadow-2xl relative overflow-hidden space-y-6">
         
         {/* Header inside canvas */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
           <div className="flex items-center space-x-2.5">
             <span className="w-2.5 h-2.5 rounded-full bg-ai-500 animate-ping"></span>
-            <h2 className="text-sm font-black uppercase tracking-wider text-slate-200">
+            <h2 className="text-lg font-black  text-slate-200">
               {lang === 'ta' ? 'AGRILINK AI — தொடர்ச்சியான ஒற்றை அடுக்கு n8n இயக்கம்' : 'AgriLink AI — Master Continuous n8n Workflow'}
             </h2>
-            <span className="text-[9px] bg-purple-950 text-purple-300 font-extrabold px-2.5 py-0.5 rounded-full border border-purple-500/40">
+            <span className="text-[9px] bg-purple-950 text-purple-300 font-extrabold px-4 py-2 rounded-md border border-purple-500/40">
               {lang === 'ta' ? '15-முனைகள் கொண்ட ஒற்றை பணிப்பாய்வு' : '15-Node Single Continuous Pipeline'}
             </span>
           </div>
@@ -139,10 +139,10 @@ export const Step4PromotionN8N = () => {
           <button
             onClick={triggerN8nWorkflow}
             disabled={n8nStatus === 'running'}
-            className={`px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg flex items-center space-x-2 transition-all ${
+            className={`px-5 py-2.5 rounded-lg font-black text-base  shadow-lg flex items-center space-x-2 transition-all ${
               n8nStatus === 'running'
                 ? 'bg-ai-600/50 text-white cursor-not-allowed animate-pulse'
-                : 'bg-gradient-to-r from-ai-500 to-indigo-600 hover:from-ai-600 hover:to-indigo-700 text-white hover:scale-105 active:scale-95'
+                : 'bg-emerald-700 hover:bg-emerald-800 text-white hover:scale-105 active:scale-95'
             }`}
           >
             <Zap className="w-4 h-4 text-amber-300" />
@@ -163,25 +163,25 @@ export const Step4PromotionN8N = () => {
             return (
               <div
                 key={node.id}
-                className={`rounded-2xl p-4 border transition-all duration-300 flex flex-col justify-between relative ${
+                className={`rounded-lg p-4 border transition-all duration-300 flex flex-col justify-between relative ${
                   isCurrent
-                    ? 'border-ai-500 bg-indigo-950/70 shadow-xl shadow-ai-500/20 scale-105'
+                    ? 'border-ai-500 bg-indigo-950/70 shadow-xl shadow-md scale-105'
                     : isCompleted
                     ? 'border-emerald-500/80 bg-emerald-950/30'
                     : 'border-slate-800 bg-slate-900/60 opacity-60'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <div className="p-2 rounded-xl bg-slate-800/80 border border-slate-700">
+                  <div className="p-2 rounded-lg bg-slate-800/80 border border-slate-700">
                     {node.icon}
                   </div>
                   {isCompleted ? (
-                    <span className="flex items-center space-x-1 text-[9px] font-bold text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-500/40">
+                    <span className="flex items-center space-x-1 text-[9px] font-bold text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded-md border border-emerald-500/40">
                       <CheckCircle2 className="w-3 h-3" />
                       <span>{lang === 'ta' ? 'முடிந்தது' : 'Complete'}</span>
                     </span>
                   ) : isCurrent ? (
-                    <span className="text-[9px] font-bold text-amber-300 bg-amber-950 px-2 py-0.5 rounded-full border border-amber-500/40 animate-pulse">
+                    <span className="text-[9px] font-bold text-amber-300 bg-amber-950 px-2 py-0.5 rounded-md border border-amber-500/40 animate-pulse">
                       {lang === 'ta' ? 'இயங்குகிறது' : 'Running'}
                     </span>
                   ) : (
@@ -192,13 +192,13 @@ export const Step4PromotionN8N = () => {
                 </div>
 
                 <div>
-                  <p className="text-[10px] font-bold text-ai-500 uppercase tracking-widest">
+                  <p className="text-lg font-bold text-ai-500 st">
                     {node.name}
                   </p>
-                  <h3 className="text-xs font-black text-white leading-tight uppercase mt-0.5">
+                  <h3 className="text-base font-black text-white leading-tight  mt-0.5">
                     {node.title}
                   </h3>
-                  <p className="text-[10px] text-slate-400 mt-1 line-clamp-2">
+                  <p className="text-lg text-slate-400 mt-1 line-clamp-2">
                     {node.desc}
                   </p>
                 </div>
@@ -208,15 +208,15 @@ export const Step4PromotionN8N = () => {
         </div>
 
         {/* Live Execution Console Window */}
-        <div className="bg-slate-950/90 border border-slate-800 rounded-2xl p-4 font-mono text-xs">
+        <div className="bg-slate-950/90 border border-slate-800 rounded-lg p-4 font-mono text-base">
           <div className="flex items-center justify-between text-slate-400 border-b border-slate-800 pb-2 mb-2">
             <div className="flex items-center space-x-2">
               <Terminal className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-[11px] font-bold uppercase tracking-wider">
+              <span className="text-base font-bold ">
                 {lang === 'ta' ? 'செயலாக்க முனையம் (Execution Console)' : 'Execution Console'}
               </span>
             </div>
-            <span className="text-[10px] text-slate-500 font-mono">
+            <span className="text-lg text-slate-500 font-mono">
               {lang === 'ta' ? 'n8n வெப்ஹூக் செயலில் உள்ளது' : 'n8n webhook listener active'}
             </span>
           </div>
@@ -240,7 +240,7 @@ export const Step4PromotionN8N = () => {
         <div className="pt-1">
           <button
             onClick={() => setShowJsonPayload(!showJsonPayload)}
-            className="flex items-center space-x-2 text-xs font-bold text-slate-300 hover:text-white bg-slate-900/90 hover:bg-slate-800 px-3.5 py-2 rounded-xl border border-slate-700 transition-colors"
+            className="flex items-center space-x-2 text-base font-bold text-slate-300 hover:text-white bg-slate-900/90 hover:bg-slate-800 px-3.5 py-2 rounded-lg border border-slate-700 transition-colors"
           >
             <Code2 className="w-3.5 h-3.5 text-ai-400" />
             <span>
@@ -252,7 +252,7 @@ export const Step4PromotionN8N = () => {
           </button>
 
           {showJsonPayload && (
-            <div className="mt-3 bg-slate-950 p-4 rounded-2xl border border-slate-800 text-[11px] font-mono text-emerald-300 overflow-x-auto max-h-72">
+            <div className="mt-3 bg-slate-950 p-4 rounded-lg border border-slate-800 text-base font-mono text-emerald-300 overflow-x-auto max-h-72">
               <pre>{JSON.stringify({
                 crop: cropName,
                 quantityKg: customQty,
@@ -291,27 +291,27 @@ export const Step4PromotionN8N = () => {
       </div>
 
       {/* Generated Content Card */}
-      <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-xl space-y-4">
+      <div className="bg-white rounded-lg p-6 sm:p-7 border border-slate-200/90 shadow-xl space-y-4">
         
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center space-x-2">
             <span className="text-xl">📢</span>
-            <h3 className="text-sm font-black text-slate-900 uppercase tracking-wide">
+            <h3 className="text-lg font-black text-slate-900 ">
               {lang === 'ta' ? 'மொத்த வியாபாரிகளுக்கான விளம்பர உரை' : 'Buyer-Facing Promotional Output'}
             </h3>
           </div>
-          <span className="text-xs font-bold text-slate-400">
+          <span className="text-base font-bold text-slate-400">
             {lang === 'ta' ? 'AGRILINK AI மூலம் தானாக உருவாக்கப்பட்டது' : 'Auto-formatted via AgriLink AI'}
           </span>
         </div>
 
-        <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200 relative font-medium text-xs sm:text-sm text-slate-800 whitespace-pre-line leading-relaxed">
+        <div className="bg-slate-50 rounded-lg p-5 border border-slate-200 relative font-medium text-base sm:text-lg text-slate-800 whitespace-pre-line leading-relaxed">
           {promoCopy}
 
           <div className="absolute top-3 right-3 flex items-center space-x-2">
             <button
               onClick={handleCopy}
-              className="p-2 rounded-xl bg-white border border-slate-300 text-slate-600 hover:text-slate-900 hover:border-agri-500 transition-colors shadow-xs"
+              className="p-2 rounded-lg bg-white border border-slate-300 text-slate-600 hover:text-slate-900 hover:border-agri-500 transition-colors shadow-xs"
               title="Copy to clipboard"
             >
               {copied ? <CheckCircle2 className="w-4 h-4 text-agri-500" /> : <Copy className="w-4 h-4" />}
@@ -324,7 +324,7 @@ export const Step4PromotionN8N = () => {
           <div className="flex items-center space-x-2">
             <button
               onClick={() => alert('New promotional copy variations synthesized.')}
-              className="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-xs flex items-center space-x-1.5 transition-colors"
+              className="px-6 py-4 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-base flex items-center space-x-1.5 transition-colors"
             >
               <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
               <span>Regenerate</span>
@@ -335,7 +335,7 @@ export const Step4PromotionN8N = () => {
                 const url = `https://wa.me/?text=${encodeURIComponent(promoCopy)}`;
                 window.open(url, '_blank');
               }}
-              className="px-4 py-2 rounded-xl bg-emerald-50 text-agri-800 border border-emerald-300 hover:bg-emerald-100 font-bold text-xs flex items-center space-x-1.5 transition-colors"
+              className="px-6 py-4 rounded-lg bg-emerald-50 text-agri-800 border border-emerald-300 hover:bg-emerald-100 font-bold text-base flex items-center space-x-1.5 transition-colors"
             >
               <MessageSquare className="w-3.5 h-3.5 text-agri-500" />
               <span>Share to WhatsApp</span>
@@ -344,7 +344,7 @@ export const Step4PromotionN8N = () => {
 
           <button
             onClick={() => setFlowStep(5)}
-            className="px-6 py-3.5 rounded-2xl bg-agri-500 hover:bg-agri-600 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-agri-500/25 flex items-center justify-center space-x-2 transition-all hover:scale-105"
+            className="px-6 py-3.5 rounded-lg bg-[#166534] hover:bg-[#14532d] text-white border-2 border-[#14532d] text-white font-black text-base  shadow-lg shadow-md flex items-center justify-center space-x-2 transition-all hover:scale-105"
           >
             <span>{t.proceedToOrderBtn}</span>
             <ArrowRight className="w-4 h-4" />
@@ -357,7 +357,7 @@ export const Step4PromotionN8N = () => {
       <div className="flex items-center justify-between pt-2">
         <button
           onClick={() => setFlowStep(3)}
-          className="px-5 py-3 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs flex items-center space-x-1.5 transition-colors"
+          className="px-5 py-3 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-base flex items-center space-x-1.5 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{t.back}</span>
@@ -365,7 +365,7 @@ export const Step4PromotionN8N = () => {
 
         <button
           onClick={() => setFlowStep(5)}
-          className="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center space-x-2 transition-colors"
+          className="px-6 py-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-base flex items-center space-x-2 transition-colors"
         >
           <span>Continue to Order Confirmed</span>
           <ArrowRight className="w-4 h-4 text-emerald-400" />
