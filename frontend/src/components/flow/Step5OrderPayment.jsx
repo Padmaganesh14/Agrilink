@@ -34,8 +34,8 @@ export const Step5OrderPayment = () => {
 
   const handleOpenWhatsApp = () => {
     setWhatsappSent(true);
-    const messageEn = `Hello ${buyerName}, this is Farmer Ramanathan via AgriLink AI regarding Order #${order.orderId} (${selectedCrop.name} - ${customQty.toLocaleString()} KG). Rate agreed at ₹${pricePerKg}/KG (Total ₹${totalValue.toLocaleString()}). Ready for payment coordination before vehicle dispatch.`;
-    const messageTa = `வணக்கம் ${buyerName}, AgriLink AI தளம் மூலம் விவசாயி ராமநாதன் பேசுகிறேன். ஆர்டர் #${order.orderId} (${cropDisplay} - ${customQty.toLocaleString()} கிலோ) தொடர்பாக ஒப்புக்கொண்ட விலை ₹${pricePerKg}/கிலோ (மொத்தம் ₹${totalValue.toLocaleString()}). வாகனம் ஏற்றுவதற்கு முன் முன்பணம் ஒருங்கிணைப்பை உறுதிசெய்யவும்.`;
+    const messageEn = `Hello ${buyerName}, this is Farmer via AgriLink AI regarding Order #${order.orderId} (${selectedCrop.name} - ${customQty.toLocaleString()} KG). Rate agreed at ₹${pricePerKg}/KG (Total ₹${totalValue.toLocaleString()}). Ready for payment coordination before vehicle dispatch.`;
+    const messageTa = `வணக்கம் ${buyerName}, AgriLink AI தளம் மூலம் விவசாயி பேசுகிறேன். ஆர்டர் #${order.orderId} (${cropDisplay} - ${customQty.toLocaleString()} கிலோ) தொடர்பாக ஒப்புக்கொண்ட விலை ₹${pricePerKg}/கிலோ (மொத்தம் ₹${totalValue.toLocaleString()}). வாகனம் ஏற்றுவதற்கு முன் முன்பணம் ஒருங்கிணைப்பை உறுதிசெய்யவும்.`;
     const message = lang === 'ta' ? messageTa : messageEn;
     const waUrl = `https://wa.me/919443122810?text=${encodeURIComponent(message)}`;
     window.open(waUrl, '_blank');
@@ -99,7 +99,7 @@ export const Step5OrderPayment = () => {
               <span>{lang === 'ta' ? 'விற்பனையாளர் (தோட்டம்)' : 'Seller (Farm Gate)'}</span>
             </div>
             <p className="font-extrabold text-slate-900 text-lg">
-              {lang === 'ta' ? 'ராமநாதன் (விவசாயி)' : 'Ramanathan'}
+              {lang === 'ta' ? 'விவசாயி' : 'Farmer'}
             </p>
             <p className="text-base text-slate-500 font-medium">
               {locationDisplay} {lang === 'ta' ? 'தோட்டம் • தமிழ்நாடு' : 'Farm • Tamil Nadu'}

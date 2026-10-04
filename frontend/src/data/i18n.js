@@ -69,7 +69,7 @@ export const translations = {
     mobileNumberLabel: "Mobile Number",
     sendOtpBtn: "SEND OTP →",
     continueDemoFarmerBtn: " CONTINUE AS DEMO FARMER",
-    demoFarmerInfo: "Demo: Ramanathan • Trichy, Tamil Nadu",
+    demoFarmerInfo: "Farmer Profile",
 
     // Buyer Login
     buyerLoginHeader: "BUYER LOGIN",
@@ -79,7 +79,7 @@ export const translations = {
     demoBuyerInfo: "Demo Buyer: Koyambedu Wholesale Mart • Chennai",
 
     // Farmer Command Center
-    greeting: "Good Morning, Ramanathan",
+    greeting: "Good Morning, Farmer",
     locationHeader: "Trichy • Tamil Nadu",
     yourNextSale: "YOUR NEXT SALE",
     continueSellingBtn: "CONTINUE SELLING →",
@@ -478,7 +478,7 @@ export const translations = {
     mobileNumberLabel: "Mobile Number",
     sendOtpBtn: "SEND OTP →",
     continueDemoFarmerBtn: " CONTINUE AS DEMO FARMER",
-    demoFarmerInfo: "Demo: Ramanathan • Trichy, Tamil Nadu",
+    demoFarmerInfo: "Farmer Profile",
 
     // Buyer Login
     buyerLoginHeader: "BUYER LOGIN",
@@ -488,7 +488,7 @@ export const translations = {
     demoBuyerInfo: "Demo Buyer: Koyambedu Wholesale Mart • Chennai",
 
     // Farmer Command Center
-    greeting: "Good Morning, Ramanathan",
+    greeting: "Good Morning, Farmer",
     locationHeader: "Trichy • Tamil Nadu",
     yourNextSale: "YOUR NEXT SALE",
     continueSellingBtn: "CONTINUE SELLING →",
@@ -682,7 +682,7 @@ export const translations = {
     mobileNumberLabel: "Mobile Number",
     sendOtpBtn: "SEND OTP →",
     continueDemoFarmerBtn: " CONTINUE AS DEMO FARMER",
-    demoFarmerInfo: "Demo: Ramanathan • Trichy, Tamil Nadu",
+    demoFarmerInfo: "Farmer Profile",
 
     // Buyer Login
     buyerLoginHeader: "BUYER LOGIN",
@@ -692,7 +692,7 @@ export const translations = {
     demoBuyerInfo: "Demo Buyer: Koyambedu Wholesale Mart • Chennai",
 
     // Farmer Command Center
-    greeting: "Good Morning, Ramanathan",
+    greeting: "Good Morning, Farmer",
     locationHeader: "Trichy • Tamil Nadu",
     yourNextSale: "YOUR NEXT SALE",
     continueSellingBtn: "CONTINUE SELLING →",

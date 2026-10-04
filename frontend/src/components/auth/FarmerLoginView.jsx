@@ -110,7 +110,7 @@ export const FarmerLoginView = () => {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Ramanathan"
+                  placeholder="Full Name"
                   className="w-full px-4 py-3 rounded-lg border border-slate-300 font-bold text-slate-800 text-lg focus:outline-none focus:ring-2 focus:ring-agri-500"
                 />
               </div>
