@@ -12,6 +12,7 @@ export async function createOrder(req, res, next) {
     const rate = Number(ratePerKg);
     const orderId = `AGRI-${Date.now().toString().slice(-6)}`;
     const totalValue = Math.round(qty * rate);
+    const sellerId = req.body.sellerId || null;
 
     const orderData = {
       orderId: orderId,
@@ -22,6 +23,7 @@ export async function createOrder(req, res, next) {
       status: 'Payment Coordination',
       buyerName: buyer.name,
       buyerLocation: buyer.location,
+      sellerId: sellerId,
       pickupLocation: pickupLocation || 'Farm Gate',
       deliveryLocation: deliveryLocation || buyer.location,
       transportName: transport?.name || null,
@@ -100,6 +102,30 @@ export async function getOrder(req, res, next) {
     res.json({
       success: true,
       order: data
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getOrdersBySeller(req, res, next) {
+  try {
+    const { sellerId } = req.params;
+
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('sellerId', sellerId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error("[Get Orders Error]", error);
+      return res.status(500).json({ success: false, message: 'Failed to fetch orders' });
+    }
+
+    res.json({
+      success: true,
+      data: data || []
     });
   } catch (err) {
     next(err);

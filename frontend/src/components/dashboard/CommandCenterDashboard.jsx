@@ -20,9 +20,11 @@ export const CommandCenterDashboard = () => {
     jumpToFlowStep,
     selectedTransport,
     flowStep,
+    setActiveOrderId,
   } = useAgri();
 
   const [myCrops, setMyCrops] = useState([]);
+  const [myOrders, setMyOrders] = useState([]);
   const [stats, setStats] = useState({
     buyers: 0,
     orders: 0,
@@ -39,6 +41,13 @@ export const CommandCenterDashboard = () => {
           );
           if (res.data.success) {
             setMyCrops(res.data.data);
+          }
+
+          const orderRes = await axios.get(
+            `http://localhost:8000/api/order/seller/${user.id}`,
+          );
+          if (orderRes.data.success) {
+            setMyOrders(orderRes.data.data);
           }
 
           const statRes = await axios.get(
@@ -194,31 +203,41 @@ export const CommandCenterDashboard = () => {
       </div>
 
       {/* ACTIVE SALE Card */}
-      {selectedTransport && (
-        <div className="bg-emerald-50 rounded-lg p-5 border border-emerald-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-full bg-white text-emerald-600 flex items-center justify-center shadow-sm shrink-0 border border-emerald-100">
-              <Truck className="w-6 h-6" />
-            </div>
-            <div>
-              <h4 className="text-lg font-bold text-emerald-900 mb-0.5">
-                {t.activeSaleRoute}
-              </h4>
-              <p className="text-sm text-emerald-700 font-medium">
-                {lang === "ta"
-                  ? `வாகனம்: ${selectedTransport.name} • செல்கிறது: சென்னை`
-                  : `Vehicle: ${selectedTransport.name} • En route to Chennai`}
-              </p>
-            </div>
-          </div>
+      {myOrders.length > 0 && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-bold text-slate-900 mt-6">
+            {lang === "ta" ? "செயலிலுள்ள ஆர்டர்கள்" : "Active Orders"}
+          </h3>
+          {myOrders.map((order) => (
+            <div key={order.orderId} className="bg-emerald-50 rounded-lg p-5 border border-emerald-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 rounded-full bg-white text-emerald-600 flex items-center justify-center shadow-sm shrink-0 border border-emerald-100">
+                  <Truck className="w-6 h-6" />
+                </div>
+                <div>
+                  <h4 className="text-lg font-bold text-emerald-900 mb-0.5">
+                    {order.crop} • {order.quantityKg} KG | {order.pickupLocation} → {order.deliveryLocation}
+                  </h4>
+                  <p className="text-sm text-emerald-700 font-medium">
+                    {lang === "ta"
+                      ? `வாகனம்: ${order.transportName || "Logistics"} • செல்கிறது: ${order.deliveryLocation}`
+                      : `Vehicle: ${order.transportName || "Logistics"} • En route to ${order.deliveryLocation}`}
+                  </p>
+                </div>
+              </div>
 
-          <button
-            onClick={() => jumpToFlowStep(6)}
-            className="px-5 py-2.5 rounded-md bg-emerald-700 hover:bg-emerald-800 text-white font-medium text-sm flex items-center justify-center space-x-2 w-full sm:w-auto"
-          >
-            <span>{t.trackDeliveryBtn}</span>
-            <ChevronRight className="w-4 h-4" />
-          </button>
+              <button
+                onClick={() => {
+                  setActiveOrderId(order.orderId);
+                  jumpToFlowStep(6);
+                }}
+                className="px-5 py-2.5 rounded-md bg-emerald-700 hover:bg-emerald-800 text-white font-medium text-sm flex items-center justify-center space-x-2 w-full sm:w-auto shrink-0"
+              >
+                <span>{t.trackDeliveryBtn}</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
         </div>
       )}
       {/* My Listings */}

@@ -43,6 +43,7 @@ export const Step4PromotionN8N = () => {
     triggerN8nWorkflow,
     marketIntelligence,
     setActiveOrderId,
+    user,
   } = useAgri();
 
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
@@ -269,6 +270,7 @@ export const Step4PromotionN8N = () => {
                   },
                   pickupLocation: customLocation,
                   deliveryLocation: selectedBuyer?.location || "Chennai",
+                  sellerId: user?.id,
                 };
                 const result = await api.createOrder(orderData);
                 if (result.success && result.order) {
@@ -330,6 +332,7 @@ export const Step4PromotionN8N = () => {
                 },
                 pickupLocation: customLocation,
                 deliveryLocation: selectedBuyer?.location || "Chennai",
+                sellerId: user?.id,
               };
               const result = await api.createOrder(orderData);
               if (result.success && result.order) {
