@@ -44,7 +44,19 @@ export const Step6LogisticsTracking = () => {
         api.getTracking(activeOrderId).catch(() => ({ success: false })),
       ]).then(([orderRes, trackRes]) => {
         if (orderRes.success) setOrderData(orderRes.order);
-        if (trackRes.success) setTrackingData(trackRes.tracking);
+        if (trackRes.success) {
+          setTrackingData(trackRes.tracking);
+        } else if (orderRes.success) {
+          // If order exists but no tracking, farmer hasn't assigned transport yet
+          setTrackingData({
+            status: "Awaiting Dispatch",
+            origin: orderRes.order.pickupLocation,
+            destination: orderRes.order.deliveryLocation,
+            currentCheckpoint: "Farm",
+            distanceKm: 0,
+            etaHours: 0
+          });
+        }
         setIsLoading(false);
       });
     } else {

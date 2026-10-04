@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAgri } from "../../context/AgriContext";
+import { api } from "../../services/api";
 import {
   Search,
   MapPin,
@@ -10,40 +11,54 @@ import {
   TrendingUp,
   X,
   Sprout,
+  Truck,
+  ChevronRight,
+  ShoppingCart,
+  Package,
 } from "lucide-react";
 
 export const BuyerMarketplaceView = () => {
   const {
     t,
     lang,
-    setFlowStep,
-    setSelectedCrop,
-    setSelectedBuyer,
-    jumpToFlowStep,
+    user,
+    setActiveOrderId,
+    setCurrentView,
   } = useAgri();
 
   const [crops, setCrops] = useState([]);
+  const [myOrders, setMyOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("All");
   const [activeModalCrop, setActiveModalCrop] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("marketplace"); // 'marketplace' or 'purchases'
+  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+  const [purchaseQuantity, setPurchaseQuantity] = useState("");
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
   useEffect(() => {
-    const fetchCrops = async () => {
+    const fetchData = async () => {
       try {
-        // Change to dynamic endpoint, e.g., process.env.VITE_API_URL or localhost
         const res = await axios.get("http://localhost:8000/api/crops");
         if (res.data.success) {
           setCrops(res.data.data);
         }
+        
+        if (user && user.name) {
+          const orderRes = await axios.get(`http://localhost:8000/api/order/buyer/${user.name}`);
+          if (orderRes.data.success) {
+            setMyOrders(orderRes.data.data);
+          }
+        }
       } catch (error) {
-        console.error("Failed to fetch crops", error);
+        console.error("Failed to fetch data", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchCrops();
-  }, []);
+    fetchData();
+  }, [user]);
 
   const filteredCrops = crops.filter((c) => {
     const cropName = c.cropName || "";
@@ -56,14 +71,56 @@ export const BuyerMarketplaceView = () => {
     return matchesSearch && matchesDistrict;
   });
 
-  const handlePlaceOrder = (crop) => {
-    setSelectedCrop(crop);
-    // In a real app we'd trigger an order creation logic here
-    if (crop.matchedBuyers && crop.matchedBuyers.length > 0) {
-      setSelectedBuyer(crop.matchedBuyers[0]);
+  const handlePlaceOrderClick = (crop) => {
+    setActiveModalCrop(crop);
+    setPurchaseQuantity("");
+    setIsCheckoutModalOpen(true);
+  };
+
+  const confirmBuyerOrder = async () => {
+    if (!purchaseQuantity || isNaN(purchaseQuantity) || Number(purchaseQuantity) <= 0) {
+      alert("Please enter a valid quantity");
+      return;
     }
-    setActiveModalCrop(null);
-    setFlowStep(5);
+
+    try {
+      setIsPlacingOrder(true);
+      const orderData = {
+        cropId: activeModalCrop.id,
+        crop: activeModalCrop.cropName,
+        quantityKg: Number(purchaseQuantity),
+        ratePerKg: activeModalCrop.pricePerKg,
+        buyer: {
+          name: user?.name || "Buyer",
+          location: user?.location || "Chennai",
+        },
+        pickupLocation: activeModalCrop.location,
+        deliveryLocation: user?.location || "Chennai",
+        sellerId: activeModalCrop.sellerId,
+      };
+
+      const result = await api.createOrder(orderData);
+      if (result.success) {
+        alert(lang === "ta" ? "ஆர்டர் வெற்றிகரமாக செய்யப்பட்டது!" : "Order placed successfully! The farmer has been notified.");
+        setIsCheckoutModalOpen(false);
+        setActiveModalCrop(null);
+        // Refresh orders
+        if (user && user.name) {
+          const orderRes = await axios.get(`http://localhost:8000/api/order/buyer/${user.name}`);
+          if (orderRes.data.success) {
+            setMyOrders(orderRes.data.data);
+          }
+        }
+        setActiveTab("purchases");
+      } else {
+        alert("Failed to place order.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Error placing order.");
+    } finally {
+      setIsPlacingOrder(false);
+    }
   };
 
   return (
@@ -98,8 +155,37 @@ export const BuyerMarketplaceView = () => {
             </p>
           </div>
         </div>
+      </div>
 
-        {/* Search & Filter Bar */}
+      {/* Tabs */}
+      <div className="flex items-center space-x-1 sm:space-x-4 border-b border-slate-200 px-1">
+        <button
+          onClick={() => setActiveTab("marketplace")}
+          className={`flex items-center space-x-2 py-3 px-2 sm:px-4 text-sm font-bold border-b-2 transition-colors ${
+            activeTab === "marketplace"
+              ? "border-emerald-600 text-emerald-700"
+              : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+          }`}
+        >
+          <ShoppingCart className="w-4 h-4" />
+          <span>{lang === "ta" ? "சந்தை" : "Marketplace"}</span>
+        </button>
+        <button
+          onClick={() => setActiveTab("purchases")}
+          className={`flex items-center space-x-2 py-3 px-2 sm:px-4 text-sm font-bold border-b-2 transition-colors ${
+            activeTab === "purchases"
+              ? "border-emerald-600 text-emerald-700"
+              : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+          }`}
+        >
+          <Package className="w-4 h-4" />
+          <span>{lang === "ta" ? "என் வாங்குதல்கள்" : "My Purchases"}</span>
+        </button>
+      </div>
+
+      {activeTab === "marketplace" ? (
+        <>
+          {/* Search & Filter Bar */}
         <div className="mt-4 sm:mt-5 grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
           <div className="sm:col-span-2 relative">
             <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 absolute left-3 top-2.5" />
@@ -201,9 +287,57 @@ export const BuyerMarketplaceView = () => {
           </div>
         ))}
       </div>
+        </>
+      ) : (
+        <div className="space-y-4">
+          <h2 className="text-xl font-bold text-slate-900 mt-6 mb-4">
+            {lang === "ta" ? "என் வாங்குதல்கள்" : "My Purchases"}
+          </h2>
+          {myOrders.length === 0 ? (
+            <div className="py-12 text-center text-slate-500 bg-white rounded-lg border border-slate-200 shadow-sm">
+              {lang === "ta" ? "எந்த ஆர்டரும் இல்லை" : "You haven't placed any orders yet."}
+            </div>
+          ) : (
+            myOrders.map((order) => (
+              <div key={order.orderId} className="bg-white rounded-lg p-5 border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 shrink-0">
+                    <Truck className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-bold text-slate-900 mb-0.5">
+                      {order.crop} • {order.quantityKg} KG
+                    </h4>
+                    <p className="text-sm text-slate-500 font-medium">
+                      {order.pickupLocation} → {order.deliveryLocation}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
+                  <div className="bg-slate-50 border border-slate-100 rounded-md px-4 py-2 text-center w-full sm:w-auto">
+                    <span className="block text-[10px] text-slate-400 font-semibold uppercase">Total Value</span>
+                    <span className="block font-bold text-slate-900">₹{order.totalValue?.toLocaleString()}</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setActiveOrderId(order.orderId);
+                      setCurrentView("tracking");
+                    }}
+                    className="px-5 py-2.5 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm flex items-center justify-center space-x-2 w-full sm:w-auto shrink-0 transition-colors"
+                  >
+                    <span>{t.trackDeliveryBtn || "Track Delivery"}</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
 
       {/* Lot Details Modal */}
-      {activeModalCrop && (
+      {activeModalCrop && !isCheckoutModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
           <div className="bg-white rounded-xl max-w-md w-full p-4 sm:p-6 space-y-4 sm:space-y-5 border border-slate-200 shadow-xl relative max-h-[90vh] overflow-y-auto">
             <button
@@ -280,12 +414,83 @@ export const BuyerMarketplaceView = () => {
             </div>
 
             <button
-              onClick={() => handlePlaceOrder(activeModalCrop)}
+              onClick={() => handlePlaceOrderClick(activeModalCrop)}
               className="w-full py-2.5 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm flex items-center justify-center space-x-2 transition-colors shadow-sm"
             >
-              <span>{t.placeOrderBtn}</span>
+              <span>{t.placeOrderBtn || "Buy Now"}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Checkout Modal */}
+      {isCheckoutModalOpen && activeModalCrop && (
+        <div className="fixed inset-0 z-[60] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 space-y-6 border border-slate-200 shadow-xl relative">
+            <button
+              onClick={() => setIsCheckoutModalOpen(false)}
+              className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-full transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">Confirm Purchase</h2>
+              <p className="text-sm text-slate-500 mt-1">Specify quantity and delivery location</p>
+            </div>
+
+            <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 flex items-center space-x-3">
+              <span className="text-3xl leading-none">{activeModalCrop.icon}</span>
+              <div>
+                <p className="font-bold text-slate-900">{activeModalCrop.cropName}</p>
+                <p className="text-xs text-slate-500">{activeModalCrop.location} • ₹{activeModalCrop.pricePerKg}/kg</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">
+                  Required Quantity (KG)
+                </label>
+                <input
+                  type="number"
+                  value={purchaseQuantity}
+                  onChange={(e) => setPurchaseQuantity(e.target.value)}
+                  placeholder={`Max available: ${activeModalCrop.quantityAvailable}`}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">
+                  Delivery Location
+                </label>
+                <input
+                  type="text"
+                  value={user?.location || "Chennai"}
+                  disabled
+                  className="w-full px-3 py-2 border border-slate-200 bg-slate-50 text-slate-500 rounded-md"
+                />
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <button
+                onClick={confirmBuyerOrder}
+                disabled={isPlacingOrder}
+                className="w-full py-3 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center space-x-2 transition-colors shadow-sm disabled:opacity-70"
+              >
+                {isPlacingOrder ? (
+                  <span>Processing...</span>
+                ) : (
+                  <>
+                    <span>Confirm Order</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}

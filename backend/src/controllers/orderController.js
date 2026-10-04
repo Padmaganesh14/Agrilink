@@ -131,3 +131,27 @@ export async function getOrdersBySeller(req, res, next) {
     next(err);
   }
 }
+
+export async function getOrdersByBuyer(req, res, next) {
+  try {
+    const { buyerName } = req.params;
+
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('buyerName', buyerName)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error("[Get Buyer Orders Error]", error);
+      return res.status(500).json({ success: false, message: 'Failed to fetch buyer orders' });
+    }
+
+    res.json({
+      success: true,
+      data: data || []
+    });
+  } catch (err) {
+    next(err);
+  }
+}
