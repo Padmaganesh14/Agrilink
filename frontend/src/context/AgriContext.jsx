@@ -8,13 +8,16 @@ import confetti from "canvas-confetti";
 const AgriContext = createContext();
 
 export const AgriProvider = ({ children }) => {
-  const [lang, setLang] = useState(() => {
+  const [displayLang, setDisplayLang] = useState(() => {
     return localStorage.getItem("agri_lang") || "en";
   });
 
   useEffect(() => {
-    localStorage.setItem("agri_lang", lang);
-  }, [lang]);
+    localStorage.setItem("agri_lang", displayLang);
+  }, [displayLang]);
+
+  // Force React DOM to always render English so Google Translate can translate it dynamically.
+  const lang = "en";
 
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem("agri_user");
@@ -292,9 +295,10 @@ export const AgriProvider = ({ children }) => {
   return (
     <AgriContext.Provider
       value={{
-        lang,
-        t,
-        setLang,
+        lang, // always "en"
+        displayLang,
+        t: translations["en"], // ALWAYS use English base for GT
+        setLang: setDisplayLang,
         toggleLang,
         user,
         setUser,

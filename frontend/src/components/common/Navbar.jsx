@@ -11,7 +11,7 @@ import {
 
 export const Navbar = () => {
   const {
-    lang,
+    displayLang,
     setLang,
     userRole,
     user,
@@ -34,13 +34,13 @@ export const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // On load: if hi/te is stored, ensure googtrans cookie is set so GT auto-activates
+  // On load: if ta/hi/te is stored, ensure googtrans cookie is set so GT auto-activates
   useEffect(() => {
-    if (lang === "hi" || lang === "te") {
+    if (displayLang === "ta" || displayLang === "hi" || displayLang === "te") {
       const cookie = document.cookie;
-      if (!cookie.includes(`googtrans=/en/${lang}`)) {
-        document.cookie = `googtrans=/en/${lang}; path=/`;
-        document.cookie = `googtrans=/en/${lang}; path=/; domain=${location.hostname}`;
+      if (!cookie.includes(`googtrans=/en/${displayLang}`)) {
+        document.cookie = `googtrans=/en/${displayLang}; path=/`;
+        document.cookie = `googtrans=/en/${displayLang}; path=/; domain=${location.hostname}`;
         window.location.reload();
       }
     }
@@ -55,7 +55,7 @@ export const Navbar = () => {
 
   const handleLanguageSelect = (langCode) => {
     setIsLangOpen(false);
-    if (langCode === "hi" || langCode === "te") {
+    if (langCode === "ta" || langCode === "hi" || langCode === "te") {
       // Save to localStorage first, then set cookie and reload
       localStorage.setItem("agri_lang", langCode);
       document.cookie = `googtrans=/en/${langCode}; path=/`;
@@ -68,7 +68,7 @@ export const Navbar = () => {
       const prevLang = localStorage.getItem("agri_lang");
       setLang(langCode);
       // Reload only if switching away from a GT language
-      if (prevLang === "hi" || prevLang === "te") {
+      if (prevLang === "ta" || prevLang === "hi" || prevLang === "te") {
         localStorage.setItem("agri_lang", langCode);
         window.location.reload();
       }
@@ -179,7 +179,8 @@ export const Navbar = () => {
             >
               <Globe className="w-4 h-4 text-emerald-600" />
               <span className="text-sm font-semibold uppercase">
-                {languages.find((l) => l.code === lang)?.name || lang}
+                {languages.find((l) => l.code === displayLang)?.name ||
+                  displayLang}
               </span>
             </button>
 
