@@ -114,3 +114,8 @@ INSERT INTO public.transporters (name, vehicle, "capacityKg", "baseRateKm", rati
 -- Note: Policies to allow all if RLS is enabled later
 -- CREATE POLICY "allow all" ON public.orders FOR ALL USING (true);
 -- CREATE POLICY "allow all" ON public.trackings FOR ALL USING (true);
+
+-- Grant permissions for anon role (required if project enforces public schema restrictions)
+GRANT USAGE ON SCHEMA public TO anon;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon;
