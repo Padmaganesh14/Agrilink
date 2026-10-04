@@ -11,6 +11,7 @@ import {
 
 export const Navbar = () => {
   const {
+    lang,
     displayLang,
     setLang,
     userRole,
