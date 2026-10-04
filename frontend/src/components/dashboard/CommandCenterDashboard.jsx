@@ -12,8 +12,15 @@ import {
 } from "lucide-react";
 
 export const CommandCenterDashboard = () => {
-  const { t, lang, user, startSellMyCrop, jumpToFlowStep, selectedTransport, flowStep } =
-    useAgri();
+  const {
+    t,
+    lang,
+    user,
+    startSellMyCrop,
+    jumpToFlowStep,
+    selectedTransport,
+    flowStep,
+  } = useAgri();
 
   const [myCrops, setMyCrops] = useState([]);
   const [stats, setStats] = useState({

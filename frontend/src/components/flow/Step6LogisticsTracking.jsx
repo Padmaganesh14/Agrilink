@@ -56,6 +56,8 @@ export const Step6LogisticsTracking = () => {
     name: orderData?.transportName || selectedTransport?.name || "Transport",
     vehicle:
       orderData?.transportVehicle || selectedTransport?.vehicle || "Vehicle",
+    estimatedCost:
+      orderData?.transportCost || selectedTransport?.estimatedCost || 0,
   };
   const buyer = {
     name: orderData?.buyerName || selectedBuyer?.name || "Buyer",
