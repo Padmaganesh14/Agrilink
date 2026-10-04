@@ -13,7 +13,13 @@ import confetti from "canvas-confetti";
 const AgriContext = createContext();
 
 export const AgriProvider = ({ children }) => {
-  const [lang, setLang] = useState("en");
+  const [lang, setLang] = useState(() => {
+    return localStorage.getItem("agri_lang") || "en";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("agri_lang", lang);
+  }, [lang]);
 
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem("agri_user");
@@ -131,7 +137,9 @@ export const AgriProvider = ({ children }) => {
     }
   };
 
-  const t = translations[lang] || translations.en;
+  // If hi or te, fall back to English so Google Translate translates from English correctly
+  const baseLangForI18n = lang === "hi" || lang === "te" ? "en" : lang;
+  const t = translations[baseLangForI18n] || translations.en;
 
   const toggleLang = () => {
     setLang((prev) => (prev === "en" ? "ta" : "en"));
@@ -378,6 +386,7 @@ export const AgriProvider = ({ children }) => {
       value={{
         lang,
         t,
+        setLang,
         toggleLang,
         user,
         setUser,

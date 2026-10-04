@@ -407,4 +407,413 @@ export const translations = {
     back: "பின்னால்",
     continue: "தொடரவும்",
   }
+,
+  hi: {
+    // Official Brand
+    brandName: "एग्रीलिंक AI",
+    brandSubtitle: "SMART AGRICULTURAL MARKET INTELLIGENCE",
+    mainTagline: "Find the market. Find the buyer. Move the crop.",
+    supportingTagline: "From crop discovery to buyer, promotion, transport and delivery — one connected journey.",
+    
+    // Landing Nav
+    navHowItWorks: "यह कैसे काम करता है",
+    navMarketIntel: "बाजार की जानकारी",
+    navForFarmers: "किसानों के लिए",
+    navForBuyers: "खरीदारों के लिए",
+    navFarmerLogin: "किसान लॉगिन",
+    navBuyerLogin: "खरीदार लॉगिन",
+
+    // Hero Section
+    heroBadge: "AI-POWERED AGRICULTURAL MARKET INTELLIGENCE",
+    heroHeadingMain: "अपनी फसल बेचें",
+    heroHeadingHighlight: "WITH INTELLIGENCE.",
+    heroDescription: "AgriLink AI helps farmers identify better market opportunities, connect with B2B buyers, promote their crops and coordinate delivery through one connected workflow.",
+    heroPrimaryBtn: " SELL MY CROP →",
+    heroSecondaryBtn: " EXPLORE BUYER MARKET",
+    heroFooterTag: "AI-assisted • Tamil + English • Hackathon MVP",
+
+    // Hero Card
+    heroCardTitle: "AI MARKET OPPORTUNITY",
+    demoDataBadge: "DEMO DATA",
+    bestMarketLabel: "BEST MARKET",
+    localPriceLabel: "Local Mandi Price",
+    grossDiffText: "+₹6/kg gross price difference",
+    highDemandTag: "HIGH DEMAND",
+    buyersReadyTag: "BUYERS READY",
+    distanceTag: "~330 KM",
+
+    // Primary Connected Journey
+    journeyTitle: "ONE CROP. ONE CONNECTED JOURNEY.",
+    journeySub: "From harvest discovery to delivery in one unified flow.",
+    j01Title: "01 CROP",
+    j01Desc: "Add what you're selling.",
+    j02Title: "02 MARKET",
+    j02Desc: "Discover market opportunities.",
+    j03Title: "03 BUYER",
+    j03Desc: "Find relevant B2B buyers.",
+    j04Title: "04 AI + n8n",
+    j04Desc: "Generate and automate crop promotion.",
+    j05Title: "05 ORDER",
+    j05Desc: "Confirm the buyer order.",
+    j06Title: "06 LOGISTICS",
+    j06Desc: "Choose transport and track delivery.",
+
+    // Role Entry Cards
+    forFarmersTitle: "FOR FARMERS",
+    forFarmersDesc: "Turn your crop into a market opportunity.",
+    startSellingBtn: "START SELLING →",
+    forBuyersTitle: "FOR B2B BUYERS",
+    forBuyersDesc: "Source agricultural commodities directly from farms.",
+    exploreCropsBtn: "EXPLORE CROPS →",
+
+    // Market Intelligence Section
+    marketIntelSectionTitle: "AI MARKET INTELLIGENCE",
+    marketIntelSectionSubtitle: "Understand where your crop has the strongest market opportunity.",
+    demoMarketDataBadge: "DEMO MARKET DATA",
+    aiDisclaimerText: "AI Forecast / Estimate — Not a Guaranteed Price",
+
+    // Farmer Login
+    farmerLoginHeader: "FARMER LOGIN",
+    farmerLoginSubtitle: "Start with what you're growing.",
+    mobileNumberLabel: "Mobile Number",
+    sendOtpBtn: "SEND OTP →",
+    continueDemoFarmerBtn: " CONTINUE AS DEMO FARMER",
+    demoFarmerInfo: "Demo: Ramanathan • Trichy, Tamil Nadu",
+
+    // Buyer Login
+    buyerLoginHeader: "BUYER LOGIN",
+    buyerLoginSubtitle: "Source farm-direct agricultural commodities.",
+    businessNumberLabel: "Business / Mobile Number",
+    continueDemoBuyerBtn: " CONTINUE AS DEMO BUYER",
+    demoBuyerInfo: "Demo Buyer: Koyambedu Wholesale Mart • Chennai",
+
+    // Farmer Command Center
+    greeting: "Good Morning, Ramanathan",
+    locationHeader: "Trichy • Tamil Nadu",
+    yourNextSale: "YOUR NEXT SALE",
+    continueSellingBtn: "CONTINUE SELLING →",
+    statBuyers: "BUYERS",
+    statOrders: "ORDERS",
+    statActiveDelivery: "ACTIVE DELIVERY",
+    activeSaleHeader: "ACTIVE SALE",
+    activeSaleRoute: "Tomato • 2,000 KG | Trichy → Chennai",
+    transportConfirmedBadge: "Transport Confirmed",
+    trackDeliveryBtn: "TRACK DELIVERY →",
+
+    // Stepper
+    // Stepper
+    sellMyCropHeader: "SELL MY CROP",
+    step01Pill: "01 CROP",
+    step02Pill: "02 MARKET INTELLIGENCE",
+    step03Pill: "03 BUYER",
+    step04Pill: "04 AI + n8n",
+    step05Pill: "05 ORDER",
+    step06Pill: "06 LOGISTICS",
+
+    // Step 01: Crop
+    step01Title: "आज आप क्या बेच रहे हैं?",
+    step01Subtitle: "Enter any agricultural crop or choose a quick demo preset to analyze wholesale APMC markets and matched B2B buyers.",
+    chooseYourCrop: "अपनी फसल चुनें",
+    searchCropPlaceholder: "Search crops... e.g. Tomato, Banana, Cotton, Sugarcane, Groundnut, Brinjal",
+    popularCropsLabel: "लोकप्रिय फसलें",
+    quickDemoCropsLabel: "QUICK DEMO CROPS",
+    quickDemoCropsSubtitle: "Pre-configured lots for instant judge demonstration",
+    oneClickFillBadge: "1-Click Fill",
+    orLabel: "or",
+    addCustomCropBtn: "+ कस्टम फसल जोड़ें",
+    cropDetailsHeader: "फसल विवरण",
+    editableParamsLabel: "Editable Parameters",
+    cropNameLabel: "फसल का नाम",
+    cropNamePlaceholder: "e.g. Tomato, Banana, Coconut, or any crop",
+    quantityLabel: "मात्रा (किलो)",
+    locationLabel: "खेत का स्थान",
+    locationPlaceholder: "e.g. Trichy",
+    qualityLabel: "ग्रेड / गुणवत्ता",
+    gradeAStandard: "Grade A (Standard)",
+    gradeB: "Grade B",
+    premiumExport: "Premium / Export Quality",
+    organicCertified: "Organic Certified",
+    harvestDateLabel: "संभावित कटाई की तारीख",
+    expectedPriceLabel: "अपेक्षित मूल्य",
+    expectedPriceSub: "(₹ / KG) — Farmer Expectation",
+    expectedPricePlaceholder: "e.g. 28",
+    aiMarketIntelBox: "✦ AI Market Intelligence for Your Crop",
+    n8nDynamicSchema: "n8n • Dynamic Schema",
+    cropAgnosticNotice: "✦ CROP-AGNOSTIC MARKET INTELLIGENCE ENGINE",
+    cropAgnosticDesc: "AgriLink AI processes arbitrary agricultural commodities without hardcoded limits.",
+    findMarketBtn: "बाजार खोजें →",
+
+    // Step 02: Market
+    step02Title: "YOUR BEST MARKET OPPORTUNITY",
+    whyChennaiTitle: "WHY CHENNAI?",
+    whyPoint1: "Higher indicative market price (+₹6/kg gross)",
+    whyPoint2: "High retail & institutional demand",
+    whyPoint3: "Suitable buyer requirement matching 2,000 KG volume",
+    whyPoint4: "Direct transport corridor available (~330 KM)",
+    aiEstimateBadge: "AI ESTIMATE",
+    findBuyersBtn: "FIND BUYERS →",
+
+    // Step 03: Buyer
+    step03Title: "BUYERS READY FOR YOUR CROP",
+    demoBuyerBadge: "DEMO BUYER",
+    selectBuyerBtn: "SELECT BUYER",
+    selectAndPromoteBtn: "SELECT & PROMOTE CROP →",
+    matchFactor1: "Volume compatible",
+    matchFactor2: "Destination compatible",
+    matchFactor3: "Crop requirement",
+
+    // Step 04: AI + n8n
+    step04Title: "AI-POWERED CROP PROMOTION",
+    step04Subtitle: "Turn crop details into buyer-facing promotional content.",
+    promoteMyCropBtn: " PROMOTE MY CROP",
+    demoAutomationBadge: "DEMO AUTOMATION",
+    node01: "01 AI ANALYSIS",
+    node02: "02 CONTENT GENERATION",
+    node03: "03 WEBHOOK",
+    node04: "04 n8n WORKFLOW",
+    node05: "05 BUYER PROMOTION",
+    proceedToOrderBtn: "PROCEED TO ORDER →",
+
+    // Step 05: Order
+    step05Title: "ORDER CONFIRMED",
+    paymentCoordinationTitle: "PAYMENT COORDINATION",
+    currentMvpPaymentNotice: "Current MVP: Payment coordination through WhatsApp.",
+    openWhatsAppPaymentBtn: "OPEN WHATSAPP PAYMENT COORDINATION",
+    confirmArrangeTransportBtn: "CONFIRM & ARRANGE TRANSPORT →",
+    futureEscrowNotice: "Future: Secure digital payment integration",
+
+    // Transport Layer
+    arrangeTransportTitle: "ARRANGE TRANSPORT",
+    demoTransportPartnerBadge: "DEMO TRANSPORT PARTNER",
+    estimatedTransportCostLabel: "Estimated transport cost",
+    selectTransportBtn: "SELECT",
+    transportSelectedBanner: "✓ TRANSPORT SELECTED",
+    confirmStartTrackingBtn: "CONFIRM & START TRACKING →",
+
+    // Step 06: Logistics & Tracking
+    step06Title: "LOGISTICS & DELIVERY",
+    simulatedDemoTrackingBadge: "SIMULATED DEMO TRACKING",
+    inTransitBadge: "IN TRANSIT",
+    advanceStageBtn: "Advance Stage",
+    saleInMotionTitle: "✓ SALE IN MOTION",
+    saleInMotionSub: "AgriLink AI connects the journey from crop to buyer to delivery.",
+
+    // Buyer Dashboard
+    buyerDashboardHeroTitle: "FARM-DIRECT PROCUREMENT",
+    buyerDashboardSubtitle: "Source verified agricultural lots directly from farms.",
+    viewLotBtn: "VIEW LOT",
+    placeOrderBtn: "PLACE ORDER",
+
+    // Demo Mode Navigator
+    demoModeLabel: "DEMO MODE",
+    resetDemoBtn: "RESET DEMO",
+
+    // Common
+    back: "पीछे",
+    continue: "आगे बढ़ें",
+  },
+  te: {
+    // Official Brand
+    brandName: "AGRILINK AI",
+    brandSubtitle: "SMART AGRICULTURAL MARKET INTELLIGENCE",
+    mainTagline: "Find the market. Find the buyer. Move the crop.",
+    supportingTagline: "From crop discovery to buyer, promotion, transport and delivery — one connected journey.",
+    
+    // Landing Nav
+    navHowItWorks: "ఇది ఎలా పని చేస్తుంది",
+    navMarketIntel: "మార్కెట్ ఇంటెలిజెన్స్",
+    navForFarmers: "రైతుల కోసం",
+    navForBuyers: "కొనుగోలుదారుల కోసం",
+    navFarmerLogin: "రైతు లాగిన్",
+    navBuyerLogin: "కొనుగోలుదారు లాగిన్",
+
+    // Hero Section
+    heroBadge: "AI-POWERED AGRICULTURAL MARKET INTELLIGENCE",
+    heroHeadingMain: "మీ పంటను విక్రయించండి",
+    heroHeadingHighlight: "WITH INTELLIGENCE.",
+    heroDescription: "AgriLink AI helps farmers identify better market opportunities, connect with B2B buyers, promote their crops and coordinate delivery through one connected workflow.",
+    heroPrimaryBtn: " SELL MY CROP →",
+    heroSecondaryBtn: " EXPLORE BUYER MARKET",
+    heroFooterTag: "AI-assisted • Tamil + English • Hackathon MVP",
+
+    // Hero Card
+    heroCardTitle: "AI MARKET OPPORTUNITY",
+    demoDataBadge: "DEMO DATA",
+    bestMarketLabel: "BEST MARKET",
+    localPriceLabel: "Local Mandi Price",
+    grossDiffText: "+₹6/kg gross price difference",
+    highDemandTag: "HIGH DEMAND",
+    buyersReadyTag: "BUYERS READY",
+    distanceTag: "~330 KM",
+
+    // Primary Connected Journey
+    journeyTitle: "ONE CROP. ONE CONNECTED JOURNEY.",
+    journeySub: "From harvest discovery to delivery in one unified flow.",
+    j01Title: "01 CROP",
+    j01Desc: "Add what you're selling.",
+    j02Title: "02 MARKET",
+    j02Desc: "Discover market opportunities.",
+    j03Title: "03 BUYER",
+    j03Desc: "Find relevant B2B buyers.",
+    j04Title: "04 AI + n8n",
+    j04Desc: "Generate and automate crop promotion.",
+    j05Title: "05 ORDER",
+    j05Desc: "Confirm the buyer order.",
+    j06Title: "06 LOGISTICS",
+    j06Desc: "Choose transport and track delivery.",
+
+    // Role Entry Cards
+    forFarmersTitle: "FOR FARMERS",
+    forFarmersDesc: "Turn your crop into a market opportunity.",
+    startSellingBtn: "START SELLING →",
+    forBuyersTitle: "FOR B2B BUYERS",
+    forBuyersDesc: "Source agricultural commodities directly from farms.",
+    exploreCropsBtn: "EXPLORE CROPS →",
+
+    // Market Intelligence Section
+    marketIntelSectionTitle: "AI MARKET INTELLIGENCE",
+    marketIntelSectionSubtitle: "Understand where your crop has the strongest market opportunity.",
+    demoMarketDataBadge: "DEMO MARKET DATA",
+    aiDisclaimerText: "AI Forecast / Estimate — Not a Guaranteed Price",
+
+    // Farmer Login
+    farmerLoginHeader: "FARMER LOGIN",
+    farmerLoginSubtitle: "Start with what you're growing.",
+    mobileNumberLabel: "Mobile Number",
+    sendOtpBtn: "SEND OTP →",
+    continueDemoFarmerBtn: " CONTINUE AS DEMO FARMER",
+    demoFarmerInfo: "Demo: Ramanathan • Trichy, Tamil Nadu",
+
+    // Buyer Login
+    buyerLoginHeader: "BUYER LOGIN",
+    buyerLoginSubtitle: "Source farm-direct agricultural commodities.",
+    businessNumberLabel: "Business / Mobile Number",
+    continueDemoBuyerBtn: " CONTINUE AS DEMO BUYER",
+    demoBuyerInfo: "Demo Buyer: Koyambedu Wholesale Mart • Chennai",
+
+    // Farmer Command Center
+    greeting: "Good Morning, Ramanathan",
+    locationHeader: "Trichy • Tamil Nadu",
+    yourNextSale: "YOUR NEXT SALE",
+    continueSellingBtn: "CONTINUE SELLING →",
+    statBuyers: "BUYERS",
+    statOrders: "ORDERS",
+    statActiveDelivery: "ACTIVE DELIVERY",
+    activeSaleHeader: "ACTIVE SALE",
+    activeSaleRoute: "Tomato • 2,000 KG | Trichy → Chennai",
+    transportConfirmedBadge: "Transport Confirmed",
+    trackDeliveryBtn: "TRACK DELIVERY →",
+
+    // Stepper
+    // Stepper
+    sellMyCropHeader: "SELL MY CROP",
+    step01Pill: "01 CROP",
+    step02Pill: "02 MARKET INTELLIGENCE",
+    step03Pill: "03 BUYER",
+    step04Pill: "04 AI + n8n",
+    step05Pill: "05 ORDER",
+    step06Pill: "06 LOGISTICS",
+
+    // Step 01: Crop
+    step01Title: "ఈ రోజు మీరు ఏమి అమ్ముతున్నారు?",
+    step01Subtitle: "Enter any agricultural crop or choose a quick demo preset to analyze wholesale APMC markets and matched B2B buyers.",
+    chooseYourCrop: "మీ పంటను ఎంచుకోండి",
+    searchCropPlaceholder: "Search crops... e.g. Tomato, Banana, Cotton, Sugarcane, Groundnut, Brinjal",
+    popularCropsLabel: "ప్రసిద్ధ పంటలు",
+    quickDemoCropsLabel: "QUICK DEMO CROPS",
+    quickDemoCropsSubtitle: "Pre-configured lots for instant judge demonstration",
+    oneClickFillBadge: "1-Click Fill",
+    orLabel: "or",
+    addCustomCropBtn: "+ అనుకూల పంటను జోడించండి",
+    cropDetailsHeader: "పంట వివరాలు",
+    editableParamsLabel: "Editable Parameters",
+    cropNameLabel: "పంట పేరు",
+    cropNamePlaceholder: "e.g. Tomato, Banana, Coconut, or any crop",
+    quantityLabel: "పరిమాణం (KG)",
+    locationLabel: "పొలం స్థానం",
+    locationPlaceholder: "e.g. Trichy",
+    qualityLabel: "గ్రేడ్ / నాణ్యత",
+    gradeAStandard: "Grade A (Standard)",
+    gradeB: "Grade B",
+    premiumExport: "Premium / Export Quality",
+    organicCertified: "Organic Certified",
+    harvestDateLabel: "ఆశించిన పంట తేదీ",
+    expectedPriceLabel: "ఆశించిన ధర",
+    expectedPriceSub: "(₹ / KG) — Farmer Expectation",
+    expectedPricePlaceholder: "e.g. 28",
+    aiMarketIntelBox: "✦ AI Market Intelligence for Your Crop",
+    n8nDynamicSchema: "n8n • Dynamic Schema",
+    cropAgnosticNotice: "✦ CROP-AGNOSTIC MARKET INTELLIGENCE ENGINE",
+    cropAgnosticDesc: "AgriLink AI processes arbitrary agricultural commodities without hardcoded limits.",
+    findMarketBtn: "మార్కెట్‌ను కనుగొనండి →",
+
+    // Step 02: Market
+    step02Title: "YOUR BEST MARKET OPPORTUNITY",
+    whyChennaiTitle: "WHY CHENNAI?",
+    whyPoint1: "Higher indicative market price (+₹6/kg gross)",
+    whyPoint2: "High retail & institutional demand",
+    whyPoint3: "Suitable buyer requirement matching 2,000 KG volume",
+    whyPoint4: "Direct transport corridor available (~330 KM)",
+    aiEstimateBadge: "AI ESTIMATE",
+    findBuyersBtn: "FIND BUYERS →",
+
+    // Step 03: Buyer
+    step03Title: "BUYERS READY FOR YOUR CROP",
+    demoBuyerBadge: "DEMO BUYER",
+    selectBuyerBtn: "SELECT BUYER",
+    selectAndPromoteBtn: "SELECT & PROMOTE CROP →",
+    matchFactor1: "Volume compatible",
+    matchFactor2: "Destination compatible",
+    matchFactor3: "Crop requirement",
+
+    // Step 04: AI + n8n
+    step04Title: "AI-POWERED CROP PROMOTION",
+    step04Subtitle: "Turn crop details into buyer-facing promotional content.",
+    promoteMyCropBtn: " PROMOTE MY CROP",
+    demoAutomationBadge: "DEMO AUTOMATION",
+    node01: "01 AI ANALYSIS",
+    node02: "02 CONTENT GENERATION",
+    node03: "03 WEBHOOK",
+    node04: "04 n8n WORKFLOW",
+    node05: "05 BUYER PROMOTION",
+    proceedToOrderBtn: "PROCEED TO ORDER →",
+
+    // Step 05: Order
+    step05Title: "ORDER CONFIRMED",
+    paymentCoordinationTitle: "PAYMENT COORDINATION",
+    currentMvpPaymentNotice: "Current MVP: Payment coordination through WhatsApp.",
+    openWhatsAppPaymentBtn: "OPEN WHATSAPP PAYMENT COORDINATION",
+    confirmArrangeTransportBtn: "CONFIRM & ARRANGE TRANSPORT →",
+    futureEscrowNotice: "Future: Secure digital payment integration",
+
+    // Transport Layer
+    arrangeTransportTitle: "ARRANGE TRANSPORT",
+    demoTransportPartnerBadge: "DEMO TRANSPORT PARTNER",
+    estimatedTransportCostLabel: "Estimated transport cost",
+    selectTransportBtn: "SELECT",
+    transportSelectedBanner: "✓ TRANSPORT SELECTED",
+    confirmStartTrackingBtn: "CONFIRM & START TRACKING →",
+
+    // Step 06: Logistics & Tracking
+    step06Title: "LOGISTICS & DELIVERY",
+    simulatedDemoTrackingBadge: "SIMULATED DEMO TRACKING",
+    inTransitBadge: "IN TRANSIT",
+    advanceStageBtn: "Advance Stage",
+    saleInMotionTitle: "✓ SALE IN MOTION",
+    saleInMotionSub: "AgriLink AI connects the journey from crop to buyer to delivery.",
+
+    // Buyer Dashboard
+    buyerDashboardHeroTitle: "FARM-DIRECT PROCUREMENT",
+    buyerDashboardSubtitle: "Source verified agricultural lots directly from farms.",
+    viewLotBtn: "VIEW LOT",
+    placeOrderBtn: "PLACE ORDER",
+
+    // Demo Mode Navigator
+    demoModeLabel: "DEMO MODE",
+    resetDemoBtn: "RESET DEMO",
+
+    // Common
+    back: "వెనుకకు",
+    continue: "కొనసాగించు",
+  },
 };

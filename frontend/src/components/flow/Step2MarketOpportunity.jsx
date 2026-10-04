@@ -118,29 +118,12 @@ export const Step2MarketOpportunity = () => {
             </div>
           </div>
 
-          {/* Engine Status Toggle (n8n Webhook vs Government Dataset) */}
+          {/* Engine Status Toggle (n8n Webhook vs Government Dataset) - REMOVED */}
           <div className="flex flex-col items-end space-y-1">
-            <button
-              onClick={handleToggleEngine}
-              disabled={isMarketIntelLoading}
-              className={`inline-flex items-center space-x-1.5 px-5 py-3.5 rounded-lg text-lg font-black  border transition-all ${
-                n8nWebhookMode === 'n8n_live'
-                  ? 'bg-blue-50 text-blue-700 border-blue-300 hover:bg-blue-100'
-                  : 'bg-emerald-50 text-agri-700 border-emerald-300 hover:bg-emerald-100'
-              }`}
-              title="Click to toggle between Docker n8n Webhook and Local Government Dataset engine"
-            >
-              {isMarketIntelLoading ? (
-                <RefreshCw className="w-3 h-3 animate-spin text-agri-600" />
-              ) : n8nWebhookMode === 'n8n_live' ? (
-                <Zap className="w-3 h-3 text-blue-600" />
-              ) : (
-                <Server className="w-3 h-3 text-agri-600" />
-              )}
-              <span>
-                {n8nWebhookMode === 'n8n_live' ? 'Docker n8n Pipeline' : 'DMI Agmarknet Dataset'}
-              </span>
-            </button>
+            <span className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-full text-sm font-bold bg-emerald-50 text-agri-700 border border-emerald-200">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>{lang === 'ta' ? 'நிகழ்நேர சந்தை தரவு' : 'Live Market Engine'}</span>
+            </span>
             <span className="text-[9px] font-bold text-slate-400">
               {lang === 'ta' ? '1 குவிண்டால் = 100 கிலோ' : '1 Quintal = 100 KG'}
             </span>

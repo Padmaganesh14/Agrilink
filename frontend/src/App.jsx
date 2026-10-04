@@ -83,11 +83,7 @@ export function AppContent() {
         )}
       </main>
 
-      {/* Floating Google Translate Widget */}
-      <div className="fixed bottom-4 right-4 z-[9999] bg-white p-2 rounded-lg shadow-lg border border-slate-200">
-        <div className="text-[10px] font-bold text-slate-500 mb-1 uppercase text-center tracking-wider">Language</div>
-        <div id="google_translate_element" className="scale-90 origin-center"></div>
-      </div>
+
     </div>
   );
 }

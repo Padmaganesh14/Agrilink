@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useAgri } from "../../context/AgriContext";
 import {
   Sprout,
@@ -12,15 +12,68 @@ import {
 export const Navbar = () => {
   const {
     lang,
-    toggleLang,
+    setLang,
     userRole,
     user,
     logout,
     currentView,
     setCurrentView,
     startSellMyCrop,
-    jumpToFlowStep,
   } = useAgri();
+
+  const [isLangOpen, setIsLangOpen] = useState(false);
+  const langRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (langRef.current && !langRef.current.contains(e.target)) {
+        setIsLangOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // On load: if hi/te is stored, ensure googtrans cookie is set so GT auto-activates
+  useEffect(() => {
+    if (lang === "hi" || lang === "te") {
+      const cookie = document.cookie;
+      if (!cookie.includes(`googtrans=/en/${lang}`)) {
+        document.cookie = `googtrans=/en/${lang}; path=/`;
+        document.cookie = `googtrans=/en/${lang}; path=/; domain=${location.hostname}`;
+        window.location.reload();
+      }
+    }
+  }, []);
+
+  const languages = [
+    { code: "en", name: "English" },
+    { code: "ta", name: "தமிழ்" },
+    { code: "hi", name: "हिंदी" },
+    { code: "te", name: "తెలుగు" },
+  ];
+
+  const handleLanguageSelect = (langCode) => {
+    setIsLangOpen(false);
+    if (langCode === "hi" || langCode === "te") {
+      // Save to localStorage first, then set cookie and reload
+      localStorage.setItem("agri_lang", langCode);
+      document.cookie = `googtrans=/en/${langCode}; path=/`;
+      document.cookie = `googtrans=/en/${langCode}; path=/; domain=${location.hostname}`;
+      window.location.reload();
+    } else {
+      // Clear googtrans cookie
+      document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+      document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${location.hostname}`;
+      const prevLang = localStorage.getItem("agri_lang");
+      setLang(langCode);
+      // Reload only if switching away from a GT language
+      if (prevLang === "hi" || prevLang === "te") {
+        localStorage.setItem("agri_lang", langCode);
+        window.location.reload();
+      }
+    }
+  };
 
   // Hide the navbar on the new standalone LandingPage (it has its own header)
   if (currentView === "landing") return null;
@@ -117,6 +170,47 @@ export const Navbar = () => {
 
         {/* Right Actions */}
         <div className="flex items-center space-x-3">
+          {/* Native Language Dropdown */}
+          <div className="relative" ref={langRef}>
+            <button
+              onClick={() => setIsLangOpen(!isLangOpen)}
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-md border border-slate-200 transition-colors shadow-sm"
+              title="Select Language"
+            >
+              <Globe className="w-4 h-4 text-emerald-600" />
+              <span className="text-sm font-semibold uppercase">
+                {languages.find((l) => l.code === lang)?.name || lang}
+              </span>
+            </button>
+
+            {isLangOpen && (
+              <div
+                className="notranslate absolute right-0 mt-2 w-36 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50"
+                translate="no"
+              >
+                <div className="py-1">
+                  {languages.map((l) => (
+                    <button
+                      key={l.code}
+                      onClick={() => handleLanguageSelect(l.code)}
+                      className="w-full text-left px-4 py-2.5 text-sm font-medium hover:bg-emerald-50 hover:text-emerald-700 transition-colors flex items-center justify-between"
+                    >
+                      <span className="notranslate" translate="no">
+                        {l.name}
+                      </span>
+                      <span
+                        className="notranslate text-[10px] text-slate-400 uppercase font-bold"
+                        translate="no"
+                      >
+                        {l.code}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
           {user && userRole && (
             <div className="flex items-center space-x-3 pl-3 border-l border-slate-200">
               <div className="hidden sm:block text-right">

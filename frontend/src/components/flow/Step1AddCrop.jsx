@@ -382,7 +382,7 @@ export const Step1AddCrop = () => {
                     onClick={() => handleApplyCrop(chip.name)}
                     className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
                       isActive
-                        ? "bg-agri-600 text-white shadow-md shadow-agri-500/30 scale-105"
+                        ? "bg-gray-900 text-white shadow-md shadow-agri-500/30 scale-105"
                         : "bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm"
                     }`}
                   >
