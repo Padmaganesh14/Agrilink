@@ -4,13 +4,20 @@ import { useAgri } from "../../context/AgriContext";
 import { Sprout, LogIn, UserPlus } from "lucide-react";
 
 export const LandingPage = () => {
-  const {
-    setCurrentView,
-    setUserRole,
-    setUser,
-    t,
-    lang,
-  } = useAgri();
+  const { setCurrentView, setUserRole, setUser, t, lang, user, userRole } =
+    useAgri();
+
+  // Auto-redirect if already logged in
+  React.useEffect(() => {
+    if (user) {
+      const activeRole = user.role || userRole;
+      if (activeRole === "farmer") {
+        setCurrentView("command-center");
+      } else {
+        setCurrentView("buyer-marketplace");
+      }
+    }
+  }, [user, userRole, setCurrentView]);
 
   const [isLogin, setIsLogin] = useState(true);
   const [role, setRole] = useState("farmer"); // 'farmer' or 'buyer'
@@ -35,13 +42,14 @@ export const LandingPage = () => {
         ...formData,
         role,
       });
+      const loggedInRole = res.data.user.role;
 
       setUser(res.data.user);
-      setUserRole(res.data.role);
+      setUserRole(loggedInRole);
 
       setTimeout(() => {
         setLoading(false);
-        if (res.data.role === "farmer") {
+        if (loggedInRole === "farmer") {
           setCurrentView("command-center");
         } else {
           setCurrentView("buyer-marketplace");
@@ -129,7 +137,7 @@ export const LandingPage = () => {
                       : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
                   }`}
                 >
-                   {lang === "ta" ? "விவசாயி" : "Farmer"}
+                  {lang === "ta" ? "விவசாயி" : "Farmer"}
                 </button>
                 <button
                   type="button"
@@ -140,7 +148,7 @@ export const LandingPage = () => {
                       : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
                   }`}
                 >
-                   {lang === "ta" ? "வியாபாரி" : "Buyer"}
+                  {lang === "ta" ? "வியாபாரி" : "Buyer"}
                 </button>
               </div>
 
