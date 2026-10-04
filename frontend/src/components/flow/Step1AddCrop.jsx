@@ -48,6 +48,7 @@ export const Step1AddCrop = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const searchContainerRef = useRef(null);
 
   const [locQuery, setLocQuery] = useState("");
@@ -233,7 +234,8 @@ export const Step1AddCrop = () => {
 
     if (user && user.id) {
       try {
-        await axios.post("http://localhost:8000/api/crops", {
+        setIsSubmitting(true);
+        const res = await axios.post("http://localhost:8000/api/crops", {
           cropName: cropName,
           tamilName: cropTamilMap[cropName] || cropName,
           grade: cropQuality,
@@ -241,6 +243,13 @@ export const Step1AddCrop = () => {
           quantityAvailable: customQty,
           pricePerKg: expectedPrice ? Number(expectedPrice) : null,
           sellerId: user.id,
+        });
+
+        const createdCropId = res.data?.data?.id;
+
+        setSelectedCrop({
+          ...selectedCrop,
+          id: createdCropId,
         });
 
         refreshMarketIntelligence({
@@ -254,6 +263,8 @@ export const Step1AddCrop = () => {
       } catch (err) {
         console.error("Failed to list crop", err);
         alert("Failed to save crop to database. Check backend logs.");
+      } finally {
+        setIsSubmitting(false);
       }
     } else {
       alert("User not logged in!");
@@ -595,9 +606,10 @@ export const Step1AddCrop = () => {
           <button
             type="button"
             onClick={handleContinue}
-            className="w-full py-4 px-6 rounded-lg bg-[#166534] hover:bg-[#14532d] text-white border-2 border-[#14532d] text-white font-black text-base shadow-lg shadow-md flex items-center justify-center space-x-2 transition-all hover:scale-[1.01] active:scale-95"
+            disabled={isSubmitting}
+            className={`w-full py-4 px-6 rounded-lg ${isSubmitting ? "bg-slate-400 cursor-not-allowed border-slate-400" : "bg-[#166534] hover:bg-[#14532d] border-[#14532d] hover:scale-[1.01] active:scale-95"} text-white border-2 text-white font-black text-base shadow-lg shadow-md flex items-center justify-center space-x-2 transition-all`}
           >
-            <span>{t.findMarketBtn}</span>
+            <span>{isSubmitting ? "Processing..." : t.findMarketBtn}</span>
             <ArrowRight className="w-5 h-5" />
           </button>
         </div>

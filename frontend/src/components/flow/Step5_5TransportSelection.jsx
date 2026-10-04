@@ -1,10 +1,7 @@
 import React from "react";
 import { useAgri } from "../../context/AgriContext";
-import {
-  transportPartners,
-  getCropDisplayName,
-  getLocationDisplayName,
-} from "../../data/mockData";
+import { getCropDisplayName, getLocationDisplayName } from "../../data/mockData";
+import { api } from "../../services/api";
 import {
   Truck,
   ArrowRight,
@@ -24,14 +21,69 @@ export const Step5_5TransportSelection = () => {
     selectedBuyer,
     selectedTransport,
     chooseTransport,
+    activeOrderId,
   } = useAgri();
+
+  const [transportPartners, setTransportPartners] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [isStartingTracking, setIsStartingTracking] = React.useState(false);
+
+  React.useEffect(() => {
+    const fetchPartners = async () => {
+      try {
+        const result = await api.matchTransport({
+          origin: customLocation,
+          destination: selectedBuyer?.location,
+          quantityKg: customQty
+        });
+        if (result.success && result.partners) {
+          setTransportPartners(result.partners);
+        }
+      } catch (err) {
+        console.error("Failed to fetch transport partners", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPartners();
+  }, [customLocation, selectedBuyer, customQty]);
 
   const handleSelectPartner = (partner) => {
     chooseTransport(partner);
   };
 
-  const handleConfirmAndTrack = () => {
-    setFlowStep(6);
+  const handleConfirmAndTrack = async () => {
+    if (!activeOrderId) {
+      alert(lang === "ta" ? "ஆர்டர் ஐடி கிடைக்கவில்லை" : "Order ID not found.");
+      return;
+    }
+
+    try {
+      setIsStartingTracking(true);
+      const trackingData = {
+        orderId: activeOrderId,
+        origin: customLocation,
+        destination: selectedBuyer?.location,
+        distanceKm: selectedTransport?.distanceKm || 0,
+        etaHours: selectedTransport?.transitHours ? parseFloat(selectedTransport.transitHours) : 0,
+      };
+
+      const result = await api.startTracking(trackingData);
+      if (result.success) {
+        setFlowStep(6);
+      } else {
+        alert(
+          lang === "ta"
+            ? "கண்காணிப்பு தொடங்க முடியவில்லை"
+            : "Failed to start tracking.",
+        );
+      }
+    } catch (err) {
+      alert(lang === "ta" ? "பிழை ஏற்பட்டது" : "Error starting tracking.");
+      console.error(err);
+    } finally {
+      setIsStartingTracking(false);
+    }
   };
 
   const cropDisplay = getCropDisplayName(selectedCrop.name, lang);
@@ -67,7 +119,11 @@ export const Step5_5TransportSelection = () => {
 
       {/* 3 Transport Cards */}
       <div className="space-y-4">
-        {transportPartners.map((partner) => {
+        {loading ? (
+          <div className="text-center py-8 text-slate-500">Loading transport partners...</div>
+        ) : transportPartners.length === 0 ? (
+          <div className="text-center py-8 text-slate-500">No transport partners found.</div>
+        ) : transportPartners.map((partner) => {
           const isSelected = selectedTransport?.id === partner.id;
 
           return (
@@ -217,9 +273,16 @@ export const Step5_5TransportSelection = () => {
           <button
             type="button"
             onClick={handleConfirmAndTrack}
-            className="w-full py-4 px-6 rounded-lg bg-[#166534] hover:bg-[#14532d] text-white border-2 border-[#14532d] text-white font-black text-base shadow-lg shadow-md flex items-center justify-center space-x-2 transition-all hover:scale-[1.01]"
+            disabled={isStartingTracking}
+            className="w-full py-4 px-6 rounded-lg bg-[#166534] hover:bg-[#14532d] text-white border-2 border-[#14532d] font-black text-base shadow-lg shadow-md flex items-center justify-center space-x-2 transition-all hover:scale-[1.01] disabled:opacity-70 disabled:hover:scale-100"
           >
-            <span>{t.confirmStartTrackingBtn}</span>
+            <span>
+              {isStartingTracking
+                ? lang === "ta"
+                  ? "தொடங்கப்படுகிறது..."
+                  : "Starting..."
+                : t.confirmStartTrackingBtn}
+            </span>
             <ArrowRight className="w-5 h-5" />
           </button>
         </div>
@@ -237,9 +300,16 @@ export const Step5_5TransportSelection = () => {
 
         <button
           onClick={handleConfirmAndTrack}
-          className="px-6 py-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-base flex items-center space-x-2 transition-colors"
+          disabled={isStartingTracking}
+          className="px-6 py-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-base flex items-center space-x-2 transition-colors disabled:opacity-70"
         >
-          <span>Continue to Logistics & Track</span>
+          <span>
+            {isStartingTracking
+              ? lang === "ta"
+                ? "தொடங்கப்படுகிறது..."
+                : "Starting..."
+              : "Continue to Logistics & Track"}
+          </span>
           <ArrowRight className="w-4 h-4 text-emerald-400" />
         </button>
       </div>

@@ -16,6 +16,7 @@ export const CommandCenterDashboard = () => {
     useAgri();
 
   const [myCrops, setMyCrops] = useState([]);
+  const [stats, setStats] = useState({ buyers: 0, orders: 0, activeDeliveries: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,6 +28,11 @@ export const CommandCenterDashboard = () => {
           );
           if (res.data.success) {
             setMyCrops(res.data.data);
+          }
+          
+          const statRes = await axios.get(`http://localhost:8000/api/stats/farmer/${user.id}`);
+          if (statRes.data.success) {
+            setStats(statRes.data.stats);
           }
         } catch (error) {
           console.error("Failed to fetch my crops", error);
@@ -137,7 +143,7 @@ export const CommandCenterDashboard = () => {
           </div>
           <div>
             <h3 className="text-2xl font-bold text-slate-900 leading-none mb-1">
-              12
+              {stats.buyers}
             </h3>
             <p className="text-xs font-medium text-slate-500 uppercase">
               {t.statBuyers}
@@ -151,7 +157,7 @@ export const CommandCenterDashboard = () => {
           </div>
           <div>
             <h3 className="text-2xl font-bold text-slate-900 leading-none mb-1">
-              03
+              {stats.orders}
             </h3>
             <p className="text-xs font-medium text-slate-500 uppercase">
               {t.statOrders}
@@ -165,7 +171,7 @@ export const CommandCenterDashboard = () => {
           </div>
           <div>
             <h3 className="text-2xl font-bold text-slate-900 leading-none mb-1">
-              01
+              {stats.activeDeliveries}
             </h3>
             <p className="text-xs font-medium text-slate-500 uppercase">
               {t.statActiveDelivery}

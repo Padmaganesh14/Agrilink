@@ -1,8 +1,13 @@
-import { Tracking } from '../models/Tracking.js';
+import { supabase } from '../config/supabase.js';
 
 export async function startTracking(req, res, next) {
   try {
-    const { orderId = 'AGRI-2026-8842', origin = 'Trichy Farm Gate', destination = 'Chennai Koyambedu' } = req.body;
+    const { orderId, origin, destination, distanceKm, etaHours } = req.body;
+    
+    if (!orderId || !origin || !destination) {
+      return res.status(400).json({ success: false, message: 'Missing required tracking fields (orderId, origin, destination)' });
+    }
+
     const trackingId = `TRK-${Date.now().toString().slice(-6)}`;
 
     const trackingData = {
@@ -10,20 +15,28 @@ export async function startTracking(req, res, next) {
       orderId,
       origin,
       destination,
-      currentCheckpoint: 'Villupuram (NH45)',
+      currentCheckpoint: origin,
       speedKmH: 52,
-      distanceKm: 330,
-      etaHours: 6,
+      distanceKm: distanceKm || 0,
+      etaHours: etaHours || 0,
       status: 'In Transit'
     };
 
-    try {
-      await Tracking.create(trackingData);
-    } catch (e) {}
+    const { data, error } = await supabase
+      .from('trackings')
+      .insert([trackingData])
+      .select()
+      .single();
+
+    if (error) {
+      console.error("[Tracking Creation Error]", error);
+      return res.status(500).json({ success: false, message: 'Database failure: could not create tracking record', error: error.message });
+    }
 
     res.status(201).json({
       success: true,
-      tracking: trackingData
+      message: 'Tracking started',
+      tracking: data
     });
   } catch (err) {
     next(err);
@@ -33,29 +46,26 @@ export async function startTracking(req, res, next) {
 export async function getTracking(req, res, next) {
   try {
     const { id } = req.params;
-    let tracking = null;
 
-    try {
-      tracking = await Tracking.findOne({ trackingId: id });
-    } catch (e) {}
+    // We can query by trackingId or orderId depending on what the frontend passes, but let's query by orderId since the route says /tracking/:id and the id usually passed from frontend will be orderId. Wait, let's query by orderId.
+    const { data, error } = await supabase
+      .from('trackings')
+      .select('*')
+      .eq('orderId', id)
+      .single();
 
-    if (!tracking) {
-      tracking = {
-        trackingId: id,
-        orderId: 'AGRI-2026-8842',
-        origin: 'Trichy Farm Gate',
-        destination: 'Chennai Koyambedu Wholesale Mart',
-        currentCheckpoint: 'Villupuram (NH45)',
-        speedKmH: 52,
-        distanceKm: 330,
-        etaHours: 6,
-        status: 'In Transit'
-      };
+    if (error) {
+      console.error("[Get Tracking Error]", error);
+      return res.status(404).json({ success: false, message: `Tracking for order ${id} not found` });
+    }
+
+    if (!data) {
+      return res.status(404).json({ success: false, message: `Tracking for order ${id} not found` });
     }
 
     res.json({
       success: true,
-      tracking
+      tracking: data
     });
   } catch (err) {
     next(err);

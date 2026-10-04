@@ -1,11 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { translations } from "../data/i18n";
-import {
-  defaultCrops,
-  defaultOrder,
-  transportPartners,
-  findOrBuildCrop,
-} from "../data/mockData";
+
 import { calculateMarketIntelligence } from "../data/governmentMarketData";
 import { fetchMarketIntelligence } from "../services/marketIntelligenceService";
 import confetti from "canvas-confetti";
@@ -87,19 +82,11 @@ export const AgriProvider = ({ children }) => {
   );
   const [transportConfirmed, setTransportConfirmed] = useState(false);
 
-  const [order, setOrder] = useState({
-    ...defaultOrder,
-    transport: transportPartners[0],
-  });
+  const [activeOrderId, setActiveOrderId] = useState(null);
 
   // Auth state
   const [isFarmerAuth, setIsFarmerAuth] = useState(false);
   const [isBuyerAuth, setIsBuyerAuth] = useState(false);
-
-  // n8n workflow execution simulation
-  const [n8nStatus, setN8nStatus] = useState("idle"); // 'idle' | 'running' | 'completed'
-  const [n8nActiveNode, setN8nActiveNode] = useState(0);
-  const [n8nLogs, setN8nLogs] = useState([]);
 
   // Market Intelligence state
   const [marketIntelligence, setMarketIntelligence] = useState(null);
@@ -169,14 +156,14 @@ export const AgriProvider = ({ children }) => {
     const qual = quality || "Grade A";
     const date = harvestDate || "2026-10-05";
 
-    const cropObj = findOrBuildCrop({
-      cropName: name,
+    const cropObj = {
+      name,
       quantityKg: qty,
       location: loc,
       quality: qual,
       harvestDate: date,
       expectedPrice: expectedPrice ? Number(expectedPrice) : null,
-    });
+    };
 
     setSelectedCrop(cropObj);
     setCustomQty(qty);
@@ -191,23 +178,6 @@ export const AgriProvider = ({ children }) => {
         : null;
     setSelectedBuyer(buyer);
 
-    const pricePerKg = cropObj.bestMarket
-      ? cropObj.bestMarket.price
-      : buyer?.targetPrice || Number(expectedPrice) || 35;
-    setOrder((prev) => ({
-      ...prev,
-      crop: cropObj.name,
-      tamilCrop: cropObj.tamilName || cropObj.name,
-      icon: cropObj.icon || "",
-      quantityKg: qty,
-      ratePerKg: pricePerKg,
-      totalValue: Math.round(pricePerKg * qty),
-      pickup: {
-        ...prev.pickup,
-        name: `${loc} Farm Gate`,
-      },
-    }));
-
     refreshMarketIntelligence({
       cropName: name,
       quantityKg: qty,
@@ -219,11 +189,11 @@ export const AgriProvider = ({ children }) => {
     return cropObj;
   };
 
-  const startSellMyCrop = (crop = defaultCrops[0]) => {
+  const startSellMyCrop = (crop = {}) => {
     setArbitraryCrop({
-      name: crop.name,
-      quantity: crop.defaultQty,
-      location: crop.defaultLocation,
+      name: crop.name || "Tomato",
+      quantity: crop.defaultQty || 2000,
+      location: crop.defaultLocation || "Trichy",
       quality: crop.grade || "Grade A",
       harvestDate: crop.harvestDate || "2026-10-05",
       expectedPrice: crop.localPrice || "",
@@ -242,123 +212,10 @@ export const AgriProvider = ({ children }) => {
   const chooseTransport = (partner) => {
     setSelectedTransport(partner);
     setTransportConfirmed(true);
-    setOrder((prev) => ({
-      ...prev,
-      transport: partner,
-    }));
   };
 
   const resetDemo = () => {
     // Deprecated
-  };
-
-  // Trigger n8n interactive simulation with animated sequential node stepping
-  // Supports dynamic arbitrary crops without hardcoded conditionals
-  const triggerN8nWorkflow = () => {
-    if (n8nStatus === "running") return;
-    setN8nStatus("running");
-    setN8nActiveNode(1);
-
-    const cropName = selectedCrop.name;
-    const qtyFormatted = customQty.toLocaleString();
-    const payloadJson = JSON.stringify({
-      crop: cropName,
-      quantityKg: customQty,
-      location: customLocation,
-      quality: cropQuality,
-      harvestDate: harvestDate,
-    });
-
-    setN8nLogs([
-      `10:42:01 ✓ Node ① Webhook & Input Validation: Ingested ${cropName} (${qtyFormatted} KG, ${customLocation} Farm Gate, Expected: ₹${expectedPrice || 28}/kg)`,
-    ]);
-
-    setTimeout(() => {
-      setN8nActiveNode(2);
-      setN8nLogs((prev) => [
-        ...prev,
-        `10:42:02 ✓ Node ② Mandi Dataset Ingestion: data.gov.in / GitHub Agmarknet feed normalized (₹3,500/qntl ➔ ₹35/kg)`,
-      ]);
-    }, 700);
-
-    setTimeout(() => {
-      setN8nActiveNode(3);
-      setN8nLogs((prev) => [
-        ...prev,
-        `10:42:03 ✓ Node ③ Market Opportunity Scored: Chennai (+₹7 gross − ₹2 transport = +₹5 net advantage ➔ +₹10,000 net)`,
-      ]);
-    }, 1400);
-
-    setTimeout(() => {
-      setN8nActiveNode(4);
-      setN8nLogs((prev) => [
-        ...prev,
-        `10:42:04 ✓ Node ④ Buyer & Transport Matching: Koyambedu Wholesale Mart (2,000 KG) & NH45 corridor (~330 KM)`,
-      ]);
-    }, 2100);
-
-    setTimeout(() => {
-      setN8nActiveNode(5);
-      setN8nLogs((prev) => [
-        ...prev,
-        `10:42:05 ✓ Node ⑤ Master Response Ready: Bilingual WhatsApp Broadcast, Payment Escrow & Live Tracking Specs generated`,
-      ]);
-    }, 2800);
-
-    setTimeout(() => {
-      setN8nStatus("completed");
-      setN8nLogs((prev) => [
-        ...prev,
-        `10:42:06 ✦ Master n8n Execution Complete: Single unified payload delivered to AgriLink AI UI.`,
-      ]);
-      try {
-        confetti({
-          particleCount: 50,
-          spread: 60,
-          origin: { y: 0.6 },
-        });
-      } catch (e) {}
-    }, 3900);
-  };
-
-  // Allows presenter to step through the order stages live during the demo
-  const advanceOrderStage = () => {
-    setOrder((prev) => {
-      const currentIdx = prev.stages.findIndex((s) => s.current);
-      if (currentIdx === -1 || currentIdx >= prev.stages.length - 1) {
-        try {
-          confetti({
-            particleCount: 80,
-            spread: 80,
-            origin: { y: 0.5 },
-          });
-        } catch (e) {}
-        return prev;
-      }
-
-      const newStages = prev.stages.map((stage, idx) => {
-        if (idx < currentIdx + 1)
-          return { ...stage, done: true, current: false };
-        if (idx === currentIdx + 1)
-          return { ...stage, done: false, current: true };
-        return { ...stage, done: false, current: false };
-      });
-
-      if (currentIdx + 1 === prev.stages.length - 1) {
-        try {
-          confetti({
-            particleCount: 100,
-            spread: 100,
-            origin: { y: 0.4 },
-          });
-        } catch (e) {}
-      }
-
-      return {
-        ...prev,
-        stages: newStages,
-      };
-    });
   };
 
   return (
@@ -397,17 +254,12 @@ export const AgriProvider = ({ children }) => {
         selectedTransport,
         chooseTransport,
         transportConfirmed,
-        order,
-        setOrder,
+        activeOrderId,
+        setActiveOrderId,
         isFarmerAuth,
         isBuyerAuth,
         startSellMyCrop,
-        n8nStatus,
-        n8nActiveNode,
-        n8nLogs,
-        triggerN8nWorkflow,
-        advanceOrderStage,
-        resetDemo,
+
         marketIntelligence,
         isMarketIntelLoading,
         refreshMarketIntelligence,

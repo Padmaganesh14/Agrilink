@@ -9,6 +9,7 @@ import promotionRoutes from './routes/promotionRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import transportRoutes from './routes/transportRoutes.js';
 import trackingRoutes from './routes/trackingRoutes.js';
+import statsRoutes from './routes/statsRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
@@ -37,6 +38,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/order', orderRoutes);
 app.use('/api/transport', transportRoutes);
 app.use('/api/tracking', trackingRoutes);
+app.use('/api/stats', statsRoutes);
 
 // Fallback 404
 app.use((req, res, next) => {

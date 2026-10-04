@@ -1,4 +1,5 @@
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI } from "@google/genai";
+import { supabase } from "../config/supabase.js";
 
 export async function analyzeMarketOpportunity({
   crop = "Tomato",
@@ -10,10 +11,16 @@ export async function analyzeMarketOpportunity({
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
-    throw new Error("GEMINI_API_KEY is not set. Please configure it to enable the AI Market Intelligence engine.");
+    throw new Error(
+      "GEMINI_API_KEY is not set. Please configure it to enable the AI Market Intelligence engine.",
+    );
   }
 
   const ai = new GoogleGenAI({ apiKey });
+
+  const { data: realBuyers } = await supabase
+    .from("buyer_profiles")
+    .select("*, users!inner(name, mobile)");
 
   const prompt = `
 You are an expert Agricultural Market Intelligence AI for India.
@@ -24,14 +31,18 @@ Your task: return a comprehensive JSON analysis with REAL current market data fo
 Instructions:
 1. mandis: Return 6 to 8 nearby APMC mandis relevant to the farmer's location (${location}) across the state. Include the local mandi as first entry (isLocal: true). Each mandi must have realistic current modal prices for ${crop}.
 2. bestMarket: The single best mandi for maximum net advantage after transport cost.
-3. buyers: Return 5 to 8 realistic B2B buyers at the best market who would buy ${crop} in bulk. Each must have a realistic business name, address, contact type (wholesale/retail/export), quantity they can absorb, and their target price per kg.
+3. buyers: Return a subset of the realistic B2B buyers provided below who are a good match for ${crop}.
+   IMPORTANT: You MUST ONLY select buyers from the list of real buyers provided below. Do not invent buyers.
+   For each selected buyer, populate 'id' with their 'id', 'name' with their 'users.name', 'targetPrice' with their 'targetPricePerKg', and 'requirementQty' with their 'maxVolumeKg'. Generate matchHighlights based on the crop and location.
 4. transport: Estimated logistics from ${location} to the best market.
 5. aiInsight: Clear, factual summary with at least 4 bullet reasons why that market is best.
 
+REAL BUYERS IN THE SYSTEM:
+${JSON.stringify(realBuyers || [], null, 2)}
+
 IMPORTANT:
 - All prices must be REALISTIC current Indian market prices for ${crop} in ₹/KG.
-- Mandi prices must reflect actual seasonal variation for October 2026.
-- Buyers must have realistic Indian business names and locations.
+- Mandi prices must reflect actual seasonal variation.
 - bestMarket.location must be the actual city name only.
 - Return ONLY the JSON object. No markdown, no explanation.
 `;
@@ -62,7 +73,18 @@ IMPORTANT:
             isLocal: { type: "BOOLEAN" },
             tag: { type: "STRING" },
           },
-          required: ["market", "city", "shortName", "distanceKm", "modalPricePerKg", "modalPriceQuintal", "demand", "transportPerKg", "isLocal", "tag"],
+          required: [
+            "market",
+            "city",
+            "shortName",
+            "distanceKm",
+            "modalPricePerKg",
+            "modalPriceQuintal",
+            "demand",
+            "transportPerKg",
+            "isLocal",
+            "tag",
+          ],
         },
       },
       bestMarket: {
@@ -81,7 +103,16 @@ IMPORTANT:
           transitHours: { type: "STRING" },
           transitCorridor: { type: "STRING" },
         },
-        required: ["location", "marketFullName", "modalPricePerKg", "grossDiffPerKg", "estimatedTransportPerKg", "netAdvantagePerKg", "totalOpportunity", "distanceKm"],
+        required: [
+          "location",
+          "marketFullName",
+          "modalPricePerKg",
+          "grossDiffPerKg",
+          "estimatedTransportPerKg",
+          "netAdvantagePerKg",
+          "totalOpportunity",
+          "distanceKm",
+        ],
       },
       buyers: {
         type: "ARRAY",
@@ -102,7 +133,15 @@ IMPORTANT:
             },
             contactType: { type: "STRING" },
           },
-          required: ["id", "name", "businessType", "location", "requirementQty", "targetPrice", "paymentTerms"],
+          required: [
+            "id",
+            "name",
+            "businessType",
+            "location",
+            "requirementQty",
+            "targetPrice",
+            "paymentTerms",
+          ],
         },
       },
       transport: {
@@ -130,7 +169,17 @@ IMPORTANT:
         },
       },
     },
-    required: ["crop", "quantityKg", "farmerLocation", "farmerExpectedPrice", "mandis", "bestMarket", "buyers", "transport", "aiInsight"],
+    required: [
+      "crop",
+      "quantityKg",
+      "farmerLocation",
+      "farmerExpectedPrice",
+      "mandis",
+      "bestMarket",
+      "buyers",
+      "transport",
+      "aiInsight",
+    ],
   };
 
   const response = await ai.models.generateContent({
@@ -146,6 +195,41 @@ IMPORTANT:
   if (response.text) {
     try {
       const data = JSON.parse(response.text);
+
+      // --- CRITICAL: Enforce Mathematical Correctness ---
+      const localMandi =
+        data.mandis?.find((m) => m.isLocal) || data.mandis?.[0];
+
+      if (data.mandis) {
+        data.mandis.forEach((mandi) => {
+          mandi.modalPriceQuintal = mandi.modalPricePerKg * 100;
+          // net advantage over local mandi after transport
+          mandi.netAdvantagePerKg =
+            mandi.modalPricePerKg -
+            (localMandi?.modalPricePerKg || mandi.modalPricePerKg) -
+            (mandi.transportPerKg || 0);
+        });
+      }
+
+      if (data.bestMarket) {
+        data.bestMarket.modalPriceQuintal =
+          data.bestMarket.modalPricePerKg * 100;
+        data.bestMarket.grossDiffPerKg =
+          data.bestMarket.modalPricePerKg -
+          (localMandi?.modalPricePerKg || data.bestMarket.modalPricePerKg);
+        data.bestMarket.netAdvantagePerKg =
+          data.bestMarket.grossDiffPerKg -
+          (data.bestMarket.estimatedTransportPerKg || 0);
+        data.bestMarket.totalOpportunity =
+          data.bestMarket.netAdvantagePerKg * data.quantityKg;
+      }
+
+      if (data.transport) {
+        data.transport.estimatedCost =
+          data.transport.ratePerKg * data.quantityKg;
+      }
+      // ------------------------------------------------
+
       return data;
     } catch (e) {
       console.error("Failed to parse Gemini output:", e);

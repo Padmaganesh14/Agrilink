@@ -4,6 +4,7 @@ import {
   getCropDisplayName,
   getLocationDisplayName,
 } from "../../data/mockData";
+import { api } from "../../services/api";
 import {
   ArrowRight,
   ArrowLeft,
@@ -41,7 +42,10 @@ export const Step4PromotionN8N = () => {
     n8nLogs,
     triggerN8nWorkflow,
     marketIntelligence,
+    setActiveOrderId,
   } = useAgri();
+
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
 
   const [copied, setCopied] = useState(false);
   const [showJsonPayload, setShowJsonPayload] = useState(false);
@@ -51,11 +55,7 @@ export const Step4PromotionN8N = () => {
   const cropName = crop.name;
   const cropNameTa = getCropDisplayName(crop.name, "ta");
   const displayLocation = getLocationDisplayName(customLocation, lang);
-  const priceDisplay =
-    selectedBuyer?.targetPrice ||
-    crop.bestMarket?.price ||
-    crop.localPrice ||
-    35;
+  const priceDisplay = selectedBuyer?.targetPrice || crop.expectedPrice || 35;
 
   const promoCopyEn = `${cropIcon} Fresh ${cropQuality} ${cropName}\n Quantity: ${customQty.toLocaleString()} KG\n Farm-origin: ${customLocation}, Tamil Nadu\n Indicative Market Rate: ₹${priceDisplay} / KG\n Available for verified B2B purchase via AgriLink AI.\n#AgriLinkAI #${cropName.replace(/\s+/g, "")} #B2BAgriculture #TamilNadu`;
 
@@ -255,10 +255,51 @@ export const Step4PromotionN8N = () => {
           </div>
 
           <button
-            onClick={() => setFlowStep(5)}
-            className="px-6 py-3.5 rounded-lg bg-[#166534] hover:bg-[#14532d] text-white border-2 border-[#14532d] text-white font-black text-base  shadow-lg shadow-md flex items-center justify-center space-x-2 transition-all hover:scale-105"
+            onClick={async () => {
+              try {
+                setIsCreatingOrder(true);
+                const orderData = {
+                  cropId: selectedCrop.id,
+                  crop: selectedCrop.name,
+                  quantityKg: customQty,
+                  ratePerKg: priceDisplay,
+                  buyer: {
+                    name: selectedBuyer?.name || "Koyambedu Wholesale Mart",
+                    location: selectedBuyer?.location || "Chennai",
+                  },
+                  pickupLocation: customLocation,
+                  deliveryLocation: selectedBuyer?.location || "Chennai",
+                };
+                const result = await api.createOrder(orderData);
+                if (result.success && result.order) {
+                  setActiveOrderId(result.order.orderId);
+                  setFlowStep(5);
+                } else {
+                  alert(
+                    lang === "ta"
+                      ? "ஆர்டர் உருவாக்க முடியவில்லை"
+                      : "Failed to create order",
+                  );
+                }
+              } catch (e) {
+                alert(
+                  lang === "ta" ? "பிழை ஏற்பட்டது" : "Error creating order",
+                );
+                console.error(e);
+              } finally {
+                setIsCreatingOrder(false);
+              }
+            }}
+            disabled={isCreatingOrder}
+            className="px-6 py-3.5 rounded-lg bg-[#166534] hover:bg-[#14532d] text-white border-2 border-[#14532d] font-black text-base shadow-lg shadow-md flex items-center justify-center space-x-2 transition-all hover:scale-105 disabled:opacity-70 disabled:hover:scale-100"
           >
-            <span>{t.proceedToOrderBtn}</span>
+            <span>
+              {isCreatingOrder
+                ? lang === "ta"
+                  ? "உருவாக்கப்படுகிறது..."
+                  : "Creating..."
+                : t.proceedToOrderBtn}
+            </span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -275,10 +316,49 @@ export const Step4PromotionN8N = () => {
         </button>
 
         <button
-          onClick={() => setFlowStep(5)}
-          className="px-6 py-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-base flex items-center space-x-2 transition-colors"
+          onClick={async () => {
+            try {
+              setIsCreatingOrder(true);
+              const orderData = {
+                cropId: selectedCrop.id,
+                crop: selectedCrop.name,
+                quantityKg: customQty,
+                ratePerKg: priceDisplay,
+                buyer: {
+                  name: selectedBuyer?.name || "Koyambedu Wholesale Mart",
+                  location: selectedBuyer?.location || "Chennai",
+                },
+                pickupLocation: customLocation,
+                deliveryLocation: selectedBuyer?.location || "Chennai",
+              };
+              const result = await api.createOrder(orderData);
+              if (result.success && result.order) {
+                setActiveOrderId(result.order.orderId);
+                setFlowStep(5);
+              } else {
+                alert(
+                  lang === "ta"
+                    ? "ஆர்டர் உருவாக்க முடியவில்லை"
+                    : "Failed to create order",
+                );
+              }
+            } catch (e) {
+              alert(lang === "ta" ? "பிழை ஏற்பட்டது" : "Error creating order");
+              console.error(e);
+            } finally {
+              setIsCreatingOrder(false);
+            }
+          }}
+          disabled={isCreatingOrder}
+          className="px-6 py-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-base flex items-center space-x-2 transition-colors disabled:opacity-70"
         >
-          <span>Continue to Order Confirmed</span>
+          <span>
+            {isCreatingOrder
+              ? lang === "ta"
+                ? "உருவாக்கப்படுகிறது..."
+                : "Creating..."
+              : "Continue to Order Confirmed"}
+          </span>
           <ArrowRight className="w-4 h-4 text-emerald-400" />
         </button>
       </div>

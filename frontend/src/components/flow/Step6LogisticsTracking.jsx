@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { useAgri } from "../../context/AgriContext";
 import {
-  routeCoordinates,
   getCropDisplayName,
   getLocationDisplayName,
 } from "../../data/mockData";
+import { api } from "../../services/api";
 import L from "leaflet";
 import {
   Truck,
@@ -25,26 +25,64 @@ export const Step6LogisticsTracking = () => {
     lang,
     setCurrentView,
     setFlowStep,
-    order,
-    advanceOrderStage,
-    resetDemo,
-    selectedCrop,
-    customQty,
     customLocation,
     selectedTransport,
     selectedBuyer,
-    userRole,
+    activeOrderId,
   } = useAgri();
+
+  const [orderData, setOrderData] = useState(null);
+  const [trackingData, setTrackingData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (activeOrderId) {
+      setIsLoading(true);
+      Promise.all([
+        api.getOrder(activeOrderId).catch(() => ({ success: false })),
+        api.getTracking(activeOrderId).catch(() => ({ success: false })),
+      ]).then(([orderRes, trackRes]) => {
+        if (orderRes.success) setOrderData(orderRes.order);
+        if (trackRes.success) setTrackingData(trackRes.tracking);
+        setIsLoading(false);
+      });
+    }
+  }, [activeOrderId]);
+
+  if (isLoading) {
+    return (
+      <div className="text-center py-20 text-slate-500 font-bold">
+        Loading Tracking Details...
+      </div>
+    );
+  }
+
+  if (!orderData || !trackingData) {
+    return (
+      <div className="text-center py-20 text-red-500 font-bold">
+        Failed to load tracking data. Please return to the previous step.
+        <br />
+        <button
+          onClick={() => setFlowStep(5)}
+          className="mt-4 px-4 py-2 bg-slate-200 text-slate-800 rounded"
+        >
+          Go Back
+        </button>
+      </div>
+    );
+  }
+
+  const transport = {
+    name: orderData.transportName,
+    vehicle: orderData.transportVehicle,
+  };
+  const buyer = {
+    name: orderData.buyerName,
+    location: orderData.buyerLocation,
+  };
 
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
-
-  const isFinalStage = order.stages[order.stages.length - 1].done;
-  const transport = selectedTransport || order.transport;
-  const buyer = selectedBuyer || {
-    name: "Koyambedu Wholesale Mart",
-    location: "Chennai",
-  };
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -166,6 +204,21 @@ export const Step6LogisticsTracking = () => {
     };
   }, [transport]);
 
+  if (isLoading) {
+    return (
+      <div className="text-center py-20 text-slate-500 font-bold">
+        Loading Tracking Details...
+      </div>
+    );
+  }
+  if (!orderData || !trackingData) {
+    return (
+      <div className="text-center py-20 text-red-500 font-bold">
+        Failed to load tracking information. Did you create an order?
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 pb-28 space-y-6">
       {/* Header */}
@@ -202,7 +255,7 @@ export const Step6LogisticsTracking = () => {
               </span>
             </div>
             <span className="px-4 py-2 rounded-md text-lg font-black  bg-emerald-100 text-agri-700">
-               {t.inTransitBadge}
+              {t.inTransitBadge}
             </span>
           </div>
 
@@ -259,17 +312,9 @@ export const Step6LogisticsTracking = () => {
                   {lang === "ta" ? "பரிவர்த்தனை" : "Transaction"}
                 </span>
                 <h3 className="text-base font-black text-[#0F172A]">
-                  {lang === "ta" ? "ஆர்டர்" : "ORDER"} #{order.orderId}
+                  {lang === "ta" ? "ஆர்டர்" : "ORDER"} #{activeOrderId}
                 </h3>
               </div>
-
-              <button
-                onClick={advanceOrderStage}
-                className="px-5 py-3.5 rounded-lg bg-[#166534] hover:bg-[#14532d] text-white border-2 border-[#14532d] text-white font-black text-base  shadow-xs flex items-center space-x-1.5 transition-all"
-              >
-                <Sparkles className="w-3 h-3 text-amber-300" />
-                <span>{t.advanceStageBtn}</span>
-              </button>
             </div>
 
             {/* Spec lines */}
@@ -279,8 +324,9 @@ export const Step6LogisticsTracking = () => {
                   {lang === "ta" ? "பயிர் விவரம்:" : "Crop Lot:"}
                 </span>
                 <span className="font-black text-slate-900">
-                  {getCropDisplayName(selectedCrop.name, lang)} •{" "}
-                  {customQty.toLocaleString()} {lang === "ta" ? "கிலோ" : "KG"}
+                  {getCropDisplayName(orderData.crop, lang)} •{" "}
+                  {orderData.quantityKg.toLocaleString()}{" "}
+                  {lang === "ta" ? "கிலோ" : "KG"}
                 </span>
               </div>
 
@@ -318,7 +364,19 @@ export const Step6LogisticsTracking = () => {
                   : "Order Lifecycle Timeline"}
               </span>
 
-              {order.stages.map((stage) => {
+              {[
+                { id: "s1", key: "stage1", done: true, time: "10:45 AM" },
+                { id: "s2", key: "stage2", done: true, time: "10:50 AM" },
+                { id: "s3", key: "stage3", done: true, time: "11:15 AM" },
+                {
+                  id: "s4",
+                  key: "stage4",
+                  done: false,
+                  current: true,
+                  time: "In Progress",
+                },
+                { id: "s5", key: "stage5", done: false, time: "Pending" },
+              ].map((stage) => {
                 const label = t[stage.key] || stage.key;
                 return (
                   <div
@@ -369,14 +427,6 @@ export const Step6LogisticsTracking = () => {
             </div>
             <p className="text-base text-slate-400 mt-1">{t.saleInMotionSub}</p>
           </div>
-
-          <button
-            onClick={resetDemo}
-            className="px-6 py-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-base font-bold flex items-center space-x-1.5 transition-colors self-start sm:self-auto border border-slate-700"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>{t.resetDemoBtn}</span>
-          </button>
         </div>
 
         {/* 4 Final Checkpoints */}
