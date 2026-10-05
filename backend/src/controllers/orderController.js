@@ -1,11 +1,21 @@
-import { supabase } from '../config/supabase.js';
+import { supabase } from "../config/supabase.js";
 
 export async function createOrder(req, res, next) {
   try {
-    const { crop, quantityKg, ratePerKg, buyer, transport, pickupLocation, deliveryLocation } = req.body;
-    
+    const {
+      crop,
+      quantityKg,
+      ratePerKg,
+      buyer,
+      transport,
+      pickupLocation,
+      deliveryLocation,
+    } = req.body;
+
     if (!crop || !quantityKg || !ratePerKg || !buyer) {
-      return res.status(400).json({ success: false, message: 'Missing required order fields' });
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing required order fields" });
     }
 
     const qty = Number(quantityKg);
@@ -20,27 +30,33 @@ export async function createOrder(req, res, next) {
       quantityKg: qty,
       ratePerKg: rate,
       totalValue: totalValue,
-      status: 'Payment Coordination',
+      status: "Payment Coordination",
       buyerName: buyer.name,
       buyerLocation: buyer.location,
       sellerId: sellerId,
-      pickupLocation: pickupLocation || 'Farm Gate',
+      pickupLocation: pickupLocation || "Farm Gate",
       deliveryLocation: deliveryLocation || buyer.location,
       transportName: transport?.name || null,
       transportVehicle: transport?.vehicle || null,
       transportCost: transport?.estimatedCost || null,
-      paymentCoordinated: true
+      paymentCoordinated: true,
     };
 
     const { data: orderResponse, error: orderError } = await supabase
-      .from('orders')
+      .from("orders")
       .insert([orderData])
       .select()
       .single();
 
     if (orderError) {
       console.error("[Order Creation Error]", orderError);
-      return res.status(500).json({ success: false, message: 'Database failure: could not create order', error: orderError.message });
+      return res
+        .status(500)
+        .json({
+          success: false,
+          message: "Database failure: could not create order",
+          error: orderError.message,
+        });
     }
 
     // Attempt to reduce stock if cropId is provided using optimistic locking
@@ -48,12 +64,12 @@ export async function createOrder(req, res, next) {
       try {
         let success = false;
         let attempts = 0;
-        
+
         while (!success && attempts < 3) {
           const { data: cropData } = await supabase
-            .from('crops')
-            .select('quantityAvailable')
-            .eq('id', req.body.cropId)
+            .from("crops")
+            .select("quantityAvailable")
+            .eq("id", req.body.cropId)
             .single();
 
           if (cropData) {
@@ -62,17 +78,17 @@ export async function createOrder(req, res, next) {
               // We already created the order, but let's assume it failed due to stock?
               // In a real app we'd roll back the order. Here we log and break.
               console.warn("Insufficient crop inventory for order:", orderId);
-              break; 
+              break;
             }
-            
+
             const newQty = oldQty - qty;
-            const newStatus = newQty === 0 ? 'sold' : 'available';
+            const newStatus = newQty === 0 ? "sold" : "available";
 
             const { data: updated, error: updateErr } = await supabase
-              .from('crops')
+              .from("crops")
               .update({ quantityAvailable: newQty, status: newStatus })
-              .eq('id', req.body.cropId)
-              .eq('quantityAvailable', oldQty) // Optimistic locking condition
+              .eq("id", req.body.cropId)
+              .eq("quantityAvailable", oldQty) // Optimistic locking condition
               .select();
 
             if (!updateErr && updated && updated.length > 0) {
@@ -83,7 +99,7 @@ export async function createOrder(req, res, next) {
           }
           attempts++;
         }
-        
+
         if (!success) {
           console.error("Failed to deduct inventory for order:", orderId);
         }
@@ -94,8 +110,8 @@ export async function createOrder(req, res, next) {
 
     res.status(201).json({
       success: true,
-      message: 'Order created successfully',
-      order: orderResponse
+      message: "Order created successfully",
+      order: orderResponse,
     });
   } catch (err) {
     next(err);
@@ -107,23 +123,27 @@ export async function getOrder(req, res, next) {
     const { id } = req.params;
 
     const { data, error } = await supabase
-      .from('orders')
-      .select('*')
-      .eq('orderId', id)
+      .from("orders")
+      .select("*, users:sellerId(name, farmName)")
+      .eq("orderId", id)
       .single();
 
     if (error) {
       console.error("[Get Order Error]", error);
-      return res.status(404).json({ success: false, message: `Order ${id} not found` });
+      return res
+        .status(404)
+        .json({ success: false, message: `Order ${id} not found` });
     }
 
     if (!data) {
-       return res.status(404).json({ success: false, message: `Order ${id} not found` });
+      return res
+        .status(404)
+        .json({ success: false, message: `Order ${id} not found` });
     }
 
     res.json({
       success: true,
-      order: data
+      order: data,
     });
   } catch (err) {
     next(err);
@@ -135,19 +155,21 @@ export async function getOrdersBySeller(req, res, next) {
     const { sellerId } = req.params;
 
     const { data, error } = await supabase
-      .from('orders')
-      .select('*')
-      .eq('sellerId', sellerId)
-      .order('created_at', { ascending: false });
+      .from("orders")
+      .select("*, users:sellerId(name, farmName)")
+      .eq("sellerId", sellerId)
+      .order("created_at", { ascending: false });
 
     if (error) {
       console.error("[Get Orders Error]", error);
-      return res.status(500).json({ success: false, message: 'Failed to fetch orders' });
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to fetch orders" });
     }
 
     res.json({
       success: true,
-      data: data || []
+      data: data || [],
     });
   } catch (err) {
     next(err);
@@ -159,19 +181,21 @@ export async function getOrdersByBuyer(req, res, next) {
     const { buyerName } = req.params;
 
     const { data, error } = await supabase
-      .from('orders')
-      .select('*')
-      .eq('buyerName', buyerName)
-      .order('created_at', { ascending: false });
+      .from("orders")
+      .select("*, users:sellerId(name, farmName)")
+      .eq("buyerName", buyerName)
+      .order("created_at", { ascending: false });
 
     if (error) {
       console.error("[Get Buyer Orders Error]", error);
-      return res.status(500).json({ success: false, message: 'Failed to fetch buyer orders' });
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to fetch buyer orders" });
     }
 
     res.json({
       success: true,
-      data: data || []
+      data: data || [],
     });
   } catch (err) {
     next(err);

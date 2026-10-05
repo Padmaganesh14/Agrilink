@@ -146,8 +146,9 @@ export const Step6LogisticsTracking = () => {
           return null;
         };
 
-        const origin = customLocation || "Trichy";
-        const destination = buyer.location || "Chennai";
+        const origin = orderData?.pickupLocation || customLocation || "Trichy";
+        const destination =
+          orderData?.deliveryLocation || buyer.location || "Chennai";
 
         const [originCoords, destCoords] = await Promise.all([
           fetchCoordinates(origin),
@@ -285,7 +286,7 @@ export const Step6LogisticsTracking = () => {
           {t.step06Title}
         </h1>
         <p className="text-base sm:text-lg font-medium text-slate-500 mt-1">
-          {"Real-time highway transit visualization from Trichy Farm Gate to Chennai Koyambedu."}
+          {`Real-time highway transit visualization from ${orderData.pickupLocation} Farm Gate to ${buyer.location}.`}
         </p>
       </div>
 
@@ -347,20 +348,25 @@ export const Step6LogisticsTracking = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-base text-slate-500 font-medium pt-1">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-base text-slate-500 font-medium pt-1 gap-2 sm:gap-0">
             <span>
               {"Distance:"}{" "}
-              <b className="text-slate-800">330 KM</b>
+              <b className="text-slate-800">
+                {trackingData?.distanceKm || orderData?.distanceKm || "330"} KM
+              </b>
             </span>
             <span>
               {"Duration:"}{" "}
               <b className="text-slate-800">
-                {"~6 Hours"}
+                {"~"}
+                {trackingData?.etaHours || orderData?.etaHours || "6"} {"Hours"}
               </b>
             </span>
             <span>
               {"Speed:"}{" "}
-              <b className="text-agri-600">52 km/h</b>
+              <b className="text-agri-600">
+                {trackingData?.speedKmH || "52"} km/h
+              </b>
             </span>
           </div>
         </div>
@@ -382,13 +388,10 @@ export const Step6LogisticsTracking = () => {
             {/* Spec lines (Invoice Details) */}
             <div className="space-y-2 text-base">
               <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-500 font-bold">
-                  {"Crop Lot:"}
-                </span>
+                <span className="text-slate-500 font-bold">{"Crop Lot:"}</span>
                 <span className="font-black text-slate-900 text-right">
                   {getCropDisplayName(orderData.crop, lang)} •{" "}
-                  {orderData.quantityKg.toLocaleString()}{" "}
-                  {"KG"}
+                  {orderData.quantityKg.toLocaleString()} {"KG"}
                 </span>
               </div>
 
@@ -402,9 +405,7 @@ export const Step6LogisticsTracking = () => {
               </div>
 
               <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-500 font-bold">
-                  {"Buyer:"}
-                </span>
+                <span className="text-slate-500 font-bold">{"Buyer:"}</span>
                 <span className="font-black text-slate-900 text-right">
                   {buyer.name}
                   <br />
@@ -415,11 +416,9 @@ export const Step6LogisticsTracking = () => {
               </div>
 
               <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-500 font-bold">
-                  {"Seller:"}
-                </span>
+                <span className="text-slate-500 font-bold">{"Seller:"}</span>
                 <span className="font-black text-slate-900 text-right">
-                  {userRole === "farmer" ? (user?.farmName || user?.name || "Farmer") : (orderData.sellerName || "Partner Farm")}
+                  {orderData?.users?.farmName || orderData?.users?.name || (userRole === "farmer" ? (user?.farmName || user?.name) : "Partner Farm")}
                   <br />
                   <span className="text-[10px] text-slate-500 uppercase">
                     {orderData.pickupLocation}
@@ -428,9 +427,7 @@ export const Step6LogisticsTracking = () => {
               </div>
 
               <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-500 font-bold">
-                  {"Transport:"}
-                </span>
+                <span className="text-slate-500 font-bold">{"Transport:"}</span>
                 <span className="font-black text-agri-600 text-right">
                   {transport.name}
                   <br />
