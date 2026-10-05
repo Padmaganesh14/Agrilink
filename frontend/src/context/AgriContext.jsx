@@ -110,6 +110,8 @@ export const AgriProvider = ({ children }) => {
     initialDraft.activeOrderId || null,
   );
 
+  const [activeDemand, setActiveDemand] = useState(null);
+
   // Auth state
   const [isFarmerAuth, setIsFarmerAuth] = useState(false);
   const [isBuyerAuth, setIsBuyerAuth] = useState(false);
@@ -278,7 +280,54 @@ export const AgriProvider = ({ children }) => {
   const jumpToFlowStep = (step) => {
     setFlowStep(step);
     setCurrentView("flow");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const fulfillDemandFlow = async (demand) => {
+    setActiveDemand(demand);
+    setSelectedCrop({
+      name: demand.cropName,
+      location: user?.location || "Trichy",
+    });
+    setCustomQty(demand.quantityRequired);
+    setExpectedPrice(demand.targetPrice || "");
+    setSelectedBuyer(
+      demand.buyer || { name: "Buyer", location: demand.deliveryLocation },
+    );
+
+    try {
+      // 1. Deduct Demand Quantity
+      await axios.put(
+        `http://localhost:8000/api/demands/${demand.id}/fulfill`,
+        {
+          fulfilledQty: demand.quantityRequired,
+        },
+      );
+
+      // 2. Create Order
+      const res = await axios.post("http://localhost:8000/api/order/create", {
+        cropId: "demand-fulfillment",
+        crop: demand.cropName,
+        quantityKg: demand.quantityRequired,
+        ratePerKg: demand.targetPrice,
+        buyer: demand.buyer || {
+          name: "Buyer",
+          location: demand.deliveryLocation,
+        },
+        pickupLocation: user?.location || "Trichy",
+        deliveryLocation: demand.deliveryLocation,
+        sellerId: user?.id,
+      });
+
+      if (res.data.success) {
+        setActiveOrderId(res.data.order.id || res.data.order.orderId);
+        setFlowStep(5);
+        setCurrentView("flow");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Failed to fulfill demand. Please try again.");
+    }
   };
 
   const chooseTransport = (partner) => {
@@ -329,6 +378,9 @@ export const AgriProvider = ({ children }) => {
         transportConfirmed,
         activeOrderId,
         setActiveOrderId,
+        activeDemand,
+        setActiveDemand,
+        fulfillDemandFlow,
         isFarmerAuth,
         isBuyerAuth,
         startSellMyCrop,

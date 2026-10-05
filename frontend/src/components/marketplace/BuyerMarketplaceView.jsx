@@ -23,6 +23,7 @@ export const BuyerMarketplaceView = () => {
 
   const [crops, setCrops] = useState([]);
   const [myOrders, setMyOrders] = useState([]);
+  const [myDemands, setMyDemands] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("All");
   const [activeModalCrop, setActiveModalCrop] = useState(null);
@@ -31,6 +32,14 @@ export const BuyerMarketplaceView = () => {
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
   const [purchaseQuantity, setPurchaseQuantity] = useState("");
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [demandForm, setDemandForm] = useState({
+    cropName: "",
+    grade: "Grade A",
+    quantityRequired: "",
+    targetPrice: "",
+    deliveryLocation: user?.location || "",
+  });
+  const [isPostingDemand, setIsPostingDemand] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +57,17 @@ export const BuyerMarketplaceView = () => {
             setMyOrders(orderRes.data.data);
           }
         }
+
+        if (user && user.id) {
+          const demandRes = await axios.get(
+            "http://localhost:8000/api/demands",
+          );
+          if (demandRes.data.success) {
+            setMyDemands(
+              demandRes.data.demands.filter((d) => d.buyerId === user.id),
+            );
+          }
+        }
       } catch (error) {
         console.error("Failed to fetch data", error);
       } finally {
@@ -59,8 +79,9 @@ export const BuyerMarketplaceView = () => {
 
   const filteredCrops = crops.filter((c) => {
     const cropName = c.cropName || "";
-    const matchesSearch =
-      cropName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = cropName
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
     const matchesDistrict =
       selectedDistrict === "All" || c.location === selectedDistrict;
     return matchesSearch && matchesDistrict;
@@ -181,6 +202,17 @@ export const BuyerMarketplaceView = () => {
         >
           <Package className="w-4 h-4" />
           <span>{"My Purchases"}</span>
+        </button>
+        <button
+          onClick={() => setActiveTab("demands")}
+          className={`flex items-center space-x-2 py-3 px-2 sm:px-4 text-sm font-bold border-b-2 transition-colors ${
+            activeTab === "demands"
+              ? "border-emerald-600 text-emerald-700"
+              : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+          }`}
+        >
+          <TrendingUp className="w-4 h-4" />
+          <span>{"My Demands"}</span>
         </button>
       </div>
 
@@ -306,7 +338,7 @@ export const BuyerMarketplaceView = () => {
             )}
           </div>
         </>
-      ) : (
+      ) : activeTab === "purchases" ? (
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-slate-900 mt-6 mb-4">
             {"My Purchases"}
@@ -359,7 +391,161 @@ export const BuyerMarketplaceView = () => {
             ))
           )}
         </div>
-      )}
+      ) : activeTab === "demands" ? (
+        <div className="space-y-6 mt-6">
+          <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
+            <h2 className="text-xl font-bold text-slate-900 mb-4">
+              Post a New Demand
+            </h2>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setIsPostingDemand(true);
+                try {
+                  const res = await axios.post(
+                    "http://localhost:8000/api/demands",
+                    {
+                      ...demandForm,
+                      buyerId: user.id,
+                    },
+                  );
+                  if (res.data.success) {
+                    setMyDemands([res.data.demand, ...myDemands]);
+                    setDemandForm({
+                      cropName: "",
+                      grade: "Grade A",
+                      quantityRequired: "",
+                      targetPrice: "",
+                      deliveryLocation: user?.location || "",
+                    });
+                    alert(
+                      "Demand posted successfully! Farmers can now see and fulfill your demand.",
+                    );
+                  }
+                } catch (err) {
+                  console.error(err);
+                  alert("Failed to post demand.");
+                } finally {
+                  setIsPostingDemand(false);
+                }
+              }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 items-end"
+            >
+              <div>
+                <label className="block text-xs font-semibold text-slate-500 mb-1">
+                  Crop Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={demandForm.cropName}
+                  onChange={(e) =>
+                    setDemandForm({ ...demandForm, cropName: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-1 focus:ring-emerald-500 text-sm"
+                  placeholder="e.g. Tomato"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-500 mb-1">
+                  Quantity (KG)
+                </label>
+                <input
+                  type="number"
+                  required
+                  value={demandForm.quantityRequired}
+                  onChange={(e) =>
+                    setDemandForm({
+                      ...demandForm,
+                      quantityRequired: e.target.value,
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-1 focus:ring-emerald-500 text-sm"
+                  placeholder="500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-500 mb-1">
+                  Target Price (₹/KG)
+                </label>
+                <input
+                  type="number"
+                  required
+                  value={demandForm.targetPrice}
+                  onChange={(e) =>
+                    setDemandForm({
+                      ...demandForm,
+                      targetPrice: e.target.value,
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-1 focus:ring-emerald-500 text-sm"
+                  placeholder="30"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-500 mb-1">
+                  Delivery City
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={demandForm.deliveryLocation}
+                  onChange={(e) =>
+                    setDemandForm({
+                      ...demandForm,
+                      deliveryLocation: e.target.value,
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-1 focus:ring-emerald-500 text-sm"
+                />
+              </div>
+              <div>
+                <button
+                  type="submit"
+                  disabled={isPostingDemand}
+                  className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded text-sm transition-colors disabled:opacity-50"
+                >
+                  {isPostingDemand ? "Posting..." : "Post Demand"}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <h2 className="text-xl font-bold text-slate-900 mb-4">
+            My Active Demands
+          </h2>
+          {myDemands.length === 0 ? (
+            <div className="py-12 text-center text-slate-500 bg-white rounded-lg border border-slate-200 shadow-sm">
+              You haven't posted any demands yet.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {myDemands.map((d) => (
+                <div
+                  key={d.id}
+                  className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex items-center justify-between"
+                >
+                  <div>
+                    <h4 className="font-bold text-slate-900">
+                      {d.cropName} • {d.quantityRequired} KG
+                    </h4>
+                    <p className="text-sm text-slate-500">
+                      Target: ₹{d.targetPrice}/KG • To: {d.deliveryLocation}
+                    </p>
+                  </div>
+                  <div>
+                    <span
+                      className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase ${d.status === "open" ? "bg-indigo-100 text-indigo-700" : "bg-emerald-100 text-emerald-700"}`}
+                    >
+                      {d.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : null}
 
       {/* Lot Details Modal */}
       {activeModalCrop && !isCheckoutModalOpen && (

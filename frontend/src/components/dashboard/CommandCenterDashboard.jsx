@@ -18,6 +18,7 @@ export const CommandCenterDashboard = () => {
     user,
     startSellMyCrop,
     jumpToFlowStep,
+    fulfillDemandFlow,
     selectedTransport,
     flowStep,
     setActiveOrderId,
@@ -25,6 +26,7 @@ export const CommandCenterDashboard = () => {
 
   const [myCrops, setMyCrops] = useState([]);
   const [myOrders, setMyOrders] = useState([]);
+  const [buyerDemands, setBuyerDemands] = useState([]);
   const [stats, setStats] = useState({
     buyers: 0,
     orders: 0,
@@ -111,6 +113,12 @@ export const CommandCenterDashboard = () => {
           if (statRes.data.success) {
             setStats(statRes.data.stats);
           }
+          
+          // Fetch open demands
+          const demandRes = await axios.get("http://localhost:8000/api/demands?status=open");
+          if (demandRes.data.success) {
+            setBuyerDemands(demandRes.data.demands);
+          }
         } catch (error) {
           console.error("Failed to fetch my crops", error);
         }
@@ -157,6 +165,43 @@ export const CommandCenterDashboard = () => {
           <span className="text-xs text-slate-400 font-medium bg-slate-800 px-2.5 py-1 rounded-md">
             {"Farm Listing"}
           </span>
+        </div>
+
+        {/* Demands Section (For Farmers) */}
+        <div className="bg-white rounded-lg p-6 shadow-sm border border-slate-200 mt-6 space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+            <h2 className="text-lg font-bold text-slate-900 flex items-center space-x-2">
+              <TrendingUp className="w-5 h-5 text-indigo-600" />
+              <span>Open Buyer Demands</span>
+            </h2>
+            <span className="text-xs text-indigo-700 font-bold bg-indigo-100 px-2.5 py-1 rounded-md uppercase">
+              {buyerDemands.length} Active
+            </span>
+          </div>
+          
+          {buyerDemands.length === 0 ? (
+            <div className="py-6 text-center text-slate-500">
+              No active buyer demands found.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {buyerDemands.map(d => (
+                <div key={d.id} className="bg-slate-50 border border-slate-200 p-4 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h4 className="font-bold text-slate-900">{d.cropName} • {d.quantityRequired} KG</h4>
+                    <p className="text-sm text-slate-500">Target: ₹{d.targetPrice}/KG • To: {d.deliveryLocation}</p>
+                    {d.buyer && <p className="text-xs text-indigo-600 font-medium mt-1">Requested by: {d.buyer.farmName || d.buyer.name}</p>}
+                  </div>
+                  <button
+                    onClick={() => fulfillDemandFlow(d)}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded transition-colors w-full sm:w-auto"
+                  >
+                    Fulfill Demand
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {activeCrop ? (
