@@ -5,9 +5,10 @@ const N8N_URL = process.env.N8N_WEBHOOK_URL || 'http://localhost:5678/webhook/se
 export async function triggerN8nMasterWorkflow(payload) {
   try {
     const response = await axios.post(N8N_URL, payload, {
-      timeout: 3000,
+      timeout: 10000, // Increased timeout for ngrok/n8n cold starts
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': '69420'
       }
     });
     return response.data;
