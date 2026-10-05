@@ -46,14 +46,20 @@ export const BuyerMarketplaceView = () => {
 
   useEffect(() => {
     if (geoLoc && !demandForm.deliveryLocation && !geoLocLoading) {
-      setDemandForm((prev) => ({ ...prev, deliveryLocation: geoLoc.split(' • ')[0] }));
+      setDemandForm((prev) => ({
+        ...prev,
+        deliveryLocation: geoLoc.split(" • ")[0],
+      }));
     }
   }, [geoLoc, geoLocLoading]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get((import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com") + "/api/crops");
+        const res = await axios.get(
+          (import.meta.env.VITE_API_URL ||
+            "https://agrilink-backend.onrender.com") + "/api/crops",
+        );
         if (res.data.success) {
           setCrops(res.data.data);
         }
@@ -69,7 +75,8 @@ export const BuyerMarketplaceView = () => {
 
         if (user && user.id) {
           const demandRes = await axios.get(
-            (import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com") + "/api/demands",
+            (import.meta.env.VITE_API_URL ||
+              "https://agrilink-backend.onrender.com") + "/api/demands",
           );
           if (demandRes.data.success) {
             setMyDemands(
@@ -420,7 +427,8 @@ export const BuyerMarketplaceView = () => {
                     : "93f26166-c1ff-4846-b2a4-52c78d20d05a"; // Fallback to 'vj' buyer if unauthenticated/dummy
 
                   const res = await axios.post(
-                    (import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com") + "/api/demands",
+                    (import.meta.env.VITE_API_URL ||
+                      "https://agrilink-backend.onrender.com") + "/api/demands",
                     {
                       ...demandForm,
                       buyerId: validBuyerId,
@@ -540,38 +548,54 @@ export const BuyerMarketplaceView = () => {
               {myDemands.map((d) => {
                 const getCropImage = (name) => {
                   const n = name.toLowerCase();
-                  if (n.includes('onion')) return "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=150&q=80";
-                  if (n.includes('toma') || n.includes('tama')) return "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=150&q=80";
-                  if (n.includes('corn')) return "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=150&q=80";
-                  if (n.includes('coco')) return "https://images.unsplash.com/photo-1526362879555-5f9037c72477?w=150&q=80";
+                  if (n.includes("onion"))
+                    return "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=150&q=80";
+                  if (n.includes("toma") || n.includes("tama"))
+                    return "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=150&q=80";
+                  if (n.includes("corn"))
+                    return "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=150&q=80";
+                  if (n.includes("coco"))
+                    return "https://images.unsplash.com/photo-1526362879555-5f9037c72477?w=150&q=80";
                   return "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=150&q=80";
                 };
-                
+
                 return (
-                <div
-                  key={d.id}
-                  className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex items-center justify-between"
-                >
-                  <div className="flex items-center space-x-4">
-                    <img src={getCropImage(d.cropName)} alt={d.cropName} className="w-14 h-14 rounded-full object-cover shadow-sm border border-slate-200" />
+                  <div
+                    key={d.id}
+                    className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex items-center justify-between"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <img
+                        src={getCropImage(d.cropName)}
+                        alt={d.cropName}
+                        className="w-14 h-14 rounded-full object-cover shadow-sm border border-slate-200"
+                      />
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-lg capitalize">
+                          {d.cropName}{" "}
+                          <span className="text-sm font-medium text-slate-500 ml-1">
+                            • {d.quantityRequired} KG
+                          </span>
+                        </h4>
+                        <p className="text-sm text-slate-500 mt-0.5">
+                          Target:{" "}
+                          <span className="font-bold text-emerald-600">
+                            ₹{d.targetPrice}/KG
+                          </span>{" "}
+                          • To: {d.deliveryLocation}
+                        </p>
+                      </div>
+                    </div>
                     <div>
-                      <h4 className="font-bold text-slate-900 text-lg capitalize">
-                        {d.cropName} <span className="text-sm font-medium text-slate-500 ml-1">• {d.quantityRequired} KG</span>
-                      </h4>
-                      <p className="text-sm text-slate-500 mt-0.5">
-                        Target: <span className="font-bold text-emerald-600">₹{d.targetPrice}/KG</span> • To: {d.deliveryLocation}
-                      </p>
+                      <span
+                        className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase ${d.status === "open" ? "bg-indigo-100 text-indigo-700" : "bg-emerald-100 text-emerald-700"}`}
+                      >
+                        {d.status}
+                      </span>
                     </div>
                   </div>
-                  <div>
-                    <span
-                      className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase ${d.status === "open" ? "bg-indigo-100 text-indigo-700" : "bg-emerald-100 text-emerald-700"}`}
-                    >
-                      {d.status}
-                    </span>
-                  </div>
-                </div>
-              )})}
+                );
+              })}
             </div>
           )}
         </div>
