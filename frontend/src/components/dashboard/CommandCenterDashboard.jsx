@@ -141,21 +141,34 @@ export const CommandCenterDashboard = () => {
             </div>
           ) : (
             <div className="space-y-3">
-              {buyerDemands.map(d => (
+              {buyerDemands.map(d => {
+                const getCropImage = (name) => {
+                  const n = name.toLowerCase();
+                  if (n.includes('onion')) return "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=150&q=80";
+                  if (n.includes('toma') || n.includes('tama')) return "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=150&q=80";
+                  if (n.includes('corn')) return "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=150&q=80";
+                  if (n.includes('coco')) return "https://images.unsplash.com/photo-1526362879555-5f9037c72477?w=150&q=80";
+                  return "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=150&q=80";
+                };
+                
+                return (
                 <div key={d.id} className="bg-slate-50 border border-slate-200 p-4 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div>
-                    <h4 className="font-bold text-slate-900">{d.cropName} • {d.quantityRequired} KG</h4>
-                    <p className="text-sm text-slate-500">Target: ₹{d.targetPrice}/KG • To: {d.deliveryLocation}</p>
-                    {d.buyer && <p className="text-xs text-indigo-600 font-medium mt-1">Requested by: {d.buyer.farmName || d.buyer.name}</p>}
+                  <div className="flex items-center space-x-4">
+                    <img src={getCropImage(d.cropName)} alt={d.cropName} className="w-14 h-14 rounded-full object-cover shadow-sm border border-slate-200" />
+                    <div>
+                      <h4 className="font-bold text-slate-900 text-lg capitalize">{d.cropName} <span className="text-sm font-medium text-slate-500 ml-1">• {d.quantityRequired} KG</span></h4>
+                      <p className="text-sm text-slate-500 mt-0.5">Target: <span className="font-bold text-emerald-600">₹{d.targetPrice}/KG</span> • To: {d.deliveryLocation}</p>
+                      {d.buyer && <p className="text-xs text-indigo-600 font-medium mt-1">Requested by: {d.buyer.farmName || d.buyer.name}</p>}
+                    </div>
                   </div>
                   <button
                     onClick={() => fulfillDemandFlow(d)}
-                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded transition-colors w-full sm:w-auto"
+                    className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-lg shadow-sm transition-colors w-full sm:w-auto flex-shrink-0"
                   >
                     Fulfill Demand
                   </button>
                 </div>
-              ))}
+              )})}
             </div>
           )}
         </div>
