@@ -290,6 +290,7 @@ export const AgriProvider = ({ children }) => {
       location: user?.location || "Trichy",
     });
     setCustomQty(demand.quantityRequired);
+    setCustomLocation(user?.location || "Trichy");
     setExpectedPrice(demand.targetPrice || "");
     setSelectedBuyer(
       demand.buyer || { name: "Buyer", location: demand.deliveryLocation },
