@@ -12,6 +12,7 @@ import trackingRoutes from "./routes/trackingRoutes.js";
 import statsRoutes from "./routes/statsRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import demandRoutes from "./routes/demandRoutes.js";
+import n8nRoutes from "./routes/n8nRoutes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -43,6 +44,7 @@ app.use("/api/tracking", trackingRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/demands", demandRoutes);
+app.use("/api/n8n", n8nRoutes);
 
 // Fallback 404
 app.use((req, res, next) => {

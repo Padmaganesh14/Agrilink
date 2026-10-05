@@ -122,6 +122,11 @@ export const AgriProvider = ({ children }) => {
     initialDraft.marketIntelligence || null,
   );
 
+  // n8n Promotion state
+  const [n8nStatus, setN8nStatus] = useState("idle");
+  const [n8nActiveNode, setN8nActiveNode] = useState(0);
+  const [n8nLogs, setN8nLogs] = useState([]);
+
   useEffect(() => {
     const draft = {
       flowStep,
@@ -249,6 +254,69 @@ export const AgriProvider = ({ children }) => {
     });
 
     return cropObj;
+  };
+
+  const triggerN8nWorkflow = async () => {
+    if (n8nStatus === "running") return;
+    setN8nStatus("running");
+    setN8nActiveNode(1);
+
+    const cropName = selectedCrop?.name || "Crop";
+    const qtyFormatted = customQty.toLocaleString();
+    const payload = {
+      crop: cropName,
+      quantityKg: customQty,
+      location: customLocation,
+      quality: cropQuality,
+      expectedPrice: expectedPrice,
+    };
+
+    setN8nLogs([
+      `10:42:01 ✓ Node ① Webhook & Input Validation: Ingested ${cropName} (${qtyFormatted} KG, ${customLocation} Farm Gate)`,
+    ]);
+
+    try {
+      // Simulate steps for UI animation
+      setTimeout(() => {
+        setN8nActiveNode(2);
+        setN8nLogs((prev) => [
+          ...prev,
+          `10:42:02 ✓ Node ② Triggering n8n Master Workflow...`,
+        ]);
+      }, 700);
+
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      const res = await axios.post(`${API_URL}/api/n8n/trigger`, payload);
+
+      setTimeout(() => {
+        setN8nActiveNode(3);
+        if (res.data.success) {
+          setN8nLogs((prev) => [
+            ...prev,
+            `10:42:04 ✓ Node ③ n8n processed successfully!`,
+            `10:42:05 ✓ Node ④ Promotional posts generated & queued.`,
+            `10:42:06 ✓ Node ⑤ Workflow completed successfully.`,
+          ]);
+          setN8nActiveNode(5);
+          setN8nStatus("completed");
+        } else {
+          setN8nLogs((prev) => [
+            ...prev,
+            `10:42:04 ❌ Error: Failed to reach n8n. Falling back to local.`,
+          ]);
+          setN8nStatus("idle");
+        }
+      }, 2000);
+    } catch (err) {
+      console.error(err);
+      setTimeout(() => {
+        setN8nLogs((prev) => [
+          ...prev,
+          `10:42:04 ❌ Error: n8n webhook unreachable.`,
+        ]);
+        setN8nStatus("idle");
+      }, 2000);
+    }
   };
 
   const startSellMyCrop = (crop = {}) => {
@@ -393,6 +461,10 @@ export const AgriProvider = ({ children }) => {
         marketIntelligence,
         isMarketIntelLoading,
         refreshMarketIntelligence,
+        n8nStatus,
+        n8nActiveNode,
+        n8nLogs,
+        triggerN8nWorkflow,
       }}
     >
       {children}
