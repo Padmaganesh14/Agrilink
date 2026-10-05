@@ -40,7 +40,9 @@ export const Step3BuyerMatch = () => {
         if (res.data.success) {
           // Filter demands by crop name (case insensitive)
           const matchedDemands = res.data.demands.filter(
-            (d) => d.cropName.toLowerCase() === selectedCrop.name.toLowerCase(),
+            (d) =>
+              d.cropName.trim().toLowerCase() ===
+              selectedCrop.name.trim().toLowerCase(),
           );
 
           // Map demands to the 'buyer' schema expected by this UI

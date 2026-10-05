@@ -304,19 +304,22 @@ export const AgriProvider = ({ children }) => {
       );
 
       // 2. Create Order
-      const res = await axios.post((import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com") + "/api/order/create", {
-        cropId: "demand-fulfillment",
-        crop: demand.cropName,
-        quantityKg: demand.quantityRequired,
-        ratePerKg: demand.targetPrice,
-        buyer: demand.buyer || {
-          name: "Buyer",
-          location: demand.deliveryLocation,
+      const res = await axios.post(
+        (import.meta.env.VITE_API_URL ||
+          "https://agrilink-backend.onrender.com") + "/api/order/create",
+        {
+          crop: demand.cropName,
+          quantityKg: demand.quantityRequired,
+          ratePerKg: demand.targetPrice,
+          buyer: demand.buyer || {
+            name: "Buyer",
+            location: demand.deliveryLocation,
+          },
+          pickupLocation: user?.location || "Trichy",
+          deliveryLocation: demand.deliveryLocation,
+          sellerId: user?.id,
         },
-        pickupLocation: user?.location || "Trichy",
-        deliveryLocation: demand.deliveryLocation,
-        sellerId: user?.id,
-      });
+      );
 
       if (res.data.success) {
         setActiveOrderId(res.data.order.id || res.data.order.orderId);
