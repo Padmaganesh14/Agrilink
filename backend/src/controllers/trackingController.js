@@ -5,22 +5,38 @@ export async function startTracking(req, res, next) {
     const { orderId, origin, destination, distanceKm, etaHours } = req.body;
 
     if (!orderId || !origin || !destination) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message:
-            "Missing required tracking fields (orderId, origin, destination)",
-        });
+      return res.status(400).json({
+        success: false,
+        message:
+          "Missing required tracking fields (orderId, origin, destination)",
+      });
     }
 
     if (!distanceKm || !etaHours) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Missing required tracking distance or ETA.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Missing required tracking distance or ETA.",
+      });
+    }
+
+    // Resolve AGRI- string to UUID
+    let resolvedOrderId = orderId;
+    const isUUID =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        orderId,
+      );
+    if (!isUUID) {
+      const { data: orderData, error: orderErr } = await supabase
+        .from("orders")
+        .select("id")
+        .eq("orderId", orderId)
+        .single();
+      if (orderErr || !orderData) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid order ID" });
+      }
+      resolvedOrderId = orderData.id;
     }
 
     const trackingId = `TRK-${Date.now().toString().slice(-6)}`;
@@ -28,7 +44,7 @@ export async function startTracking(req, res, next) {
 
     const trackingData = {
       trackingId,
-      orderId,
+      orderId: resolvedOrderId,
       origin,
       destination,
       currentCheckpoint: origin,
@@ -46,13 +62,11 @@ export async function startTracking(req, res, next) {
 
     if (error) {
       console.error("[Tracking Creation Error]", error);
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Database failure: could not create tracking record",
-          error: error.message,
-        });
+      return res.status(500).json({
+        success: false,
+        message: "Database failure: could not create tracking record",
+        error: error.message,
+      });
     }
 
     res.status(201).json({
@@ -78,21 +92,17 @@ export async function getTracking(req, res, next) {
 
     if (error) {
       console.error("[Get Tracking Error]", error);
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: `Tracking for order ${id} not found`,
-        });
+      return res.status(404).json({
+        success: false,
+        message: `Tracking for order ${id} not found`,
+      });
     }
 
     if (!data) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: `Tracking for order ${id} not found`,
-        });
+      return res.status(404).json({
+        success: false,
+        message: `Tracking for order ${id} not found`,
+      });
     }
 
     res.json({
