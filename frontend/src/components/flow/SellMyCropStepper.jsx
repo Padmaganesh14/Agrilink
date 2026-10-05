@@ -39,8 +39,8 @@ export const SellMyCropStepper = () => {
     if (stepNum === 1) return true;
     if (stepNum === 2) return isStep1Valid;
     if (stepNum === 3) return isStep1Valid;
-    if (stepNum === 4) return isStep1Valid && !!selectedBuyer;
-    if (stepNum === 5) return isStep1Valid && !!selectedBuyer;
+    if (stepNum === 4) return isStep1Valid;
+    if (stepNum === 5) return isStep1Valid;
     if (stepNum === 6) return !!activeOrderId; // Logistics requires an active order
     return false;
   };

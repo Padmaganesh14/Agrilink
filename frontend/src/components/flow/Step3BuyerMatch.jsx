@@ -167,6 +167,13 @@ export const Step3BuyerMatch = () => {
                 Add to Available Stocks
               </button>
               <button
+                onClick={() => setFlowStep(4)}
+                className="px-5 py-2.5 bg-emerald-600 text-white rounded-lg font-bold text-sm hover:bg-emerald-700 transition-colors w-full sm:w-auto flex items-center justify-center space-x-2"
+              >
+                <span>Skip to AI Promotion</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <button
                 onClick={() => setFlowStep(1)}
                 className="px-5 py-2.5 text-slate-600 font-bold text-sm hover:text-slate-800 transition-colors w-full sm:w-auto"
               >
