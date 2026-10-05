@@ -113,8 +113,8 @@ export const Step5_5TransportSelection = () => {
 
       const trackingData = {
         orderId: activeOrderId,
-        origin: customLocation,
-        destination: selectedBuyer?.location,
+        origin: customLocation || "Trichy",
+        destination: selectedBuyer?.location || "Chennai",
         distanceKm: selectedTransport?.distanceKm || 0,
         etaHours: parsedEta,
       };
