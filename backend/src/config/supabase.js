@@ -10,9 +10,9 @@ if (!supabaseUrl || !supabaseKey) {
   throw new Error("Missing Supabase credentials in .env");
 }
 
-import WebSocket from 'ws';
+import WebSocket from "ws";
 
 export const supabase = createClient(supabaseUrl, supabaseKey, {
   auth: { persistSession: false },
-  global: { WebSocket }
+  global: { WebSocket },
 });
