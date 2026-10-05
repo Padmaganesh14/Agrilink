@@ -10,6 +10,7 @@ import {
   TrendingUp,
   Sprout,
 } from "lucide-react";
+import { useLocation } from "../../hooks/useLocation";
 
 export const CommandCenterDashboard = () => {
   const {
@@ -36,58 +37,13 @@ export const CommandCenterDashboard = () => {
 
   const [currentLocation, setCurrentLocation] = useState(t.locationHeader);
 
-  useEffect(() => {
-    const fetchIPLocation = async () => {
-      try {
-        const res = await axios.get("https://ipapi.co/json/");
-        if (res.data && res.data.city && res.data.region) {
-          setCurrentLocation(`${res.data.city} • ${res.data.region}`);
-        }
-      } catch (e) {
-        console.error("Failed to fetch IP location", e);
-      }
-    };
+  const { location: geoLoc, loading: geoLocLoading } = useLocation();
 
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const { latitude, longitude } = position.coords;
-            const res = await axios.get(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
-            );
-            if (res.data && res.data.address) {
-              const city =
-                res.data.address.city ||
-                res.data.address.town ||
-                res.data.address.village ||
-                res.data.address.county ||
-                "";
-              const state = res.data.address.state || "";
-              if (city && state) {
-                setCurrentLocation(`${city} • ${state}`);
-              } else {
-                fetchIPLocation();
-              }
-            }
-          } catch (error) {
-            console.error("Failed reverse geocoding", error);
-            fetchIPLocation();
-          }
-        },
-        (error) => {
-          console.warn(
-            "Geolocation denied or failed, falling back to IP",
-            error,
-          );
-          fetchIPLocation();
-        },
-        { timeout: 10000 },
-      );
-    } else {
-      fetchIPLocation();
+  useEffect(() => {
+    if (geoLoc && !geoLocLoading) {
+      setCurrentLocation(geoLoc);
     }
-  }, []);
+  }, [geoLoc, geoLocLoading]);
 
   useEffect(() => {
     const fetchMyCrops = async () => {

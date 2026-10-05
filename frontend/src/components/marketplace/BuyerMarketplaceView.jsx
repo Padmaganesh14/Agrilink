@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAgri } from "../../context/AgriContext";
 import { api } from "../../services/api";
+import { useLocation } from "../../hooks/useLocation";
 import {
   Search,
   MapPin,
@@ -40,6 +41,14 @@ export const BuyerMarketplaceView = () => {
     deliveryLocation: user?.location || "",
   });
   const [isPostingDemand, setIsPostingDemand] = useState(false);
+
+  const { location: geoLoc, loading: geoLocLoading } = useLocation();
+
+  useEffect(() => {
+    if (geoLoc && !demandForm.deliveryLocation && !geoLocLoading) {
+      setDemandForm((prev) => ({ ...prev, deliveryLocation: geoLoc.split(' • ')[0] }));
+    }
+  }, [geoLoc, geoLocLoading]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -402,11 +411,19 @@ export const BuyerMarketplaceView = () => {
                 e.preventDefault();
                 setIsPostingDemand(true);
                 try {
+                  const isValidUUID =
+                    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+                      user?.id,
+                    );
+                  const validBuyerId = isValidUUID
+                    ? user.id
+                    : "93f26166-c1ff-4846-b2a4-52c78d20d05a"; // Fallback to 'vj' buyer if unauthenticated/dummy
+
                   const res = await axios.post(
                     "http://localhost:8000/api/demands",
                     {
                       ...demandForm,
-                      buyerId: user.id,
+                      buyerId: validBuyerId,
                     },
                   );
                   if (res.data.success) {

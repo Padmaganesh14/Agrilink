@@ -418,7 +418,11 @@ export const Step6LogisticsTracking = () => {
               <div className="flex justify-between py-1 border-b border-slate-100">
                 <span className="text-slate-500 font-bold">{"Seller:"}</span>
                 <span className="font-black text-slate-900 text-right">
-                  {orderData?.users?.farmName || orderData?.users?.name || (userRole === "farmer" ? (user?.farmName || user?.name) : "Partner Farm")}
+                  {orderData?.users?.farmName ||
+                    orderData?.users?.name ||
+                    (userRole === "farmer"
+                      ? user?.farmName || user?.name
+                      : "Partner Farm")}
                   <br />
                   <span className="text-[10px] text-slate-500 uppercase">
                     {orderData.pickupLocation}

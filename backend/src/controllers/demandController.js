@@ -32,7 +32,7 @@ export const getAllDemands = async (req, res, next) => {
   try {
     const { status } = req.query;
     
-    let query = supabase.from('demands').select('*, buyer:buyerId(name, farmName, mobile)');
+    let query = supabase.from('demands').select('*, buyer:users(name, farmName, mobile)');
     
     if (status) {
       query = query.eq('status', status);
