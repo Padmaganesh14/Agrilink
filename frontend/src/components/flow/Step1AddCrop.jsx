@@ -217,7 +217,7 @@ export const Step1AddCrop = () => {
     if (user && user.id) {
       try {
         setIsSubmitting(true);
-        const res = await axios.post("http://localhost:8000/api/crops", {
+        const res = await axios.post((import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com") + "/api/crops", {
           cropName: selectedCrop.name,
           grade: cropQuality,
           location: customLocation,

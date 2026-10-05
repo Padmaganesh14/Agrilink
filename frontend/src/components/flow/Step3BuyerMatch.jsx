@@ -35,7 +35,7 @@ export const Step3BuyerMatch = () => {
     const fetchBuyers = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8000/api/demands?status=open`,
+          `${import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com"}/api/demands?status=open`,
         );
         if (res.data.success) {
           // Filter demands by crop name (case insensitive)
@@ -131,7 +131,7 @@ export const Step3BuyerMatch = () => {
                 onClick={async () => {
                   try {
                     const res = await axios.post(
-                      "http://localhost:8000/api/crops",
+                      (import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com") + "/api/crops",
                       {
                         cropName: selectedCrop.name,
                         grade: cropQuality || "Grade A",

@@ -53,14 +53,14 @@ export const BuyerMarketplaceView = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/crops");
+        const res = await axios.get((import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com") + "/api/crops");
         if (res.data.success) {
           setCrops(res.data.data);
         }
 
         if (user && user.name) {
           const orderRes = await axios.get(
-            `http://localhost:8000/api/order/buyer/${user.name}`,
+            `${import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com"}/api/order/buyer/${user.name}`,
           );
           if (orderRes.data.success) {
             setMyOrders(orderRes.data.data);
@@ -69,7 +69,7 @@ export const BuyerMarketplaceView = () => {
 
         if (user && user.id) {
           const demandRes = await axios.get(
-            "http://localhost:8000/api/demands",
+            (import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com") + "/api/demands",
           );
           if (demandRes.data.success) {
             setMyDemands(
@@ -136,7 +136,7 @@ export const BuyerMarketplaceView = () => {
         // Refresh orders
         if (user && user.name) {
           const orderRes = await axios.get(
-            `http://localhost:8000/api/order/buyer/${user.name}`,
+            `${import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com"}/api/order/buyer/${user.name}`,
           );
           if (orderRes.data.success) {
             setMyOrders(orderRes.data.data);
@@ -420,7 +420,7 @@ export const BuyerMarketplaceView = () => {
                     : "93f26166-c1ff-4846-b2a4-52c78d20d05a"; // Fallback to 'vj' buyer if unauthenticated/dummy
 
                   const res = await axios.post(
-                    "http://localhost:8000/api/demands",
+                    (import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com") + "/api/demands",
                     {
                       ...demandForm,
                       buyerId: validBuyerId,

@@ -25,7 +25,7 @@ export const FarmerLoginView = () => {
         : { mobile: mobileNumber, password, role: "farmer" };
 
       const res = await axios.post(
-        `http://localhost:8000/api/auth/${endpoint}`,
+        `${import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com"}/api/auth/${endpoint}`,
         payload,
       );
 

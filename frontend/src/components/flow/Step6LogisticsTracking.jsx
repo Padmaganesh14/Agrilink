@@ -72,8 +72,8 @@ export const Step6LogisticsTracking = () => {
     if (user) {
       const endpoint =
         userRole === "buyer"
-          ? `http://localhost:8000/api/order/buyer/${user.name}`
-          : `http://localhost:8000/api/order/seller/${user.id}`;
+          ? `${import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com"}/api/order/buyer/${user.name}`
+          : `${import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com"}/api/order/seller/${user.id}`;
       axios
         .get(endpoint)
         .then((res) => {

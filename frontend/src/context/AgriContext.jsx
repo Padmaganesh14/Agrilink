@@ -297,14 +297,14 @@ export const AgriProvider = ({ children }) => {
     try {
       // 1. Deduct Demand Quantity
       await axios.put(
-        `http://localhost:8000/api/demands/${demand.id}/fulfill`,
+        `${import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com"}/api/demands/${demand.id}/fulfill`,
         {
           fulfilledQty: demand.quantityRequired,
         },
       );
 
       // 2. Create Order
-      const res = await axios.post("http://localhost:8000/api/order/create", {
+      const res = await axios.post((import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com") + "/api/order/create", {
         cropId: "demand-fulfillment",
         crop: demand.cropName,
         quantityKg: demand.quantityRequired,

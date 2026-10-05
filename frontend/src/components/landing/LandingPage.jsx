@@ -38,7 +38,7 @@ export const LandingPage = () => {
 
     try {
       const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
-      const res = await axios.post(`http://localhost:8000${endpoint}`, {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com"}${endpoint}`, {
         ...formData,
         role,
       });

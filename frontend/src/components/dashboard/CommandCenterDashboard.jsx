@@ -50,28 +50,28 @@ export const CommandCenterDashboard = () => {
       if (user && user.id) {
         try {
           const res = await axios.get(
-            `http://localhost:8000/api/crops?sellerId=${user.id}`,
+            `${import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com"}/api/crops?sellerId=${user.id}`,
           );
           if (res.data.success) {
             setMyCrops(res.data.data);
           }
 
           const orderRes = await axios.get(
-            `http://localhost:8000/api/order/seller/${user.id}`,
+            `${import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com"}/api/order/seller/${user.id}`,
           );
           if (orderRes.data.success) {
             setMyOrders(orderRes.data.data);
           }
 
           const statRes = await axios.get(
-            `http://localhost:8000/api/stats/farmer/${user.id}`,
+            `${import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com"}/api/stats/farmer/${user.id}`,
           );
           if (statRes.data.success) {
             setStats(statRes.data.stats);
           }
           
           // Fetch open demands
-          const demandRes = await axios.get("http://localhost:8000/api/demands?status=open");
+          const demandRes = await axios.get((import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com") + "/api/demands?status=open");
           if (demandRes.data.success) {
             setBuyerDemands(demandRes.data.demands);
           }
@@ -331,7 +331,7 @@ export const CommandCenterDashboard = () => {
                     ) {
                       try {
                         const res = await axios.delete(
-                          `http://localhost:8000/api/crops/${crop.id}`,
+                          `${import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com"}/api/crops/${crop.id}`,
                         );
                         if (res.data.success) {
                           setMyCrops((prev) =>

@@ -26,7 +26,7 @@ export const SettingsView = () => {
 
     try {
       const res = await axios.put(
-        `http://localhost:8000/api/users/${user.id}`,
+        `${import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com"}/api/users/${user.id}`,
         formData,
       );
       if (res.data.success) {
