@@ -3,7 +3,18 @@ import { useAgri } from "../../context/AgriContext";
 import { CheckCircle2, ChevronRight } from "lucide-react";
 
 export const SellMyCropStepper = () => {
-  const { flowStep, setFlowStep, t, lang, selectedCrop, customLocation, customQty, marketIntelligence, selectedBuyer, activeOrderId } = useAgri();
+  const {
+    flowStep,
+    setFlowStep,
+    t,
+    lang,
+    selectedCrop,
+    customLocation,
+    customQty,
+    marketIntelligence,
+    selectedBuyer,
+    activeOrderId,
+  } = useAgri();
 
   const steps = [
     { num: 1, label: "1. Crop" },
@@ -17,8 +28,9 @@ export const SellMyCropStepper = () => {
   const currentStepNum = flowStep === "transport" ? 5.5 : flowStep;
 
   // Derive which steps are unlocked based on actual data presence
-  const isStep1Valid = !!selectedCrop?.name && !!customLocation && Number(customQty) > 0;
-  const isStep2Valid = isStep1Valid && !!marketIntelligence;
+  const isStep1Valid =
+    !!selectedCrop?.name && !!customLocation && Number(customQty) > 0;
+  const isStep2Valid = isStep1Valid;
   const isStep3Valid = isStep2Valid && !!selectedBuyer;
   const isStep4Valid = isStep3Valid;
   const isStep5Valid = isStep4Valid && !!activeOrderId;
@@ -26,10 +38,10 @@ export const SellMyCropStepper = () => {
   const isStepUnlocked = (stepNum) => {
     if (stepNum === 1) return true;
     if (stepNum === 2) return isStep1Valid;
-    if (stepNum === 3) return isStep2Valid;
-    if (stepNum === 4) return isStep3Valid;
-    if (stepNum === 5) return isStep4Valid;
-    if (stepNum === 6) return isStep5Valid; // Logistics requires an active order
+    if (stepNum === 3) return isStep1Valid;
+    if (stepNum === 4) return isStep1Valid && !!selectedBuyer;
+    if (stepNum === 5) return isStep1Valid && !!selectedBuyer;
+    if (stepNum === 6) return !!activeOrderId; // Logistics requires an active order
     return false;
   };
 

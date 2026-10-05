@@ -128,10 +128,12 @@ export const Step3BuyerMatch = () => {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4 pt-2">
               <button
+                disabled={window.stockAdded}
                 onClick={async () => {
                   try {
                     const res = await axios.post(
-                      (import.meta.env.VITE_API_URL || "https://agrilink-backend.onrender.com") + "/api/crops",
+                      (import.meta.env.VITE_API_URL ||
+                        "https://agrilink-backend.onrender.com") + "/api/crops",
                       {
                         cropName: selectedCrop.name,
                         grade: cropQuality || "Grade A",
@@ -142,16 +144,24 @@ export const Step3BuyerMatch = () => {
                       },
                     );
                     if (res.data.success) {
+                      window.stockAdded = true;
                       alert(
                         "Crop listed successfully! Buyers can now see your stock.",
                       );
-                      window.location.reload();
+                      // Force a UI update to disable the button
+                      document.getElementById("btn-add-stock").innerText =
+                        "Added to Marketplace ✓";
+                      document.getElementById("btn-add-stock").disabled = true;
+                      document
+                        .getElementById("btn-add-stock")
+                        .classList.add("opacity-50", "cursor-not-allowed");
                     }
                   } catch (err) {
                     console.error(err);
                     alert("Failed to list crop on marketplace.");
                   }
                 }}
+                id="btn-add-stock"
                 className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg font-bold text-sm hover:bg-indigo-700 transition-colors w-full sm:w-auto"
               >
                 Add to Available Stocks
