@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 import { translations } from "../data/i18n";
 
 import { calculateMarketIntelligence } from "../data/governmentMarketData";
