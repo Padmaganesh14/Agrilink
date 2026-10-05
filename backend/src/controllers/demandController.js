@@ -32,16 +32,33 @@ export const getAllDemands = async (req, res, next) => {
   try {
     const { status } = req.query;
     
-    let query = supabase.from('demands').select('*, buyer:users(name, farmName, mobile)');
+    let query = supabase.from('demands').select('*');
     
     if (status) {
       query = query.eq('status', status);
     }
     
-    const { data, error } = await query.order('created_at', { ascending: false });
+    const { data: demandsData, error } = await query.order('created_at', { ascending: false });
     
     if (error) throw error;
-    res.status(200).json({ success: true, demands: data });
+
+    // Manually fetch buyers to bypass relation cache issues
+    const demandsWithBuyers = await Promise.all(
+      demandsData.map(async (demand) => {
+        let buyerData = { name: "Partner Buyer", farmName: "Partner Farm" };
+        if (demand.buyerId) {
+          const { data: user } = await supabase
+            .from('users')
+            .select('name, farmName, mobile')
+            .eq('id', demand.buyerId)
+            .single();
+          if (user) buyerData = user;
+        }
+        return { ...demand, buyer: buyerData };
+      })
+    );
+
+    res.status(200).json({ success: true, demands: demandsWithBuyers });
   } catch (error) {
     next(error);
   }
