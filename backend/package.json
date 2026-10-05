@@ -9,14 +9,13 @@
     "dev": "nodemon src/server.js"
   },
   "dependencies": {
+    "@google/genai": "^2.27.0",
     "@supabase/supabase-js": "^2.117.2",
     "axios": "^1.7.9",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "mongoose": "^8.9.3",
-    "morgan": "^1.10.0",
-    "tailwindcss": "4.3.3"
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "nodemon": "^1.14.10"
