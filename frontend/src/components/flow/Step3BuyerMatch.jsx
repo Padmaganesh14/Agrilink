@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useAgri } from "../../context/AgriContext";
 import {
   ArrowRight,
@@ -23,12 +24,50 @@ export const Step3BuyerMatch = () => {
     selectedBuyer,
     setSelectedBuyer,
     marketIntelligence,
+    user,
+    cropQuality,
   } = useAgri();
 
-  const intel = marketIntelligence || {};
+  const [realBuyers, setRealBuyers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Buyers come from Gemini AI response
-  const buyers = intel.buyers || [];
+  useEffect(() => {
+    const fetchBuyers = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:8000/api/demands?status=open`,
+        );
+        if (res.data.success) {
+          // Filter demands by crop name (case insensitive)
+          const matchedDemands = res.data.demands.filter(
+            (d) => d.cropName.toLowerCase() === selectedCrop.name.toLowerCase(),
+          );
+
+          // Map demands to the 'buyer' schema expected by this UI
+          const mappedBuyers = matchedDemands.map((d) => ({
+            id: d.id,
+            name: d.buyer ? d.buyer.farmName || d.buyer.name : "Verified Buyer",
+            location: d.deliveryLocation,
+            address: d.deliveryLocation,
+            businessType: "B2B Wholesale Buyer",
+            requirementQty: d.quantityRequired,
+            targetPrice: d.targetPrice,
+            contactType:
+              "WhatsApp-coordinated payment terms before vehicle dispatch",
+          }));
+
+          setRealBuyers(mappedBuyers);
+        }
+      } catch (err) {
+        console.error("Failed to fetch demands", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchBuyers();
+  }, [selectedCrop.name]);
+
+  const buyers = realBuyers;
 
   const [visibleCount, setVisibleCount] = useState(4);
   const visibleBuyers = buyers.slice(0, visibleCount);
@@ -70,22 +109,62 @@ export const Step3BuyerMatch = () => {
       </div>
 
       {/* No buyers state */}
-      {buyers.length === 0 && (
-        <div className="bg-white rounded-lg p-8 border border-slate-200 text-center space-y-3">
-          <Building2 className="w-10 h-10 text-slate-400 mx-auto" />
+      {isLoading ? (
+        <div className="bg-white rounded-lg p-12 border border-slate-200 text-center space-y-4">
+          <div className="animate-spin w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full mx-auto"></div>
           <p className="text-base font-bold text-slate-600">
-            No buyers found yet.
+            Scanning Marketplace Demands...
           </p>
-          <p className="text-sm text-slate-400">
-            Go back and generate market intelligence first.
-          </p>
-          <button
-            onClick={() => setFlowStep(2)}
-            className="px-5 py-2.5 bg-emerald-600 text-white rounded-lg font-bold text-sm"
-          >
-            Back to Market Analysis
-          </button>
         </div>
+      ) : (
+        buyers.length === 0 && (
+          <div className="bg-white rounded-lg p-8 border border-slate-200 text-center space-y-3">
+            <Building2 className="w-10 h-10 text-slate-400 mx-auto" />
+            <p className="text-base font-bold text-slate-600">
+              No buyers found yet.
+            </p>
+            <p className="text-sm text-slate-400">
+              You can list your stock on the marketplace for buyers to find.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4 pt-2">
+              <button
+                onClick={async () => {
+                  try {
+                    const res = await axios.post(
+                      "http://localhost:8000/api/crops",
+                      {
+                        cropName: selectedCrop.name,
+                        grade: cropQuality || "Grade A",
+                        location: customLocation,
+                        quantityAvailable: customQty,
+                        pricePerKg: selectedCrop.expectedPrice || 0,
+                        sellerId: user?.id,
+                      },
+                    );
+                    if (res.data.success) {
+                      alert(
+                        "Crop listed successfully! Buyers can now see your stock.",
+                      );
+                      window.location.reload();
+                    }
+                  } catch (err) {
+                    console.error(err);
+                    alert("Failed to list crop on marketplace.");
+                  }
+                }}
+                className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg font-bold text-sm hover:bg-indigo-700 transition-colors w-full sm:w-auto"
+              >
+                Add to Available Stocks
+              </button>
+              <button
+                onClick={() => setFlowStep(1)}
+                className="px-5 py-2.5 text-slate-600 font-bold text-sm hover:text-slate-800 transition-colors w-full sm:w-auto"
+              >
+                Go Back
+              </button>
+            </div>
+          </div>
+        )
       )}
 
       {/* Buyer Cards */}
@@ -239,22 +318,17 @@ export const Step3BuyerMatch = () => {
       )}
 
       {/* Navigation */}
-      <div className="flex items-center justify-between pt-2">
-        <button
-          onClick={() => setFlowStep(2)}
-          className="px-5 py-3 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-sm flex items-center space-x-1.5 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>{t.back}</span>
-        </button>
-        <button
-          onClick={() => setFlowStep(4)}
-          className="px-6 py-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm flex items-center space-x-2 transition-colors"
-        >
-          <span>Continue to AI Promotion</span>
-          <ArrowRight className="w-4 h-4 text-emerald-400" />
-        </button>
-      </div>
+      {buyers.length > 0 && (
+        <div className="flex items-center justify-start pt-2">
+          <button
+            onClick={() => setFlowStep(2)}
+            className="px-5 py-3 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-sm flex items-center space-x-1.5 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>{t.back}</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
