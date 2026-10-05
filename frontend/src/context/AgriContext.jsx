@@ -324,7 +324,7 @@ export const AgriProvider = ({ children }) => {
       );
 
       if (res.data.success) {
-        setActiveOrderId(res.data.order.id || res.data.order.orderId);
+        setActiveOrderId(res.data.order.orderId || res.data.order.id);
         setFlowStep(5);
         setCurrentView("flow");
         window.scrollTo({ top: 0, behavior: "smooth" });
