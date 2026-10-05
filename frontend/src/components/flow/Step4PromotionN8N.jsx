@@ -66,43 +66,37 @@ export const Step4PromotionN8N = () => {
   const nodes = [
     {
       id: 1,
-      name:
-        "01 WEBHOOK & VALIDATE",
+      name: "01 WEBHOOK & VALIDATE",
       title: "FARMER INGESTION",
-      desc:
-        `Payload parsed: ${cropName} (${customQty.toLocaleString()} KG @ ${customLocation})`,
+      desc: `Payload parsed: ${cropName} (${customQty.toLocaleString()} KG @ ${customLocation})`,
       icon: <Zap className="w-5 h-5 text-amber-400" />,
     },
     {
       id: 2,
       name: "02 MANDI DATASET",
       title: "AGMARKNET FEED",
-      desc:
-        "data.gov.in / GitHub Mandi Data normalized (1 Quintal = 100 KG)",
+      desc: "data.gov.in / GitHub Mandi Data normalized (1 Quintal = 100 KG)",
       icon: <Database className="w-5 h-5 text-blue-400" />,
     },
     {
       id: 3,
       name: "03 MARKET OPPORTUNITY",
       title: "MANDI SPREAD",
-      desc:
-        "Chennai ₹35 vs Trichy ₹28 (+₹7 gross − ₹2 transport = +₹5 net)",
+      desc: "Chennai ₹35 vs Trichy ₹28 (+₹7 gross − ₹2 transport = +₹5 net)",
       icon: <Cpu className="w-5 h-5 text-indigo-400" />,
     },
     {
       id: 4,
       name: "04 BUYER & LOGISTICS",
       title: "CORRIDOR MATCH",
-      desc:
-        "Koyambedu Wholesale Mart & NH45 corridor (~330 KM Eicher 14FT)",
+      desc: "Koyambedu Wholesale Mart & NH45 corridor (~330 KM Eicher 14FT)",
       icon: <Truck className="w-5 h-5 text-emerald-400" />,
     },
     {
       id: 5,
       name: "05 UNIFIED RESPONSE",
       title: "MASTER EXECUTION",
-      desc:
-        "Bilingual Promo + WhatsApp Order Escrow + Live Telemetry Active",
+      desc: "Bilingual Promo + WhatsApp Order Escrow + Live Telemetry Active",
       icon: <Layers className="w-5 h-5 text-purple-400" />,
     },
   ];
@@ -121,7 +115,9 @@ export const Step4PromotionN8N = () => {
           {"Single-Layer n8n Master Workflow"}
         </h1>
         <p className="text-base sm:text-lg font-medium text-slate-500 mt-1">
-          {"One unified orchestration pipeline: Farmer Ingestion ➔ Mandi Analysis ➔ Buyer Matching ➔ Freight ➔ WhatsApp Order ➔ Logistics."}
+          {
+            "One unified orchestration pipeline: Farmer Ingestion ➔ Mandi Analysis ➔ Buyer Matching ➔ Freight ➔ WhatsApp Order ➔ Logistics."
+          }
         </p>
       </div>
 
@@ -160,9 +156,7 @@ export const Step4PromotionN8N = () => {
         {n8nStatus === "completed" && (
           <div className="py-4 flex items-center justify-center space-x-2 text-emerald-600 font-bold">
             <CheckCircle2 className="w-5 h-5" />
-            <span>
-              {"Promotion Drafted!"}
-            </span>
+            <span>{"Promotion Drafted!"}</span>
           </div>
         )}
       </div>
@@ -243,17 +237,13 @@ export const Step4PromotionN8N = () => {
                 };
                 const result = await api.createOrder(orderData);
                 if (result.success && result.order) {
-                  setActiveOrderId(result.order.orderId);
+                  setActiveOrderId(result.order.orderId || result.order.id);
                   setFlowStep(5);
                 } else {
-                  alert(
-                    "Failed to create order",
-                  );
+                  alert("Failed to create order");
                 }
               } catch (e) {
-                alert(
-                  "Error creating order",
-                );
+                alert("Error creating order");
                 console.error(e);
               } finally {
                 setIsCreatingOrder(false);
@@ -262,11 +252,7 @@ export const Step4PromotionN8N = () => {
             disabled={isCreatingOrder}
             className="px-6 py-3.5 rounded-lg bg-[#166534] hover:bg-[#14532d] text-white border-2 border-[#14532d] font-black text-base shadow-lg shadow-md flex items-center justify-center space-x-2 transition-all hover:scale-105 disabled:opacity-70 disabled:hover:scale-100"
           >
-            <span>
-              {isCreatingOrder
-                ? "Creating..."
-                : t.proceedToOrderBtn}
-            </span>
+            <span>{isCreatingOrder ? "Creating..." : t.proceedToOrderBtn}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -304,9 +290,7 @@ export const Step4PromotionN8N = () => {
                 setActiveOrderId(result.order.orderId);
                 setFlowStep(5);
               } else {
-                alert(
-                  "Failed to create order",
-                );
+                alert("Failed to create order");
               }
             } catch (e) {
               alert("Error creating order");
@@ -319,9 +303,7 @@ export const Step4PromotionN8N = () => {
           className="px-6 py-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-base flex items-center space-x-2 transition-colors disabled:opacity-70"
         >
           <span>
-            {isCreatingOrder
-              ? "Creating..."
-              : "Continue to Order Confirmed"}
+            {isCreatingOrder ? "Creating..." : "Continue to Order Confirmed"}
           </span>
           <ArrowRight className="w-4 h-4 text-emerald-400" />
         </button>

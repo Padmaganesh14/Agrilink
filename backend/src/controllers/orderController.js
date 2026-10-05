@@ -50,13 +50,11 @@ export async function createOrder(req, res, next) {
 
     if (orderError) {
       console.error("[Order Creation Error]", orderError);
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Database failure: could not create order",
-          error: orderError.message,
-        });
+      return res.status(500).json({
+        success: false,
+        message: "Database failure: could not create order",
+        error: orderError.message,
+      });
     }
 
     // Attempt to reduce stock if cropId is provided using optimistic locking
@@ -122,10 +120,16 @@ export async function getOrder(req, res, next) {
   try {
     const { id } = req.params;
 
+    // Check if ID is a valid UUID
+    const isUUID =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        id,
+      );
+
     const { data, error } = await supabase
       .from("orders")
       .select("*, users:sellerId(name, farmName)")
-      .eq("orderId", id)
+      .eq(isUUID ? "id" : "orderId", id)
       .single();
 
     if (error) {
