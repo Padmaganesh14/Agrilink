@@ -11,6 +11,7 @@ if (!supabaseUrl || !supabaseKey) {
 }
 
 import WebSocket from "ws";
+global.WebSocket = WebSocket;
 
 export const supabase = createClient(supabaseUrl, supabaseKey, {
   auth: { persistSession: false },
