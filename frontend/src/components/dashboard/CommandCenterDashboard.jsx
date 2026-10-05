@@ -32,6 +32,61 @@ export const CommandCenterDashboard = () => {
   });
   const [loading, setLoading] = useState(true);
 
+  const [currentLocation, setCurrentLocation] = useState(t.locationHeader);
+
+  useEffect(() => {
+    const fetchIPLocation = async () => {
+      try {
+        const res = await axios.get("https://ipapi.co/json/");
+        if (res.data && res.data.city && res.data.region) {
+          setCurrentLocation(`${res.data.city} • ${res.data.region}`);
+        }
+      } catch (e) {
+        console.error("Failed to fetch IP location", e);
+      }
+    };
+
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            const { latitude, longitude } = position.coords;
+            const res = await axios.get(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
+            );
+            if (res.data && res.data.address) {
+              const city =
+                res.data.address.city ||
+                res.data.address.town ||
+                res.data.address.village ||
+                res.data.address.county ||
+                "";
+              const state = res.data.address.state || "";
+              if (city && state) {
+                setCurrentLocation(`${city} • ${state}`);
+              } else {
+                fetchIPLocation();
+              }
+            }
+          } catch (error) {
+            console.error("Failed reverse geocoding", error);
+            fetchIPLocation();
+          }
+        },
+        (error) => {
+          console.warn(
+            "Geolocation denied or failed, falling back to IP",
+            error,
+          );
+          fetchIPLocation();
+        },
+        { timeout: 10000 },
+      );
+    } else {
+      fetchIPLocation();
+    }
+  }, []);
+
   useEffect(() => {
     const fetchMyCrops = async () => {
       if (user && user.id) {
@@ -79,7 +134,7 @@ export const CommandCenterDashboard = () => {
           <h1 className="text-2xl font-bold text-slate-900">{t.greeting}</h1>
           <div className="flex items-center space-x-1.5 text-sm text-slate-500 mt-1">
             <MapPin className="w-4 h-4 text-emerald-600" />
-            <span>{t.locationHeader}</span>
+            <span>{currentLocation}</span>
           </div>
         </div>
 
@@ -88,7 +143,7 @@ export const CommandCenterDashboard = () => {
           className="px-5 py-2.5 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm shadow-sm flex items-center justify-center space-x-2 transition-colors w-full sm:w-auto"
         >
           <Sprout className="w-4 h-4" />
-          <span>{lang === "ta" ? "புதிய பயிரை விற்க" : "SELL NEW CROP"}</span>
+          <span>{"SELL NEW CROP"}</span>
         </button>
       </div>
 
@@ -100,7 +155,7 @@ export const CommandCenterDashboard = () => {
             <span>{t.yourNextSale}</span>
           </h2>
           <span className="text-xs text-slate-400 font-medium bg-slate-800 px-2.5 py-1 rounded-md">
-            {lang === "ta" ? "பண்ணை" : "Farm Listing"}
+            {"Farm Listing"}
           </span>
         </div>
 
@@ -110,13 +165,11 @@ export const CommandCenterDashboard = () => {
               <span className="text-4xl"></span>
               <div>
                 <h2 className="text-2xl font-bold text-white mb-1">
-                  {lang === "ta" && activeCrop.tamilName
-                    ? activeCrop.tamilName
-                    : activeCrop.cropName}
+                  {activeCrop.cropName}
                 </h2>
                 <p className="text-emerald-300 text-sm font-medium">
                   {activeCrop.quantityAvailable?.toLocaleString()}{" "}
-                  {lang === "ta" ? "கிலோ • தயார்" : "KG • READY"}
+                  {"KG • READY"}
                 </p>
               </div>
             </div>
@@ -124,12 +177,12 @@ export const CommandCenterDashboard = () => {
             {/* Best Market Callout */}
             <div className="bg-slate-800 rounded-lg p-4 border border-slate-700">
               <p className="text-slate-400 text-xs font-semibold mb-1 uppercase tracking-wide">
-                {lang === "ta" ? "குறிக்கப்பட்ட விலை" : "TARGET PRICE"}
+                {"TARGET PRICE"}
               </p>
               <div className="text-2xl font-bold text-white mb-2">
                 ₹{activeCrop.pricePerKg}{" "}
                 <span className="text-sm text-slate-400 font-normal">
-                  {lang === "ta" ? "/ கிலோ" : "/ kg"}
+                  {"/ kg"}
                 </span>
               </div>
               <p className="text-sm text-slate-300 flex items-center space-x-1.5">
@@ -140,9 +193,7 @@ export const CommandCenterDashboard = () => {
           </div>
         ) : (
           <div className="py-8 text-center text-slate-400">
-            {lang === "ta"
-              ? "சமீபத்திய விற்பனை இல்லை."
-              : "No recent crops listed."}
+            {"No recent crops listed."}
           </div>
         )}
 
@@ -206,10 +257,13 @@ export const CommandCenterDashboard = () => {
       {myOrders.length > 0 && (
         <div className="space-y-4">
           <h3 className="text-lg font-bold text-slate-900 mt-6">
-            {lang === "ta" ? "செயலிலுள்ள ஆர்டர்கள்" : "Active Orders"}
+            {"Active Orders"}
           </h3>
           {myOrders.map((order) => (
-            <div key={order.orderId} className="bg-emerald-50 rounded-lg p-5 border border-emerald-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div
+              key={order.orderId}
+              className="bg-emerald-50 rounded-lg p-5 border border-emerald-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+            >
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 rounded-full bg-white text-emerald-600 flex items-center justify-center shadow-sm shrink-0 border border-emerald-100">
                   <Truck className="w-6 h-6" />
@@ -222,9 +276,7 @@ export const CommandCenterDashboard = () => {
                     Buyer: {order.buyerName} ({order.buyerLocation})
                   </p>
                   <p className="text-xs text-emerald-600/80 font-medium">
-                    {lang === "ta"
-                      ? `வாகனம்: ${order.transportName || "Logistics"} • ${order.pickupLocation} → ${order.deliveryLocation}`
-                      : `Vehicle: ${order.transportName || "Pending"} • ${order.pickupLocation} → ${order.deliveryLocation}`}
+                    {`Vehicle: ${order.transportName || "Pending"} • ${order.pickupLocation} → ${order.deliveryLocation}`}
                   </p>
                 </div>
               </div>
@@ -246,7 +298,7 @@ export const CommandCenterDashboard = () => {
       {/* My Listings */}
       <div className="bg-white rounded-lg p-5 border border-slate-200 shadow-sm mt-6">
         <h3 className="text-lg font-bold text-slate-900 mb-4">
-          {lang === "ta" ? "என் பட்டியல்கள்" : "My Listings"}
+          {"My Listings"}
         </h3>
 
         {loading ? (
@@ -300,7 +352,7 @@ export const CommandCenterDashboard = () => {
           </div>
         ) : (
           <div className="py-8 text-center text-slate-400">
-            {lang === "ta" ? "பயிர்கள் எதுவும் இல்லை." : "No crops listed yet."}
+            {"No crops listed yet."}
           </div>
         )}
       </div>

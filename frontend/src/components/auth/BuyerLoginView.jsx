@@ -75,17 +75,13 @@ export const BuyerLoginView = () => {
 
             <h2 className="text-2xl font-black text-[#0F172A] tracking-tight ">
               {isRegistering
-                ? lang === "ta"
-                  ? "புதிய கணக்கை உருவாக்க"
-                  : "Create Buyer Account"
+                ? "Create Buyer Account"
                 : t.buyerLoginHeader}
             </h2>
 
             <p className="text-base text-slate-500 font-medium">
               {isRegistering
-                ? lang === "ta"
-                  ? "வாங்குபவராக பதிவு செய்யவும்"
-                  : "Join the network today"
+                ? "Join the network today"
                 : `"${t.buyerLoginSubtitle}"`}
             </p>
           </div>
@@ -101,7 +97,7 @@ export const BuyerLoginView = () => {
             {isRegistering && (
               <div>
                 <label className="block text-base font-bold text-slate-600 mb-1.5">
-                  {lang === "ta" ? "நிறுவனத்தின் பெயர்" : "Business Name"}
+                  {"Business Name"}
                 </label>
                 <input
                   type="text"
@@ -130,7 +126,7 @@ export const BuyerLoginView = () => {
 
             <div>
               <label className="block text-base font-bold text-slate-600 mb-1.5">
-                {lang === "ta" ? "கடவுச்சொல்" : "Password"}
+                {"Password"}
               </label>
               <input
                 type="password"
@@ -153,9 +149,7 @@ export const BuyerLoginView = () => {
                 <>
                   <span>
                     {isRegistering
-                      ? lang === "ta"
-                        ? "பதிவு செய்"
-                        : "Register"
+                      ? "Register"
                       : t.sendOtpBtn}
                   </span>
                   <ArrowRight className="w-4 h-4 text-indigo-400" />
@@ -174,12 +168,8 @@ export const BuyerLoginView = () => {
               className="text-base font-bold text-ai-600 hover:text-ai-700"
             >
               {isRegistering
-                ? lang === "ta"
-                  ? "ஏற்கனவே கணக்கு உள்ளதா? உள்நுழைய"
-                  : "Already have an account? Login"
-                : lang === "ta"
-                  ? "புதிய வாங்குபவரா? பதிவு செய்ய"
-                  : "New Buyer? Register here"}
+                ? "Already have an account? Login"
+                : "New Buyer? Register here"}
             </button>
           </div>
         </div>

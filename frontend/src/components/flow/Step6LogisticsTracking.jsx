@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
 import { useAgri } from "../../context/AgriContext";
 import {
   getCropDisplayName,
@@ -29,9 +30,12 @@ export const Step6LogisticsTracking = () => {
     selectedTransport,
     selectedBuyer,
     activeOrderId,
+    setActiveOrderId,
+    user,
     userRole,
   } = useAgri();
 
+  const [allOrders, setAllOrders] = useState([]);
   const [orderData, setOrderData] = useState(null);
   const [trackingData, setTrackingData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -63,6 +67,26 @@ export const Step6LogisticsTracking = () => {
       setIsLoading(false);
     }
   }, [activeOrderId]);
+
+  useEffect(() => {
+    if (user) {
+      const endpoint =
+        userRole === "buyer"
+          ? `http://localhost:8000/api/order/buyer/${user.name}`
+          : `http://localhost:8000/api/order/seller/${user.id}`;
+      axios
+        .get(endpoint)
+        .then((res) => {
+          if (res.data.success) {
+            setAllOrders(res.data.data);
+            if (!activeOrderId && res.data.data.length > 0) {
+              setActiveOrderId(res.data.data[0].orderId);
+            }
+          }
+        })
+        .catch((err) => console.warn("Failed to fetch all orders", err));
+    }
+  }, [user, userRole, activeOrderId, setActiveOrderId]);
 
   const transport = {
     name: orderData?.transportName || selectedTransport?.name || "Transport",
@@ -220,8 +244,17 @@ export const Step6LogisticsTracking = () => {
   if (!orderData || !trackingData) {
     return (
       <div className="text-center py-20 text-red-500 font-bold">
-        Failed to load tracking data. Please return to the previous step.
-        <br />
+        {allOrders.length === 0 && !activeOrderId ? (
+          <>
+            You have no active orders to track.
+            <br />
+          </>
+        ) : (
+          <>
+            Failed to load tracking data. Please return to the previous step.
+            <br />
+          </>
+        )}
         <button
           onClick={() => {
             if (userRole === "buyer") {
@@ -246,17 +279,35 @@ export const Step6LogisticsTracking = () => {
           <Truck className="w-3.5 h-3.5 text-agri-500" />
           <span>{t.step06Pill}</span>
           <span>•</span>
-          <span>{lang === "ta" ? "படி 6 / 6" : "Step 6 of 6"}</span>
+          <span>{"Step 6 of 6"}</span>
         </div>
         <h1 className="text-3xl font-black text-[#0F172A] tracking-tight ">
           {t.step06Title}
         </h1>
         <p className="text-base sm:text-lg font-medium text-slate-500 mt-1">
-          {lang === "ta"
-            ? "திருச்சி பண்ணை முதல் சென்னை கோயம்பேடு வரையிலான நேரலை நெடுஞ்சாலை போக்குவரத்து கண்காணிப்பு."
-            : "Real-time highway transit visualization from Trichy Farm Gate to Chennai Koyambedu."}
+          {"Real-time highway transit visualization from Trichy Farm Gate to Chennai Koyambedu."}
         </p>
       </div>
+
+      {/* Order Selector (if multiple orders exist) */}
+      {allOrders.length > 1 && (
+        <div className="bg-white rounded-lg p-4 border border-slate-200 shadow-sm flex items-center justify-between mb-6">
+          <label className="text-sm font-bold text-slate-700">
+            {"Select Order to Track:"}
+          </label>
+          <select
+            value={activeOrderId || ""}
+            onChange={(e) => setActiveOrderId(e.target.value)}
+            className="ml-4 flex-1 max-w-xs px-3 py-2 rounded-md bg-slate-50 border border-slate-300 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            {allOrders.map((o) => (
+              <option key={o.orderId} value={o.orderId}>
+                {o.orderId} - {o.crop} ({o.quantityKg} KG)
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {/* Premium Split Layout: Left Map + Right Order Specs */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -265,9 +316,7 @@ export const Step6LogisticsTracking = () => {
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div className="flex items-center space-x-2">
               <span className="text-base font-black text-slate-800 ">
-                {lang === "ta"
-                  ? "திருச்சி ➔ சென்னை வழித்தடம்"
-                  : "TRICHY ➔ CHENNAI ROUTE"}
+                {"TRICHY ➔ CHENNAI ROUTE"}
               </span>
               <span className="text-[9px] font-black  px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 font-mono">
                 {t.simulatedDemoTrackingBadge}
@@ -286,37 +335,31 @@ export const Step6LogisticsTracking = () => {
               <div className="flex items-center space-x-1.5">
                 <span className="w-2 h-2 rounded-full bg-agri-400 animate-ping"></span>
                 <span className="font-black text-agri-400  text-lg">
-                  {lang === "ta"
-                    ? "நெடுஞ்சாலை தொலை அளவீடு"
-                    : "Highway Telemetry"}
+                  {"Highway Telemetry"}
                 </span>
               </div>
               <p className="font-bold text-slate-100 text-base">
-                {lang === "ta"
-                  ? "இணைப்பு மையம்: விழுப்புரம் (NH45)"
-                  : "Node: Villupuram (NH45)"}
+                {"Node: Villupuram (NH45)"}
               </p>
               <p className="text-lg text-slate-400">
-                {lang === "ta"
-                  ? "வழித்தடம்: 330 கி.மீ • ~6 மணிநேரம்"
-                  : "Corridor: 330 KM • ~6 Hours"}
+                {"Corridor: 330 KM • ~6 Hours"}
               </p>
             </div>
           </div>
 
           <div className="flex items-center justify-between text-base text-slate-500 font-medium pt-1">
             <span>
-              {lang === "ta" ? "தூரம்:" : "Distance:"}{" "}
+              {"Distance:"}{" "}
               <b className="text-slate-800">330 KM</b>
             </span>
             <span>
-              {lang === "ta" ? "நேரம்:" : "Duration:"}{" "}
+              {"Duration:"}{" "}
               <b className="text-slate-800">
-                {lang === "ta" ? "~6 மணிநேரம்" : "~6 Hours"}
+                {"~6 Hours"}
               </b>
             </span>
             <span>
-              {lang === "ta" ? "வேகம்:" : "Speed:"}{" "}
+              {"Speed:"}{" "}
               <b className="text-agri-600">52 km/h</b>
             </span>
           </div>
@@ -328,10 +371,10 @@ export const Step6LogisticsTracking = () => {
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <span className="text-lg font-black  text-slate-400">
-                  {lang === "ta" ? "பரிவர்த்தனை" : "Transaction"}
+                  {"Transaction"}
                 </span>
                 <h3 className="text-base font-black text-[#0F172A]">
-                  {lang === "ta" ? "ஆர்டர்" : "ORDER"} #{activeOrderId}
+                  {"ORDER"} #{activeOrderId}
                 </h3>
               </div>
             </div>
@@ -340,18 +383,18 @@ export const Step6LogisticsTracking = () => {
             <div className="space-y-2 text-base">
               <div className="flex justify-between py-1 border-b border-slate-100">
                 <span className="text-slate-500 font-bold">
-                  {lang === "ta" ? "பயிர் விவரம்:" : "Crop Lot:"}
+                  {"Crop Lot:"}
                 </span>
                 <span className="font-black text-slate-900 text-right">
                   {getCropDisplayName(orderData.crop, lang)} •{" "}
                   {orderData.quantityKg.toLocaleString()}{" "}
-                  {lang === "ta" ? "கிலோ" : "KG"}
+                  {"KG"}
                 </span>
               </div>
 
               <div className="flex justify-between py-1 border-b border-slate-100">
                 <span className="text-slate-500 font-bold">
-                  {lang === "ta" ? "பயிர் மதிப்பு:" : "Crop Value:"}
+                  {"Crop Value:"}
                 </span>
                 <span className="font-black text-slate-900">
                   ₹{orderData.totalValue?.toLocaleString()}
@@ -360,7 +403,7 @@ export const Step6LogisticsTracking = () => {
 
               <div className="flex justify-between py-1 border-b border-slate-100">
                 <span className="text-slate-500 font-bold">
-                  {lang === "ta" ? "வாங்குபவர்:" : "Buyer:"}
+                  {"Buyer:"}
                 </span>
                 <span className="font-black text-slate-900 text-right">
                   {buyer.name}
@@ -373,10 +416,10 @@ export const Step6LogisticsTracking = () => {
 
               <div className="flex justify-between py-1 border-b border-slate-100">
                 <span className="text-slate-500 font-bold">
-                  {lang === "ta" ? "விற்பனையாளர்:" : "Seller:"}
+                  {"Seller:"}
                 </span>
                 <span className="font-black text-slate-900 text-right">
-                  {orderData.pickupLocation} Farm
+                  {userRole === "farmer" ? (user?.farmName || user?.name || "Farmer") : (orderData.sellerName || "Partner Farm")}
                   <br />
                   <span className="text-[10px] text-slate-500 uppercase">
                     {orderData.pickupLocation}
@@ -386,7 +429,7 @@ export const Step6LogisticsTracking = () => {
 
               <div className="flex justify-between py-1 border-b border-slate-100">
                 <span className="text-slate-500 font-bold">
-                  {lang === "ta" ? "போக்குவரத்து:" : "Transport:"}
+                  {"Transport:"}
                 </span>
                 <span className="font-black text-agri-600 text-right">
                   {transport.name}
@@ -399,7 +442,7 @@ export const Step6LogisticsTracking = () => {
 
               <div className="flex justify-between py-1">
                 <span className="text-slate-500 font-bold">
-                  {lang === "ta" ? "சரக்கு கட்டணம்:" : "Freight Fee:"}
+                  {"Freight Fee:"}
                 </span>
                 <span className="font-black text-slate-900">
                   ₹{transport.estimatedCost?.toLocaleString()}
@@ -408,7 +451,7 @@ export const Step6LogisticsTracking = () => {
 
               <div className="flex justify-between py-2 mt-2 bg-slate-50 px-3 rounded-lg border border-slate-200">
                 <span className="text-slate-800 font-black">
-                  {lang === "ta" ? "மொத்த தொகை:" : "Grand Total:"}
+                  {"Grand Total:"}
                 </span>
                 <span className="font-black text-emerald-700 text-xl">
                   ₹
@@ -422,7 +465,7 @@ export const Step6LogisticsTracking = () => {
             {/* Vertical Dynamic Timeline */}
             <div className="space-y-2 pt-4 border-t border-slate-100">
               <span className="text-lg font-black text-slate-400 block mb-2">
-                {lang === "ta" ? "ஆர்டர் நிலை" : "Order Status Timeline"}
+                {"Order Status Timeline"}
               </span>
 
               {[
@@ -487,9 +530,7 @@ export const Step6LogisticsTracking = () => {
                 {t.saleInMotionTitle}
               </h3>
               <span className="px-4 py-2 rounded-md text-lg font-black bg-emerald-950 text-agri-300 border border-emerald-500/40">
-                {lang === "ta"
-                  ? "சரிபார்க்கப்பட்ட B2B பரிமாற்றம்"
-                  : "Verified B2B Transition"}
+                {"Verified B2B Transition"}
               </span>
             </div>
             <p className="text-base text-slate-400 mt-1">{t.saleInMotionSub}</p>
@@ -500,41 +541,37 @@ export const Step6LogisticsTracking = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-base pt-1">
           <div className="p-3 bg-slate-850/80 rounded-lg border border-slate-800">
             <span className="text-slate-400 text-lg font-bold  block">
-              {lang === "ta" ? "வாங்குபவர் நிலை" : "Buyer Status"}
+              {"Buyer Status"}
             </span>
             <span className="font-black text-emerald-400 mt-1 block">
-              {lang === "ta"
-                ? "வாங்குபவர் உறுதி செய்தார் ✓"
-                : "Buyer Confirmed ✓"}
+              {"Buyer Confirmed ✓"}
             </span>
           </div>
 
           <div className="p-3 bg-slate-850/80 rounded-lg border border-slate-800">
             <span className="text-slate-400 text-lg font-bold  block">
-              {lang === "ta" ? "பணம் செலுத்தும் நிலை" : "Payment Status"}
+              {"Payment Status"}
             </span>
             <span className="font-black text-amber-300 mt-1 block">
-              {lang === "ta" ? "ஒருங்கிணைக்கப்பட்டது ✓" : "Coordinated ✓"}
+              {"Coordinated ✓"}
             </span>
           </div>
 
           <div className="p-3 bg-slate-850/80 rounded-lg border border-slate-800">
             <span className="text-slate-400 text-lg font-bold  block">
-              {lang === "ta" ? "போக்குவரத்து நிலை" : "Transport Status"}
+              {"Transport Status"}
             </span>
             <span className="font-black text-emerald-400 mt-1 block">
-              {lang === "ta" ? "உறுதி செய்யப்பட்டது ✓" : "Confirmed ✓"}
+              {"Confirmed ✓"}
             </span>
           </div>
 
           <div className="p-3 bg-slate-850/80 rounded-lg border border-slate-800">
             <span className="text-slate-400 text-lg font-bold  block">
-              {lang === "ta" ? "டெலிவரி நிலை" : "Delivery Status"}
+              {"Delivery Status"}
             </span>
             <span className="font-black text-blue-400 mt-1 block">
-              {lang === "ta"
-                ? "கண்காணிப்பு செயலில் உள்ளது ✓"
-                : "Tracking Active ✓"}
+              {"Tracking Active ✓"}
             </span>
           </div>
         </div>
@@ -570,12 +607,8 @@ export const Step6LogisticsTracking = () => {
         >
           <span>
             {userRole === "buyer"
-              ? lang === "ta"
-                ? "சந்தைக்குத் திரும்பு"
-                : "Return to Marketplace"
-              : lang === "ta"
-                ? "கட்டுப்பாட்டு மையத்திற்குத் திரும்பு"
-                : "Return to Command Center"}
+              ? "Return to Marketplace"
+              : "Return to Command Center"}
           </span>
           <ChevronRight className="w-4 h-4 text-emerald-400" />
         </button>

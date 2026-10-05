@@ -1,150 +1,134 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { useAgri } from "../../context/AgriContext";
-import { Save, UserCircle, Phone, Lock, CheckCircle2, AlertCircle } from "lucide-react";
+import { Settings, Save, ArrowLeft, Store } from "lucide-react";
 
 export const SettingsView = () => {
-  const { user, setUser, lang, t } = useAgri();
+  const { user, setUser, setCurrentView, t } = useAgri();
 
   const [formData, setFormData] = useState({
     name: user?.name || "",
+    farmName: user?.farmName || "",
     mobile: user?.mobile || "",
-    password: "",
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setMessage(null);
+    setIsSaving(true);
+    setMessage("");
 
     try {
-      const res = await fetch("http://localhost:8000/api/auth/update", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: user.id,
-          name: formData.name,
-          mobile: formData.mobile,
-          ...(formData.password && { password: formData.password }),
-        }),
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        setUser(data.user);
-        setMessage({ type: "success", text: "Profile updated successfully!" });
-        setFormData((prev) => ({ ...prev, password: "" })); // Clear password field
-      } else {
-        setMessage({ type: "error", text: data.message || "Failed to update profile." });
+      const res = await axios.put(
+        `http://localhost:8000/api/users/${user.id}`,
+        formData,
+      );
+      if (res.data.success) {
+        setUser(res.data.user);
+        setMessage("Settings updated successfully!");
       }
     } catch (error) {
-      setMessage({ type: "error", text: "Network error. Please try again." });
+      console.error(error);
+      setMessage(
+        "Failed to update settings. Make sure you added the 'farmName' column to the 'users' table in Supabase.",
+      );
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 pb-24">
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="bg-slate-900 p-6 text-white border-b border-slate-800">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center">
-              <UserCircle className="w-7 h-7 text-emerald-400" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold">Profile Settings</h1>
-              <p className="text-sm text-slate-400">Update your account information</p>
-            </div>
-          </div>
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 pb-28 space-y-6">
+      {/* Header */}
+      <div className="flex items-center space-x-4 mb-6">
+        <button
+          onClick={() => setCurrentView("command-center")}
+          className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 flex items-center space-x-2">
+            <Settings className="w-6 h-6 text-emerald-600" />
+            <span>Settings & Profile</span>
+          </h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Manage your farm and personal details
+          </p>
         </div>
+      </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sm:p-8">
+        <form onSubmit={handleSave} className="space-y-5">
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-1.5 flex items-center space-x-1.5">
+              <span>Personal Name</span>
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              placeholder="e.g. Ramanathan"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-1.5 flex items-center space-x-1.5">
+              <Store className="w-4 h-4 text-emerald-600" />
+              <span>Farm / Business Name</span>
+            </label>
+            <input
+              type="text"
+              name="farmName"
+              value={formData.farmName}
+              onChange={handleChange}
+              className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              placeholder="e.g. Green Valley Farms"
+            />
+            <p className="text-xs text-slate-500 mt-1.5">
+              This will be displayed to buyers during logistics tracking.
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              Mobile Number
+            </label>
+            <input
+              type="tel"
+              name="mobile"
+              value={formData.mobile}
+              onChange={handleChange}
+              className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50 text-slate-500 cursor-not-allowed"
+              readOnly
+            />
+          </div>
+
           {message && (
             <div
-              className={`p-4 rounded-lg flex items-center space-x-3 text-sm font-medium ${
-                message.type === "success"
-                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                  : "bg-red-50 text-red-700 border border-red-200"
-              }`}
+              className={`p-3 rounded-md text-sm font-medium ${message.includes("success") ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}
             >
-              {message.type === "success" ? (
-                <CheckCircle2 className="w-5 h-5 shrink-0" />
-              ) : (
-                <AlertCircle className="w-5 h-5 shrink-0" />
-              )}
-              <span>{message.text}</span>
+              {message}
             </div>
           )}
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-                Full Name / Business Name
-              </label>
-              <div className="relative">
-                <UserCircle className="w-5 h-5 text-slate-400 absolute left-3 top-2.5" />
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-900"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-                Mobile Number
-              </label>
-              <div className="relative">
-                <Phone className="w-5 h-5 text-slate-400 absolute left-3 top-2.5" />
-                <input
-                  type="tel"
-                  name="mobile"
-                  value={formData.mobile}
-                  onChange={handleChange}
-                  required
-                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-900"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-                New Password (Optional)
-              </label>
-              <div className="relative">
-                <Lock className="w-5 h-5 text-slate-400 absolute left-3 top-2.5" />
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Leave blank to keep current password"
-                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-900"
-                />
-              </div>
-            </div>
-          </div>
 
           <div className="pt-4 border-t border-slate-100 flex justify-end">
             <button
               type="submit"
-              disabled={isLoading}
-              className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-sm flex items-center space-x-2 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+              disabled={isSaving}
+              className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-70"
             >
               <Save className="w-4 h-4" />
-              <span>{isLoading ? "Saving..." : "Save Changes"}</span>
+              <span>{isSaving ? "Saving..." : "Save Changes"}</span>
             </button>
           </div>
         </form>

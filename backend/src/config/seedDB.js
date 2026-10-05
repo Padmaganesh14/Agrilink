@@ -32,7 +32,6 @@ export async function seedDatabase() {
       await Crop.create([
         {
           cropName: "Tomato",
-          tamilName: "தக்காளி",
           grade: "Grade A Premium",
           location: "Trichy",
           quantityAvailable: 5000,
@@ -42,7 +41,6 @@ export async function seedDatabase() {
         },
         {
           cropName: "Ponni Rice",
-          tamilName: "பொன்னி அரிசி",
           grade: "Premium Aged",
           location: "Madurai",
           quantityAvailable: 15000,
@@ -52,7 +50,6 @@ export async function seedDatabase() {
         },
         {
           cropName: "Small Onion",
-          tamilName: "சின்ன வெங்காயம்",
           grade: "Grade A Export",
           location: "Coimbatore",
           quantityAvailable: 2500,

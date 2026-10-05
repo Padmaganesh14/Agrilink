@@ -89,7 +89,7 @@ export const LandingPage = () => {
             >
               <div className="flex items-center justify-center space-x-2">
                 <LogIn className="w-4 h-4" />
-                <span>{lang === "ta" ? "உள்நுழைய" : "Log In"}</span>
+                <span>{"Log In"}</span>
               </div>
             </button>
             <button
@@ -102,7 +102,7 @@ export const LandingPage = () => {
             >
               <div className="flex items-center justify-center space-x-2">
                 <UserPlus className="w-4 h-4" />
-                <span>{lang === "ta" ? "பதிவு செய்" : "Sign Up"}</span>
+                <span>{"Sign Up"}</span>
               </div>
             </button>
           </div>
@@ -111,17 +111,11 @@ export const LandingPage = () => {
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-slate-900 mb-1">
                 {isLogin
-                  ? lang === "ta"
-                    ? "மீண்டும் வருக!"
-                    : "Welcome back"
-                  : lang === "ta"
-                    ? "கணக்கை உருவாக்கு"
-                    : "Create an account"}
+                  ? "Welcome back"
+                  : "Create an account"}
               </h2>
               <p className="text-sm text-slate-500">
-                {lang === "ta"
-                  ? "தொடர உங்கள் விவரங்களை உள்ளிடவும்"
-                  : "Enter your details to continue"}
+                {"Enter your details to continue"}
               </p>
             </div>
 
@@ -137,7 +131,7 @@ export const LandingPage = () => {
                       : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
                   }`}
                 >
-                  {lang === "ta" ? "விவசாயி" : "Farmer"}
+                  {"Farmer"}
                 </button>
                 <button
                   type="button"
@@ -148,7 +142,7 @@ export const LandingPage = () => {
                       : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
                   }`}
                 >
-                  {lang === "ta" ? "வியாபாரி" : "Buyer"}
+                  {"Buyer"}
                 </button>
               </div>
 

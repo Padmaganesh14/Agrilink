@@ -116,15 +116,13 @@ export const Step5OrderPayment = () => {
         <div className="inline-flex items-center space-x-2 bg-emerald-50 text-agri-700 px-5 py-3 rounded-md text-base font-black  mb-2 border border-emerald-200">
           <span>{t.step05Pill}</span>
           <span>•</span>
-          <span>{lang === "ta" ? "படி 5 / 6" : "Step 5 of 6"}</span>
+          <span>{"Step 5 of 6"}</span>
         </div>
         <h1 className="text-3xl font-black text-[#0F172A] tracking-tight ">
           {t.step05Title}
         </h1>
         <p className="text-base sm:text-lg font-medium text-slate-500 mt-1">
-          {lang === "ta"
-            ? "B2B கொள்முதல் ஆர்டர் பதிவு செய்யப்பட்டது. வாகனம் புறப்படும் முன் முன்பண விதிமுறைகளை ஒருங்கிணைக்கவும்."
-            : "B2B purchase order registered. Coordinate payment terms before vehicle dispatch."}
+          {"B2B purchase order registered. Coordinate payment terms before vehicle dispatch."}
         </p>
       </div>
 
@@ -140,20 +138,20 @@ export const Step5OrderPayment = () => {
                   {cropDisplay}
                 </h2>
                 <span className="px-4 py-2 rounded-md text-lg font-black  bg-emerald-100 text-agri-800 border border-emerald-200">
-                  {lang === "ta" ? "ஆர்டர்" : "ORDER"} #{activeOrderId}
+                  {"ORDER"} #{activeOrderId}
                 </span>
               </div>
               <p className="text-base font-bold text-slate-500 mt-0.5">
-                {customQty.toLocaleString()} {lang === "ta" ? "கிலோ" : "KG"} •{" "}
-                {lang === "ta" ? "விலை:" : "Rate:"} ₹{pricePerKg} /{" "}
-                {lang === "ta" ? "கிலோ" : "KG"}
+                {customQty.toLocaleString()} {"KG"} •{" "}
+                {"Rate:"} ₹{pricePerKg} /{" "}
+                {"KG"}
               </p>
             </div>
           </div>
 
           <div className="text-left sm:text-right bg-slate-50 sm:bg-transparent p-3 sm:p-0 rounded-lg sm:rounded-none">
             <p className="text-lg  font-bold text-slate-400">
-              {lang === "ta" ? "மொத்த ஆர்டர் மதிப்பு" : "Total Order Value"}
+              {"Total Order Value"}
             </p>
             <p className="text-2xl sm:text-3xl font-black text-agri-600">
               ₹{totalValue.toLocaleString()}
@@ -167,17 +165,15 @@ export const Step5OrderPayment = () => {
             <div className="flex items-center space-x-1.5 text-slate-500 text-base font-bold  mb-1">
               <MapPin className="w-3.5 h-3.5 text-agri-500" />
               <span>
-                {lang === "ta"
-                  ? "விற்பனையாளர் (தோட்டம்)"
-                  : "Seller (Farm Gate)"}
+                {"Seller (Farm Gate)"}
               </span>
             </div>
             <p className="font-extrabold text-slate-900 text-lg">
-              {lang === "ta" ? "விவசாயி" : "Farmer"}
+              {"Farmer"}
             </p>
             <p className="text-base text-slate-500 font-medium">
               {locationDisplay}{" "}
-              {lang === "ta" ? "தோட்டம் • தமிழ்நாடு" : "Farm • Tamil Nadu"}
+              {"Farm • Tamil Nadu"}
             </p>
           </div>
 
@@ -185,12 +181,12 @@ export const Step5OrderPayment = () => {
             <div className="flex items-center space-x-1.5 text-slate-500 text-base font-bold  mb-1">
               <Building2 className="w-3.5 h-3.5 text-ai-600" />
               <span>
-                {lang === "ta" ? "மொத்த கொள்முதல் வியாபாரி" : "Wholesale Buyer"}
+                {"Wholesale Buyer"}
               </span>
             </div>
             <p className="font-extrabold text-slate-900 text-lg">{buyerName}</p>
             <p className="text-base text-slate-500 font-medium">
-              {lang === "ta" ? "இடம்" : "Location"}:{" "}
+              {"Location"}:{" "}
               {getLocationDisplayName(
                 selectedBuyer?.location || "Chennai",
                 lang,

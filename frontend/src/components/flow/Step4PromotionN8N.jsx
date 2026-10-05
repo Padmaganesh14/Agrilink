@@ -54,15 +54,8 @@ export const Step4PromotionN8N = () => {
 
   const cropIcon = crop.icon || "";
   const cropName = crop.name;
-  const cropNameTa = getCropDisplayName(crop.name, "ta");
-  const displayLocation = getLocationDisplayName(customLocation, lang);
   const priceDisplay = selectedBuyer?.targetPrice || crop.expectedPrice || 35;
-
-  const promoCopyEn = `${cropIcon} Fresh ${cropQuality} ${cropName}\n Quantity: ${customQty.toLocaleString()} KG\n Farm-origin: ${customLocation}, Tamil Nadu\n Indicative Market Rate: ₹${priceDisplay} / KG\n Available for verified B2B purchase via AgriLink AI.\n#AgriLinkAI #${cropName.replace(/\s+/g, "")} #B2BAgriculture #TamilNadu`;
-
-  const promoCopyTa = `${cropIcon} புதிய ${cropQuality === "Grade A" ? "கிரேடு A" : cropQuality} ${cropNameTa}\n அளவு: ${customQty.toLocaleString()} கிலோ\n தோட்டம்: ${displayLocation}, தமிழ்நாடு\n உத்தேச மண்டி விலை: ₹${priceDisplay} / கிலோ\n AGRILINK AI தளம் மூலம் B2B கொள்முதல் செய்யலாம்.\n#AgriLinkAI #${cropNameTa.replace(/\s+/g, "")} #விவசாயம் #தமிழ்நாடு`;
-
-  const promoCopy = lang === "ta" ? promoCopyTa : promoCopyEn;
+  const promoCopy = `${cropIcon} Fresh ${cropQuality} ${cropName}\n Quantity: ${customQty.toLocaleString()} KG\n Farm-origin: ${customLocation}, Tamil Nadu\n Indicative Market Rate: ₹${priceDisplay} / KG\n Available for verified B2B purchase via AgriLink AI.\n#AgriLinkAI #${cropName.replace(/\s+/g, "")} #B2BAgriculture #TamilNadu`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(promoCopy);
@@ -74,52 +67,42 @@ export const Step4PromotionN8N = () => {
     {
       id: 1,
       name:
-        lang === "ta" ? "01 வெப்ஹூக் & சரிபார்ப்பு" : "01 WEBHOOK & VALIDATE",
-      title: lang === "ta" ? "விவசாயி உள்ளீடு" : "FARMER INGESTION",
+        "01 WEBHOOK & VALIDATE",
+      title: "FARMER INGESTION",
       desc:
-        lang === "ta"
-          ? `${cropNameTa} (${customQty.toLocaleString()} கிலோ, ${displayLocation}) ஏற்கப்பட்டது`
-          : `Payload parsed: ${cropName} (${customQty.toLocaleString()} KG @ ${customLocation})`,
+        `Payload parsed: ${cropName} (${customQty.toLocaleString()} KG @ ${customLocation})`,
       icon: <Zap className="w-5 h-5 text-amber-400" />,
     },
     {
       id: 2,
-      name: lang === "ta" ? "02 அரசு மண்டி தரவு" : "02 MANDI DATASET",
-      title: lang === "ta" ? "அக்மார்க்நெட் / DMI" : "AGMARKNET FEED",
+      name: "02 MANDI DATASET",
+      title: "AGMARKNET FEED",
       desc:
-        lang === "ta"
-          ? "தமிழ்நாடு மண்டி விலைகள் குவிண்டாலிலிருந்து கிலோவாக மாற்றப்பட்டது"
-          : "data.gov.in / GitHub Mandi Data normalized (1 Quintal = 100 KG)",
+        "data.gov.in / GitHub Mandi Data normalized (1 Quintal = 100 KG)",
       icon: <Database className="w-5 h-5 text-blue-400" />,
     },
     {
       id: 3,
-      name: lang === "ta" ? "03 சந்தை வாய்ப்பு" : "03 MARKET OPPORTUNITY",
-      title: lang === "ta" ? "மண்டி ஒப்பீடு" : "MANDI SPREAD",
+      name: "03 MARKET OPPORTUNITY",
+      title: "MANDI SPREAD",
       desc:
-        lang === "ta"
-          ? "சென்னை vs திருச்சி (+₹7 மொத்த சாதகம் − ₹2 போக்குவரத்து = +₹5 நிகரம்)"
-          : "Chennai ₹35 vs Trichy ₹28 (+₹7 gross − ₹2 transport = +₹5 net)",
+        "Chennai ₹35 vs Trichy ₹28 (+₹7 gross − ₹2 transport = +₹5 net)",
       icon: <Cpu className="w-5 h-5 text-indigo-400" />,
     },
     {
       id: 4,
-      name: lang === "ta" ? "04 வாங்குபவர் & சரக்கு" : "04 BUYER & LOGISTICS",
-      title: lang === "ta" ? "B2B பொருத்தம்" : "CORRIDOR MATCH",
+      name: "04 BUYER & LOGISTICS",
+      title: "CORRIDOR MATCH",
       desc:
-        lang === "ta"
-          ? "கோயம்பேடு மொத்த சந்தை & NH45 வழித்தடம் (~330 கி.மீ Eicher 14FT)"
-          : "Koyambedu Wholesale Mart & NH45 corridor (~330 KM Eicher 14FT)",
+        "Koyambedu Wholesale Mart & NH45 corridor (~330 KM Eicher 14FT)",
       icon: <Truck className="w-5 h-5 text-emerald-400" />,
     },
     {
       id: 5,
-      name: lang === "ta" ? "05 முழுமையான தொகுப்பு" : "05 UNIFIED RESPONSE",
-      title: lang === "ta" ? "ஒற்றை அடுக்கு இயக்கம்" : "MASTER EXECUTION",
+      name: "05 UNIFIED RESPONSE",
+      title: "MASTER EXECUTION",
       desc:
-        lang === "ta"
-          ? "விளம்பரம் + வாட்ஸ்அப் ஆர்டர் ஒருங்கிணைப்பு + நேரலை கண்காணிப்பு"
-          : "Bilingual Promo + WhatsApp Order Escrow + Live Telemetry Active",
+        "Bilingual Promo + WhatsApp Order Escrow + Live Telemetry Active",
       icon: <Layers className="w-5 h-5 text-purple-400" />,
     },
   ];
@@ -132,17 +115,13 @@ export const Step4PromotionN8N = () => {
           <Sparkles className="w-3.5 h-3.5 text-ai-600" />
           <span>{t.step04Pill}</span>
           <span>•</span>
-          <span>{lang === "ta" ? "படி 4 / 6" : "Step 4 of 6"}</span>
+          <span>{"Step 4 of 6"}</span>
         </div>
         <h1 className="text-3xl font-black text-[#0F172A] tracking-tight ">
-          {lang === "ta"
-            ? "ஒற்றை அடுக்கு n8n முதன்மை பணிப்பாய்வு"
-            : "Single-Layer n8n Master Workflow"}
+          {"Single-Layer n8n Master Workflow"}
         </h1>
         <p className="text-base sm:text-lg font-medium text-slate-500 mt-1">
-          {lang === "ta"
-            ? "ஒரே பணிப்பாய்வில்: விவசாயி உள்ளீடு ➔ மண்டி பகுப்பாய்வு ➔ வாங்குபவர் பொருத்தம் ➔ சரக்கு கட்டணம் ➔ வாட்ஸ்அப் ஆர்டர் ➔ நேரலை கண்காணிப்பு."
-            : "One unified orchestration pipeline: Farmer Ingestion ➔ Mandi Analysis ➔ Buyer Matching ➔ Freight ➔ WhatsApp Order ➔ Logistics."}
+          {"One unified orchestration pipeline: Farmer Ingestion ➔ Mandi Analysis ➔ Buyer Matching ➔ Freight ➔ WhatsApp Order ➔ Logistics."}
         </p>
       </div>
 
@@ -150,9 +129,7 @@ export const Step4PromotionN8N = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
           <div className="flex items-center space-x-2.5">
             <h2 className="text-lg font-black text-slate-900">
-              {lang === "ta"
-                ? "தானியங்கி சந்தைப்படுத்தல்"
-                : "Automated Smart Promotion"}
+              {"Automated Smart Promotion"}
             </h2>
           </div>
 
@@ -168,9 +145,7 @@ export const Step4PromotionN8N = () => {
             <Sparkles className="w-4 h-4 text-amber-300" />
             <span>
               {n8nStatus === "running"
-                ? lang === "ta"
-                  ? "தயாராகிறது..."
-                  : "Generating Promotion..."
+                ? "Generating Promotion..."
                 : t.promoteMyCropBtn}
             </span>
           </button>
@@ -178,9 +153,7 @@ export const Step4PromotionN8N = () => {
 
         {n8nStatus === "running" && (
           <div className="py-8 text-center text-slate-500 animate-pulse">
-            {lang === "ta"
-              ? "சிறந்த வாங்குபவர்களை தேடுகிறது..."
-              : "Finding best buyers and drafting promotion..."}
+            {"Finding best buyers and drafting promotion..."}
           </div>
         )}
 
@@ -188,7 +161,7 @@ export const Step4PromotionN8N = () => {
           <div className="py-4 flex items-center justify-center space-x-2 text-emerald-600 font-bold">
             <CheckCircle2 className="w-5 h-5" />
             <span>
-              {lang === "ta" ? "விளம்பரம் தயார்!" : "Promotion Drafted!"}
+              {"Promotion Drafted!"}
             </span>
           </div>
         )}
@@ -200,15 +173,11 @@ export const Step4PromotionN8N = () => {
           <div className="flex items-center space-x-2">
             <span className="text-xl"></span>
             <h3 className="text-lg font-black text-slate-900 ">
-              {lang === "ta"
-                ? "மொத்த வியாபாரிகளுக்கான விளம்பர உரை"
-                : "Buyer-Facing Promotional Output"}
+              {"Buyer-Facing Promotional Output"}
             </h3>
           </div>
           <span className="text-base font-bold text-slate-400">
-            {lang === "ta"
-              ? "AGRILINK AI மூலம் தானாக உருவாக்கப்பட்டது"
-              : "Auto-formatted via AgriLink AI"}
+            {"Auto-formatted via AgriLink AI"}
           </span>
         </div>
 
@@ -278,14 +247,12 @@ export const Step4PromotionN8N = () => {
                   setFlowStep(5);
                 } else {
                   alert(
-                    lang === "ta"
-                      ? "ஆர்டர் உருவாக்க முடியவில்லை"
-                      : "Failed to create order",
+                    "Failed to create order",
                   );
                 }
               } catch (e) {
                 alert(
-                  lang === "ta" ? "பிழை ஏற்பட்டது" : "Error creating order",
+                  "Error creating order",
                 );
                 console.error(e);
               } finally {
@@ -297,9 +264,7 @@ export const Step4PromotionN8N = () => {
           >
             <span>
               {isCreatingOrder
-                ? lang === "ta"
-                  ? "உருவாக்கப்படுகிறது..."
-                  : "Creating..."
+                ? "Creating..."
                 : t.proceedToOrderBtn}
             </span>
             <ArrowRight className="w-4 h-4" />
@@ -340,13 +305,11 @@ export const Step4PromotionN8N = () => {
                 setFlowStep(5);
               } else {
                 alert(
-                  lang === "ta"
-                    ? "ஆர்டர் உருவாக்க முடியவில்லை"
-                    : "Failed to create order",
+                  "Failed to create order",
                 );
               }
             } catch (e) {
-              alert(lang === "ta" ? "பிழை ஏற்பட்டது" : "Error creating order");
+              alert("Error creating order");
               console.error(e);
             } finally {
               setIsCreatingOrder(false);
@@ -357,9 +320,7 @@ export const Step4PromotionN8N = () => {
         >
           <span>
             {isCreatingOrder
-              ? lang === "ta"
-                ? "உருவாக்கப்படுகிறது..."
-                : "Creating..."
+              ? "Creating..."
               : "Continue to Order Confirmed"}
           </span>
           <ArrowRight className="w-4 h-4 text-emerald-400" />

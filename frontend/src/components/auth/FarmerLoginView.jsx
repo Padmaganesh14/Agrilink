@@ -77,17 +77,13 @@ export const FarmerLoginView = () => {
 
             <h2 className="text-2xl font-black text-[#0F172A] tracking-tight ">
               {isRegistering
-                ? lang === "ta"
-                  ? "புதிய கணக்கை உருவாக்க"
-                  : "Create Farmer Account"
+                ? "Create Farmer Account"
                 : t.farmerLoginHeader}
             </h2>
 
             <p className="text-base text-slate-500 font-medium">
               {isRegistering
-                ? lang === "ta"
-                  ? "விவசாயியாக பதிவு செய்யவும்"
-                  : "Join the network today"
+                ? "Join the network today"
                 : `"${t.farmerLoginSubtitle}"`}
             </p>
           </div>
@@ -103,7 +99,7 @@ export const FarmerLoginView = () => {
             {isRegistering && (
               <div>
                 <label className="block text-base font-bold text-slate-600 mb-1.5">
-                  {lang === "ta" ? "முழு பெயர்" : "Full Name"}
+                  {"Full Name"}
                 </label>
                 <input
                   type="text"
@@ -132,7 +128,7 @@ export const FarmerLoginView = () => {
 
             <div>
               <label className="block text-base font-bold text-slate-600 mb-1.5">
-                {lang === "ta" ? "கடவுச்சொல்" : "Password"}
+                {"Password"}
               </label>
               <input
                 type="password"
@@ -155,9 +151,7 @@ export const FarmerLoginView = () => {
                 <>
                   <span>
                     {isRegistering
-                      ? lang === "ta"
-                        ? "பதிவு செய்"
-                        : "Register"
+                      ? "Register"
                       : t.sendOtpBtn}
                   </span>
                   <ArrowRight className="w-4 h-4 text-emerald-400" />
@@ -176,12 +170,8 @@ export const FarmerLoginView = () => {
               className="text-base font-bold text-agri-600 hover:text-agri-700"
             >
               {isRegistering
-                ? lang === "ta"
-                  ? "ஏற்கனவே கணக்கு உள்ளதா? உள்நுழைய"
-                  : "Already have an account? Login"
-                : lang === "ta"
-                  ? "புதிய விவசாயியா? பதிவு செய்ய"
-                  : "New Farmer? Register here"}
+                ? "Already have an account? Login"
+                : "New Farmer? Register here"}
             </button>
           </div>
         </div>

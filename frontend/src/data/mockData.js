@@ -2,7 +2,6 @@ export const defaultCrops = [
   {
     id: 'crop-tomato',
     name: 'Tomato',
-    tamilName: 'தக்காளி',
     icon: '',
     defaultQty: 2000,
     defaultLocation: 'Trichy',
@@ -27,16 +26,15 @@ export const defaultCrops = [
       ]
     },
     markets: [
-      { name: 'Chennai Koyambedu', tamilName: 'சென்னை கோயம்பேடு', price: 34, demand: 'HIGH', diff: '+₹6/kg', advantage: true },
-      { name: 'Trichy Gandhi Market (Local)', tamilName: 'திருச்சி காந்தி மார்க்கெட்', price: 28, demand: 'MEDIUM', diff: 'Base', advantage: false },
-      { name: 'Coimbatore Market', tamilName: 'கோவை மார்க்கெட்', price: 30, demand: 'HIGH', diff: '+₹2/kg', advantage: false },
-      { name: 'Madurai Mattuthavani', tamilName: 'மதுரை மாட்டுத்தாவணி', price: 26, demand: 'LOW', diff: '-₹2/kg', advantage: false }
+      { name: 'Chennai Koyambedu', price: 34, demand: 'HIGH', diff: '+₹6/kg', advantage: true },
+      { name: 'Trichy Gandhi Market (Local)', price: 28, demand: 'MEDIUM', diff: 'Base', advantage: false },
+      { name: 'Coimbatore Market', price: 30, demand: 'HIGH', diff: '+₹2/kg', advantage: false },
+      { name: 'Madurai Mattuthavani', price: 26, demand: 'LOW', diff: '-₹2/kg', advantage: false }
     ],
     matchedBuyers: [
       {
         id: 'buyer-koyambedu',
         name: 'Koyambedu Wholesale Mart',
-        tamilName: 'கோயம்பேடு ஹோல்சேல் மார்ட்',
         badge: 'B2B Wholesale Buyer',
         location: 'Chennai',
         tamilLocation: 'சென்னை',
@@ -54,7 +52,6 @@ export const defaultCrops = [
       {
         id: 'buyer-freshdirect',
         name: 'FreshDirect Chennai',
-        tamilName: 'ஃபிரெஷ்டிரெக்ட் சென்னை',
         badge: 'B2B Retail Aggregator',
         location: 'Chennai',
         tamilLocation: 'சென்னை',
@@ -74,7 +71,6 @@ export const defaultCrops = [
   {
     id: 'crop-rice',
     name: 'Ponni Rice',
-    tamilName: 'பொன்னி அரிசி',
     icon: '',
     defaultQty: 1500,
     defaultLocation: 'Trichy',
@@ -99,15 +95,14 @@ export const defaultCrops = [
       ]
     },
     markets: [
-      { name: 'Chennai Wholesale Hub', tamilName: 'சென்னை மொத்த மையம்', price: 56, demand: 'HIGH', diff: '+₹8/kg', advantage: true },
-      { name: 'Trichy Mill Gate (Local)', tamilName: 'திருச்சி மில் கேட்', price: 48, demand: 'MEDIUM', diff: 'Base', advantage: false },
-      { name: 'Madurai Mandi', tamilName: 'மதுரை மண்டி', price: 49, demand: 'MEDIUM', diff: '+₹1/kg', advantage: false }
+      { name: 'Chennai Wholesale Hub', price: 56, demand: 'HIGH', diff: '+₹8/kg', advantage: true },
+      { name: 'Trichy Mill Gate (Local)', price: 48, demand: 'MEDIUM', diff: 'Base', advantage: false },
+      { name: 'Madurai Mandi', price: 49, demand: 'MEDIUM', diff: '+₹1/kg', advantage: false }
     ],
     matchedBuyers: [
       {
         id: 'buyer-chennai-rice',
         name: 'Ponni Super Aggregators',
-        tamilName: 'பொன்னி சூப்பர் கொள்முதல் மையம்',
         badge: 'B2B Wholesale Buyer',
         location: 'Chennai',
         tamilLocation: 'சென்னை',
@@ -127,7 +122,6 @@ export const defaultCrops = [
   {
     id: 'crop-onion',
     name: 'Small Red Onion',
-    tamilName: 'சின்ன வெங்காயம்',
     icon: '',
     defaultQty: 1000,
     defaultLocation: 'Trichy',
@@ -152,15 +146,14 @@ export const defaultCrops = [
       ]
     },
     markets: [
-      { name: 'Chennai Koyambedu', tamilName: 'சென்னை கோயம்பேடு', price: 64, demand: 'HIGH', diff: '+₹12/kg', advantage: true },
-      { name: 'Trichy Local Mandi', tamilName: 'திருச்சி உள்ளூர் மண்டி', price: 52, demand: 'MEDIUM', diff: 'Base', advantage: false },
-      { name: 'Salem Agri Yard', tamilName: 'சேலம் வேளாண் தளம்', price: 55, demand: 'MEDIUM', diff: '+₹3/kg', advantage: false }
+      { name: 'Chennai Koyambedu', price: 64, demand: 'HIGH', diff: '+₹12/kg', advantage: true },
+      { name: 'Trichy Local Mandi', price: 52, demand: 'MEDIUM', diff: 'Base', advantage: false },
+      { name: 'Salem Agri Yard', price: 55, demand: 'MEDIUM', diff: '+₹3/kg', advantage: false }
     ],
     matchedBuyers: [
       {
         id: 'buyer-shallot-mart',
         name: 'Tamil Nadu Vegetable Traders',
-        tamilName: 'தமிழ்நாடு காய்கறி வர்த்தகம்',
         badge: 'B2B Wholesale Buyer',
         location: 'Chennai',
         tamilLocation: 'சென்னை',
@@ -184,7 +177,6 @@ export const popularCropsCatalog = [
   {
     id: 'crop-banana',
     name: 'Banana',
-    tamilName: 'வாழைப்பழம்',
     icon: '',
     defaultQty: 2500,
     defaultLocation: 'Theni',
@@ -209,15 +201,14 @@ export const popularCropsCatalog = [
       ]
     },
     markets: [
-      { name: 'Chennai Koyambedu', tamilName: 'சென்னை கோயம்பேடு', price: 28, demand: 'HIGH', diff: '+₹6/kg', advantage: true },
-      { name: 'Theni Local Mandi', tamilName: 'தேனி உள்ளூர் மண்டி', price: 22, demand: 'MEDIUM', diff: 'Base', advantage: false },
-      { name: 'Madurai Mattuthavani', tamilName: 'மதுரை மாட்டுத்தாவணி', price: 24, demand: 'MEDIUM', diff: '+₹2/kg', advantage: false }
+      { name: 'Chennai Koyambedu', price: 28, demand: 'HIGH', diff: '+₹6/kg', advantage: true },
+      { name: 'Theni Local Mandi', price: 22, demand: 'MEDIUM', diff: 'Base', advantage: false },
+      { name: 'Madurai Mattuthavani', price: 24, demand: 'MEDIUM', diff: '+₹2/kg', advantage: false }
     ],
     matchedBuyers: [
       {
         id: 'buyer-chennai-fruit-mart',
         name: 'Koyambedu Fresh Fruit Terminal',
-        tamilName: 'கோயம்பேடு பழ முனையம்',
         badge: 'B2B Wholesale Buyer',
         location: 'Chennai',
         tamilLocation: 'சென்னை',
@@ -233,7 +224,6 @@ export const popularCropsCatalog = [
   {
     id: 'crop-sugarcane',
     name: 'Sugarcane',
-    tamilName: 'கரும்பு',
     icon: '',
     defaultQty: 5000,
     defaultLocation: 'Cuddalore',
@@ -258,14 +248,13 @@ export const popularCropsCatalog = [
       ]
     },
     markets: [
-      { name: 'Chennai Agro Processing Hub', tamilName: 'சென்னை அக்ரோ ஆலை மையம்', price: 4.6, demand: 'HIGH', diff: '+₹1.4/kg', advantage: true },
-      { name: 'Cuddalore Mill Gate', tamilName: 'கடலூர் மில் கேட்', price: 3.2, demand: 'MEDIUM', diff: 'Base', advantage: false }
+      { name: 'Chennai Agro Processing Hub', price: 4.6, demand: 'HIGH', diff: '+₹1.4/kg', advantage: true },
+      { name: 'Cuddalore Mill Gate', price: 3.2, demand: 'MEDIUM', diff: 'Base', advantage: false }
     ],
     matchedBuyers: [
       {
         id: 'buyer-cane-distillers',
         name: 'South India Sugar & Agro Mill',
-        tamilName: 'தென்னிந்திய சர்க்கரை & அக்ரோ ஆலை',
         badge: 'B2B Industrial Buyer',
         location: 'Chennai Suburbs',
         tamilLocation: 'சென்னை',
@@ -281,7 +270,6 @@ export const popularCropsCatalog = [
   {
     id: 'crop-groundnut',
     name: 'Groundnut',
-    tamilName: 'நிலக்கடலை',
     icon: '',
     defaultQty: 1200,
     defaultLocation: 'Tiruvannamalai',
@@ -306,14 +294,13 @@ export const popularCropsCatalog = [
       ]
     },
     markets: [
-      { name: 'Chennai Wholesale Hub', tamilName: 'சென்னை மொத்த மையம்', price: 79, demand: 'HIGH', diff: '+₹11/kg', advantage: true },
-      { name: 'Tiruvannamalai Mandi', tamilName: 'திருவண்ணாமலை மண்டி', price: 68, demand: 'MEDIUM', diff: 'Base', advantage: false }
+      { name: 'Chennai Wholesale Hub', price: 79, demand: 'HIGH', diff: '+₹11/kg', advantage: true },
+      { name: 'Tiruvannamalai Mandi', price: 68, demand: 'MEDIUM', diff: 'Base', advantage: false }
     ],
     matchedBuyers: [
       {
         id: 'buyer-tn-oilseeds',
         name: 'Chennai Edible Oils & Seeds Ltd',
-        tamilName: 'சென்னை எண்ணெய் வித்துக்கள் மையம்',
         badge: 'B2B Wholesale Buyer',
         location: 'Chennai',
         tamilLocation: 'சென்னை',
@@ -329,7 +316,6 @@ export const popularCropsCatalog = [
   {
     id: 'crop-carrot',
     name: 'Carrot',
-    tamilName: 'கேரட்',
     icon: '',
     defaultQty: 1500,
     defaultLocation: 'Ooty',
@@ -354,14 +340,13 @@ export const popularCropsCatalog = [
       ]
     },
     markets: [
-      { name: 'Chennai Koyambedu', tamilName: 'சென்னை கோயம்பேடு', price: 48, demand: 'HIGH', diff: '+₹13/kg', advantage: true },
-      { name: 'Ooty Local Yard', tamilName: 'ஊட்டி உள்ளூர் ஏல தளம்', price: 35, demand: 'MEDIUM', diff: 'Base', advantage: false }
+      { name: 'Chennai Koyambedu', price: 48, demand: 'HIGH', diff: '+₹13/kg', advantage: true },
+      { name: 'Ooty Local Yard', price: 35, demand: 'MEDIUM', diff: 'Base', advantage: false }
     ],
     matchedBuyers: [
       {
         id: 'buyer-freshchain-chennai',
         name: 'FreshChain Hypermarket Logistics',
-        tamilName: 'ஃபிரெஷ்செயின் ஹைப்பர்மார்க்கெட்',
         badge: 'B2B Retail Aggregator',
         location: 'Chennai',
         tamilLocation: 'சென்னை',
@@ -377,7 +362,6 @@ export const popularCropsCatalog = [
   {
     id: 'crop-chilli',
     name: 'Chilli',
-    tamilName: 'பச்சை மிளகாய்',
     icon: '🌶️',
     defaultQty: 800,
     defaultLocation: 'Ramanathapuram',
@@ -402,14 +386,13 @@ export const popularCropsCatalog = [
       ]
     },
     markets: [
-      { name: 'Chennai Koyambedu', tamilName: 'சென்னை கோயம்பேடு', price: 58, demand: 'HIGH', diff: '+₹13/kg', advantage: true },
-      { name: 'Ramanathapuram Mandi', tamilName: 'ராமநாதபுரம் மண்டி', price: 45, demand: 'MEDIUM', diff: 'Base', advantage: false }
+      { name: 'Chennai Koyambedu', price: 58, demand: 'HIGH', diff: '+₹13/kg', advantage: true },
+      { name: 'Ramanathapuram Mandi', price: 45, demand: 'MEDIUM', diff: 'Base', advantage: false }
     ],
     matchedBuyers: [
       {
         id: 'buyer-spiceworld',
         name: 'Madras Spice & Vegetable Mart',
-        tamilName: 'மெட்ராஸ் மசாலா & காய்கறி மார்ட்',
         badge: 'B2B Wholesale Buyer',
         location: 'Chennai',
         tamilLocation: 'சென்னை',
@@ -425,7 +408,6 @@ export const popularCropsCatalog = [
   {
     id: 'crop-brinjal',
     name: 'Brinjal',
-    tamilName: 'கத்தரிக்காய்',
     icon: '',
     defaultQty: 1000,
     defaultLocation: 'Dindigul',
@@ -450,14 +432,13 @@ export const popularCropsCatalog = [
       ]
     },
     markets: [
-      { name: 'Chennai Koyambedu', tamilName: 'சென்னை கோயம்பேடு', price: 27, demand: 'HIGH', diff: '+₹7/kg', advantage: true },
-      { name: 'Dindigul Mandi', tamilName: 'திண்டுக்கல் மண்டி', price: 20, demand: 'MEDIUM', diff: 'Base', advantage: false }
+      { name: 'Chennai Koyambedu', price: 27, demand: 'HIGH', diff: '+₹7/kg', advantage: true },
+      { name: 'Dindigul Mandi', price: 20, demand: 'MEDIUM', diff: 'Base', advantage: false }
     ],
     matchedBuyers: [
       {
         id: 'buyer-koyambedu-veggies',
         name: 'Koyambedu Wholesale Mart',
-        tamilName: 'கோயம்பேடு ஹோல்சேல் மார்ட்',
         badge: 'B2B Wholesale Buyer',
         location: 'Chennai',
         tamilLocation: 'சென்னை',
@@ -473,7 +454,6 @@ export const popularCropsCatalog = [
   {
     id: 'crop-coconut',
     name: 'Coconut',
-    tamilName: 'தேங்காய்',
     icon: '',
     defaultQty: 2000,
     defaultLocation: 'Pollachi',
@@ -498,14 +478,13 @@ export const popularCropsCatalog = [
       ]
     },
     markets: [
-      { name: 'Chennai Wholesale Terminal', tamilName: 'சென்னை மொத்த முனையம்', price: 26, demand: 'HIGH', diff: '+₹8/kg', advantage: true },
-      { name: 'Pollachi Market', tamilName: 'பொள்ளாச்சி சந்தை', price: 18, demand: 'MEDIUM', diff: 'Base', advantage: false }
+      { name: 'Chennai Wholesale Terminal', price: 26, demand: 'HIGH', diff: '+₹8/kg', advantage: true },
+      { name: 'Pollachi Market', price: 18, demand: 'MEDIUM', diff: 'Base', advantage: false }
     ],
     matchedBuyers: [
       {
         id: 'buyer-madras-coconut',
         name: 'Madras Coconut Trading Co.',
-        tamilName: 'மெட்ராஸ் தேங்காய் வர்த்தக நிறுவனம்',
         badge: 'B2B Wholesale Buyer',
         location: 'Chennai',
         tamilLocation: 'சென்னை',
@@ -521,7 +500,6 @@ export const popularCropsCatalog = [
   {
     id: 'crop-cotton',
     name: 'Cotton',
-    tamilName: 'பருத்தி',
     icon: '',
     defaultQty: 1200,
     defaultLocation: 'Perambalur',
@@ -546,14 +524,13 @@ export const popularCropsCatalog = [
       ]
     },
     markets: [
-      { name: 'Coimbatore Textile Mills', tamilName: 'கோவை ஜவுளி ஆலைகள்', price: 84, demand: 'HIGH', diff: '+₹12/kg', advantage: true },
-      { name: 'Perambalur Yard', tamilName: 'பெரம்பலூர் ஏல தளம்', price: 72, demand: 'MEDIUM', diff: 'Base', advantage: false }
+      { name: 'Coimbatore Textile Mills', price: 84, demand: 'HIGH', diff: '+₹12/kg', advantage: true },
+      { name: 'Perambalur Yard', price: 72, demand: 'MEDIUM', diff: 'Base', advantage: false }
     ],
     matchedBuyers: [
       {
         id: 'buyer-kongu-spinners',
         name: 'Kongu Textile & Spinning Consortium',
-        tamilName: 'கொங்கு ஜவுளி மற்றும் நூற்பாலை கூட்டமைப்பு',
         badge: 'B2B Industrial Buyer',
         location: 'Coimbatore',
         tamilLocation: 'கோவை',
@@ -570,16 +547,16 @@ export const popularCropsCatalog = [
 
 // Quick suggestion chips for Step 1
 export const popularCropChips = [
-  { name: 'Tomato', icon: '', tamilName: 'தக்காளி' },
-  { name: 'Rice', icon: '', tamilName: 'பொன்னி அரிசி' },
-  { name: 'Onion', icon: '', tamilName: 'வெங்காயம்' },
-  { name: 'Banana', icon: '', tamilName: 'வாழைப்பழம்' },
-  { name: 'Sugarcane', icon: '', tamilName: 'கரும்பு' },
-  { name: 'Groundnut', icon: '', tamilName: 'நிலக்கடலை' },
-  { name: 'Carrot', icon: '', tamilName: 'கேரட்' },
-  { name: 'Chilli', icon: '🌶️', tamilName: 'பச்சை மிளகாய்' },
-  { name: 'Brinjal', icon: '', tamilName: 'கத்தரிக்காய்' },
-  { name: 'Coconut', icon: '', tamilName: 'தேங்காய்' }
+  { name: 'Tomato', icon: '', },
+  { name: 'Rice', icon: '', },
+  { name: 'Onion', icon: '', },
+  { name: 'Banana', icon: '', },
+  { name: 'Sugarcane', icon: '', },
+  { name: 'Groundnut', icon: '', },
+  { name: 'Carrot', icon: '', },
+  { name: 'Chilli', icon: '🌶️', },
+  { name: 'Brinjal', icon: '', },
+  { name: 'Coconut', icon: '', }
 ];
 
 // Crop-agnostic resolver: handles ANY agricultural crop entered by user
@@ -598,8 +575,7 @@ export const findOrBuildCrop = ({
   const catalog = [...defaultCrops, ...popularCropsCatalog];
   const matched = catalog.find(c => 
     c.name.toLowerCase() === lower ||
-    c.name.toLowerCase().includes(lower) ||
-    (c.tamilName && c.tamilName.includes(cleanName))
+    c.name.toLowerCase().includes(lower) 
   );
 
   if (matched) {
@@ -632,7 +608,6 @@ export const findOrBuildCrop = ({
   return {
     id: `crop-custom-${Date.now()}`,
     name: cleanName,
-    tamilName: cleanName,
     icon: '',
     defaultQty: qty,
     defaultLocation: location || 'Trichy',
@@ -647,7 +622,6 @@ export const findOrBuildCrop = ({
       {
         id: 'buyer-generic-aggregator',
         name: 'Tamil Nadu Wholesale Agro Aggregators',
-        tamilName: 'தமிழ்நாடு மொத்த வேளாண் கொள்முதல் மையம்',
         badge: 'B2B Wholesale Buyer Network',
         location: 'Chennai Central Wholesale Corridor',
         tamilLocation: 'சென்னை',
@@ -665,7 +639,6 @@ export const findOrBuildCrop = ({
       {
         id: 'buyer-direct-supermarket',
         name: 'South India Retail Consortium',
-        tamilName: 'தென்னிந்திய சில்லறை வர்த்தக கூட்டமைப்பு',
         badge: 'B2B Institutional Buyer',
         location: 'Coimbatore & Chennai Hubs',
         tamilLocation: 'சென்னை / கோவை',
@@ -757,7 +730,6 @@ export const transportPartners = [
   {
     id: 'transport-tn-agro',
     name: 'Tamil Nadu Agro Logistics',
-    tamilName: 'தமிழ்நாடு அக்ரோ லாஜிஸ்டிக்ஸ்',
     badge: 'VERIFIED LOGISTICS PARTNER',
     vehicle: '14 FT Tata 407',
     capacityKg: 2500,
@@ -774,7 +746,6 @@ export const transportPartners = [
   {
     id: 'transport-greenroute',
     name: 'GreenRoute Transport',
-    tamilName: 'கிரீன்ரூட் டிரான்ஸ்போர்ட்',
     badge: 'VERIFIED LOGISTICS PARTNER',
     vehicle: '17 FT Cargo Eicher',
     capacityKg: 4000,
@@ -791,7 +762,6 @@ export const transportPartners = [
   {
     id: 'transport-trichy-fresh',
     name: 'Trichy Fresh Cargo',
-    tamilName: 'திருச்சி ஃப்ரெஷ் கார்கோ',
     badge: 'VERIFIED LOGISTICS PARTNER',
     vehicle: '14 FT Multi-axle',
     capacityKg: 3000,
@@ -817,13 +787,11 @@ export const defaultOrder = {
   totalValue: 68000,
   pickup: {
     name: 'Trichy Farm Gate',
-    tamilName: 'திருச்சி தோட்டம்',
     lat: 10.7905,
     lng: 78.7047
   },
   delivery: {
     name: 'Chennai Koyambedu',
-    tamilName: 'சென்னை கோயம்பேடு',
     lat: 13.0694,
     lng: 80.1948
   },

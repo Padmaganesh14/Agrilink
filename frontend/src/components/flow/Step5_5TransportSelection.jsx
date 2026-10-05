@@ -1,6 +1,9 @@
 import React from "react";
 import { useAgri } from "../../context/AgriContext";
-import { getCropDisplayName, getLocationDisplayName } from "../../data/mockData";
+import {
+  getCropDisplayName,
+  getLocationDisplayName,
+} from "../../data/mockData";
 import { api } from "../../services/api";
 import {
   Truck,
@@ -34,7 +37,7 @@ export const Step5_5TransportSelection = () => {
         const result = await api.matchTransport({
           origin: customLocation,
           destination: selectedBuyer?.location,
-          quantityKg: customQty
+          quantityKg: customQty,
         });
         if (result.success && result.partners) {
           setTransportPartners(result.partners);
@@ -54,45 +57,43 @@ export const Step5_5TransportSelection = () => {
 
   const handleConfirmAndTrack = async () => {
     if (!activeOrderId) {
-      alert(lang === "ta" ? "ஆர்டர் ஐடி கிடைக்கவில்லை" : "Order ID not found.");
+      alert("Order ID not found.");
       return;
     }
 
     try {
       setIsStartingTracking(true);
-        let parsedEta = 0;
-        if (selectedTransport?.transitHours) {
-          const match = selectedTransport.transitHours.match(/(\d+)h\s*(\d+)m/);
-          if (match) {
-            parsedEta = parseInt(match[1]) + parseInt(match[2]) / 60;
-          } else {
-            parsedEta = parseFloat(selectedTransport.transitHours);
-          }
+      let parsedEta = 0;
+      if (selectedTransport?.transitHours) {
+        const match = selectedTransport.transitHours.match(/(\d+)h\s*(\d+)m/);
+        if (match) {
+          parsedEta = parseInt(match[1]) + parseInt(match[2]) / 60;
+        } else {
+          parsedEta = parseFloat(selectedTransport.transitHours);
         }
-        
-        // ensure at least a small eta to avoid divide by zero for speed
-        if (parsedEta === 0) parsedEta = 1;
+      }
 
-        const trackingData = {
-          orderId: activeOrderId,
-          origin: customLocation,
-          destination: selectedBuyer?.location,
-          distanceKm: selectedTransport?.distanceKm || 0,
-          etaHours: parsedEta,
-        };
+      // ensure at least a small eta to avoid divide by zero for speed
+      if (parsedEta === 0) parsedEta = 1;
+
+      const trackingData = {
+        orderId: activeOrderId,
+        origin: customLocation,
+        destination: selectedBuyer?.location,
+        distanceKm: selectedTransport?.distanceKm || 0,
+        etaHours: parsedEta,
+      };
 
       const result = await api.startTracking(trackingData);
       if (result.success) {
         setFlowStep(6);
       } else {
         alert(
-          lang === "ta"
-            ? "கண்காணிப்பு தொடங்க முடியவில்லை"
-            : "Failed to start tracking.",
+          "Failed to start tracking.",
         );
       }
     } catch (err) {
-      alert(lang === "ta" ? "பிழை ஏற்பட்டது" : "Error starting tracking.");
+      alert("Error starting tracking.");
       console.error(err);
     } finally {
       setIsStartingTracking(false);
@@ -113,19 +114,17 @@ export const Step5_5TransportSelection = () => {
         <div className="inline-flex items-center space-x-2 bg-emerald-50 text-agri-700 px-5 py-3 rounded-md text-base font-black  mb-2 border border-emerald-200">
           <Truck className="w-3.5 h-3.5 text-agri-500" />
           <span>
-            {lang === "ta"
-              ? "போக்குவரத்து நிறுவன தேர்வு"
-              : "Transport Partner Selection"}
+            {"Transport Partner Selection"}
           </span>
           <span>•</span>
-          <span>{lang === "ta" ? "படி 5B / 6" : "Step 5B of 6"}</span>
+          <span>{"Step 5B of 6"}</span>
         </div>
         <h1 className="text-3xl font-black text-[#0F172A] tracking-tight ">
           {t.arrangeTransportTitle}
         </h1>
         <p className="text-base sm:text-lg font-bold text-slate-500 mt-1">
           {cropDisplay} • {customQty.toLocaleString()}{" "}
-          {lang === "ta" ? "கிலோ" : "KG"} | {locationDisplay} &rarr;{" "}
+          {"KG"} | {locationDisplay} &rarr;{" "}
           {buyerLocation}
         </p>
       </div>
@@ -133,110 +132,112 @@ export const Step5_5TransportSelection = () => {
       {/* 3 Transport Cards */}
       <div className="space-y-4">
         {loading ? (
-          <div className="text-center py-8 text-slate-500">Loading transport partners...</div>
+          <div className="text-center py-8 text-slate-500">
+            Loading transport partners...
+          </div>
         ) : transportPartners.length === 0 ? (
-          <div className="text-center py-8 text-slate-500">No transport partners found.</div>
-        ) : transportPartners.map((partner) => {
-          const isSelected = selectedTransport?.id === partner.id;
+          <div className="text-center py-8 text-slate-500">
+            No transport partners found.
+          </div>
+        ) : (
+          transportPartners.map((partner) => {
+            const isSelected = selectedTransport?.id === partner.id;
 
-          return (
-            <div
-              key={partner.id}
-              onClick={() => handleSelectPartner(partner)}
-              className={`bg-white rounded-lg p-6 border-2 cursor-pointer transition-all shadow-md ${
-                isSelected
-                  ? "border-agri-500 bg-emerald-50/20 ring-1 ring-agri-500/20"
-                  : "border-slate-200 hover:border-slate-300"
-              }`}
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4 mb-4">
-                <div className="flex items-start space-x-3.5">
-                  <div className="w-12 h-12 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 border border-amber-200">
-                    <Truck className="w-6 h-6 text-amber-700" />
-                  </div>
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <h3 className="text-base font-black text-[#0F172A]">
-                        {lang === "ta" ? partner.tamilName : partner.name}
-                      </h3>
+            return (
+              <div
+                key={partner.id}
+                onClick={() => handleSelectPartner(partner)}
+                className={`bg-white rounded-lg p-6 border-2 cursor-pointer transition-all shadow-md ${
+                  isSelected
+                    ? "border-agri-500 bg-emerald-50/20 ring-1 ring-agri-500/20"
+                    : "border-slate-200 hover:border-slate-300"
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4 mb-4">
+                  <div className="flex items-start space-x-3.5">
+                    <div className="w-12 h-12 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 border border-amber-200">
+                      <Truck className="w-6 h-6 text-amber-700" />
                     </div>
-                    <p className="text-base text-slate-500 font-bold mt-0.5">
-                      {partner.vehicle} • {partner.capacityText}
-                    </p>
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <h3 className="text-base font-black text-[#0F172A]">
+                          {partner.name}
+                        </h3>
+                      </div>
+                      <p className="text-base text-slate-500 font-bold mt-0.5">
+                        {partner.vehicle} • {partner.capacityText}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2 self-start sm:self-auto">
+                    <span className="text-base font-bold text-agri-600 flex items-center space-x-1">
+                      <span className="w-2 h-2 rounded-full bg-agri-500 animate-pulse"></span>
+                      <span> {"Available"}</span>
+                    </span>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSelectPartner(partner);
+                      }}
+                      className={`px-6 py-4 rounded-lg text-base font-black  transition-all ${
+                        isSelected
+                          ? "bg-agri-500 text-white shadow-xs"
+                          : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                      }`}
+                    >
+                      {isSelected
+                        ? "✓ SELECTED"
+                        : t.selectTransportBtn}
+                    </button>
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-2 self-start sm:self-auto">
-                  <span className="text-base font-bold text-agri-600 flex items-center space-x-1">
-                    <span className="w-2 h-2 rounded-full bg-agri-500 animate-pulse"></span>
-                    <span> {lang === "ta" ? "கிடைக்கும்" : "Available"}</span>
-                  </span>
+                {/* Specs & Pricing */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-base">
+                  <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                    <span className="text-slate-400 text-lg  font-bold block">
+                      {"Vehicle"}
+                    </span>
+                    <span className="font-extrabold text-slate-800">
+                      {partner.vehicle}
+                    </span>
+                  </div>
 
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSelectPartner(partner);
-                    }}
-                    className={`px-6 py-4 rounded-lg text-base font-black  transition-all ${
-                      isSelected
-                        ? "bg-agri-500 text-white shadow-xs"
-                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}
-                  >
-                    {isSelected
-                      ? lang === "ta"
-                        ? "✓ தேர்ந்தெடுக்கப்பட்டது"
-                        : "✓ SELECTED"
-                      : t.selectTransportBtn}
-                  </button>
+                  <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                    <span className="text-slate-400 text-lg  font-bold block">
+                      {"Capacity"}
+                    </span>
+                    <span className="font-extrabold text-slate-800">
+                      {partner.capacityKg.toLocaleString()}{" "}
+                      {"KG"}
+                    </span>
+                  </div>
+
+                  <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                    <span className="text-slate-400 text-lg  font-bold block">
+                      {t.estimatedTransportCostLabel}
+                    </span>
+                    <span className="font-black text-agri-600">
+                      ₹{partner.estimatedCost.toLocaleString()}
+                    </span>
+                  </div>
+
+                  <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                    <span className="text-slate-400 text-lg  font-bold block">
+                      {"ETA"}
+                    </span>
+                    <span className="font-extrabold text-slate-800">
+                      {partner.eta}
+                    </span>
+                  </div>
                 </div>
               </div>
-
-              {/* Specs & Pricing */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-base">
-                <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-                  <span className="text-slate-400 text-lg  font-bold block">
-                    {lang === "ta" ? "வாகனம்" : "Vehicle"}
-                  </span>
-                  <span className="font-extrabold text-slate-800">
-                    {partner.vehicle}
-                  </span>
-                </div>
-
-                <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-                  <span className="text-slate-400 text-lg  font-bold block">
-                    {lang === "ta" ? "கொள்ளளவு" : "Capacity"}
-                  </span>
-                  <span className="font-extrabold text-slate-800">
-                    {partner.capacityKg.toLocaleString()}{" "}
-                    {lang === "ta" ? "கிலோ" : "KG"}
-                  </span>
-                </div>
-
-                <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-                  <span className="text-slate-400 text-lg  font-bold block">
-                    {t.estimatedTransportCostLabel}
-                  </span>
-                  <span className="font-black text-agri-600">
-                    ₹{partner.estimatedCost.toLocaleString()}
-                  </span>
-                </div>
-
-                <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-                  <span className="text-slate-400 text-lg  font-bold block">
-                    {lang === "ta" ? "பயண நேரம்" : "ETA"}
-                  </span>
-                  <span className="font-extrabold text-slate-800">
-                    {lang === "ta"
-                      ? "~6 மணிநேரம் (NH45 வழித்தடம்)"
-                      : partner.eta}
-                  </span>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
 
       {/* Selected Transport Summary Confirmation Card */}
@@ -250,23 +251,21 @@ export const Step5_5TransportSelection = () => {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-base text-agri-950 font-bold">
             <div>
               <span className="text-agri-600 text-lg  block">
-                {lang === "ta" ? "போக்குவரத்து நிறுவனம்" : "Carrier"}
+                {"Carrier"}
               </span>
               <span>
-                {lang === "ta" && selectedTransport.tamilName
-                  ? selectedTransport.tamilName
-                  : selectedTransport.name}
+                {selectedTransport.name}
               </span>
             </div>
             <div>
               <span className="text-agri-600 text-lg  block">
-                {lang === "ta" ? "வாகனம்" : "Vehicle"}
+                {"Vehicle"}
               </span>
               <span>{selectedTransport.vehicle}</span>
             </div>
             <div>
               <span className="text-agri-600 text-lg  block">
-                {lang === "ta" ? "உத்தேச கட்டணம்" : "Estimated Freight"}
+                {"Estimated Freight"}
               </span>
               <span className="text-agri-800 font-black">
                 ₹{selectedTransport.estimatedCost.toLocaleString()}
@@ -274,10 +273,10 @@ export const Step5_5TransportSelection = () => {
             </div>
             <div>
               <span className="text-agri-600 text-lg  block">
-                {lang === "ta" ? "புறப்பாடு / சேருமிடம்" : "Pickup / Delivery"}
+                {"Pickup / Delivery"}
               </span>
               <span>
-                {locationDisplay} {lang === "ta" ? "தோட்டம்" : "Farm"} ➔{" "}
+                {locationDisplay} {"Farm"} ➔{" "}
                 {buyerLocation}
               </span>
             </div>
@@ -291,9 +290,7 @@ export const Step5_5TransportSelection = () => {
           >
             <span>
               {isStartingTracking
-                ? lang === "ta"
-                  ? "தொடங்கப்படுகிறது..."
-                  : "Starting..."
+                ? "Starting..."
                 : t.confirmStartTrackingBtn}
             </span>
             <ArrowRight className="w-5 h-5" />
@@ -318,9 +315,7 @@ export const Step5_5TransportSelection = () => {
         >
           <span>
             {isStartingTracking
-              ? lang === "ta"
-                ? "தொடங்கப்படுகிறது..."
-                : "Starting..."
+              ? "Starting..."
               : "Continue to Logistics & Track"}
           </span>
           <ArrowRight className="w-4 h-4 text-emerald-400" />

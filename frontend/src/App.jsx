@@ -44,6 +44,12 @@ export function AppContent() {
           ) : (
             <LandingPage />
           )
+        ) : currentView === "settings" ? (
+          user ? (
+            <SettingsView />
+          ) : (
+            <LandingPage />
+          )
         ) : currentView === "tracking" ? (
           user ? (
             <div className="pt-4 px-2 md:px-0">
@@ -89,8 +95,6 @@ export function AppContent() {
           <LandingPage />
         )}
       </main>
-
-
     </div>
   );
 }

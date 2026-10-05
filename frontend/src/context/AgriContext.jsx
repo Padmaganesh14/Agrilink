@@ -252,9 +252,7 @@ export const AgriProvider = ({ children }) => {
     // Check if user is in the middle of a draft (Steps 2, 3, or 4)
     if (flowStep > 1 && flowStep < 5) {
       const confirmDiscard = window.confirm(
-        lang === "ta"
-          ? "உங்களிடம் ஏற்கனவே ஒரு வரைவு (draft) உள்ளது. அதை நிராகரித்து புதிதாக தொடங்க விரும்புகிறீர்களா?"
-          : "You already have something in draft. Are you sure you want to discard it and start a new crop?",
+        "You already have something in draft. Are you sure you want to discard it and start a new crop?",
       );
       if (!confirmDiscard) {
         // User chose to continue with the draft

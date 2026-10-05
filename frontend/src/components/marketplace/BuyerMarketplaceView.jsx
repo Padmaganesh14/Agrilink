@@ -59,10 +59,8 @@ export const BuyerMarketplaceView = () => {
 
   const filteredCrops = crops.filter((c) => {
     const cropName = c.cropName || "";
-    const tamilName = c.tamilName || "";
     const matchesSearch =
-      cropName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tamilName.includes(searchTerm);
+      cropName.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesDistrict =
       selectedDistrict === "All" || c.location === selectedDistrict;
     return matchesSearch && matchesDistrict;
@@ -102,11 +100,7 @@ export const BuyerMarketplaceView = () => {
 
       const result = await api.createOrder(orderData);
       if (result.success) {
-        alert(
-          lang === "ta"
-            ? "ஆர்டர் வெற்றிகரமாக செய்யப்பட்டது!"
-            : "Order placed successfully! The farmer has been notified.",
-        );
+        alert("Order placed successfully! The farmer has been notified.");
         setIsCheckoutModalOpen(false);
         setActiveModalCrop(null);
         // Refresh orders
@@ -139,7 +133,7 @@ export const BuyerMarketplaceView = () => {
             <div className="flex items-center space-x-1.5 text-emerald-400 text-[10px] sm:text-xs font-semibold mb-1 uppercase tracking-wide">
               <Building2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               <span className="truncate">
-                Koyambedu Wholesale Mart • Chennai
+                {user?.name || "Buyer"} • {user?.location || "India"}
               </span>
             </div>
             <h1 className="text-lg sm:text-2xl font-bold text-white leading-tight">
@@ -155,7 +149,7 @@ export const BuyerMarketplaceView = () => {
               Available Lots
             </p>
             <p className="text-lg sm:text-xl font-bold text-indigo-300 mt-0.5 leading-none">
-              38 Lots
+              {crops.length} Lots
             </p>
             <p className="text-[9px] sm:text-[10px] text-emerald-400 font-medium mt-1 uppercase tracking-wide">
               100% Inspected
@@ -175,7 +169,7 @@ export const BuyerMarketplaceView = () => {
           }`}
         >
           <ShoppingCart className="w-4 h-4" />
-          <span>{lang === "ta" ? "சந்தை" : "Marketplace"}</span>
+          <span>{"Marketplace"}</span>
         </button>
         <button
           onClick={() => setActiveTab("purchases")}
@@ -186,7 +180,7 @@ export const BuyerMarketplaceView = () => {
           }`}
         >
           <Package className="w-4 h-4" />
-          <span>{lang === "ta" ? "என் வாங்குதல்கள்" : "My Purchases"}</span>
+          <span>{"My Purchases"}</span>
         </button>
       </div>
 
@@ -243,9 +237,7 @@ export const BuyerMarketplaceView = () => {
                         </span>
                         <div>
                           <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-tight">
-                            {lang === "ta" && crop.tamilName
-                              ? crop.tamilName
-                              : crop.cropName}
+                            {crop.cropName}
                           </h3>
                           <p className="text-[10px] sm:text-xs text-slate-500 font-medium mt-0.5">
                             {crop.grade}
@@ -317,13 +309,11 @@ export const BuyerMarketplaceView = () => {
       ) : (
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-slate-900 mt-6 mb-4">
-            {lang === "ta" ? "என் வாங்குதல்கள்" : "My Purchases"}
+            {"My Purchases"}
           </h2>
           {myOrders.length === 0 ? (
             <div className="py-12 text-center text-slate-500 bg-white rounded-lg border border-slate-200 shadow-sm">
-              {lang === "ta"
-                ? "எந்த ஆர்டரும் இல்லை"
-                : "You haven't placed any orders yet."}
+              {"You haven't placed any orders yet."}
             </div>
           ) : (
             myOrders.map((order) => (
@@ -388,9 +378,7 @@ export const BuyerMarketplaceView = () => {
               </span>
               <div>
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-tight">
-                  {lang === "ta" && activeModalCrop.tamilName
-                    ? activeModalCrop.tamilName
-                    : activeModalCrop.cropName}
+                  {activeModalCrop.cropName}
                 </h3>
                 <p className="text-xs sm:text-sm font-medium text-emerald-700 mt-0.5">
                   {activeModalCrop.quantityAvailable?.toLocaleString()} KG •

@@ -31,7 +31,6 @@ export const addCrop = async (req, res, next) => {
   try {
     const {
       cropName,
-      tamilName,
       grade,
       location,
       quantityAvailable,
@@ -44,7 +43,6 @@ export const addCrop = async (req, res, next) => {
       .insert([
         {
           cropName,
-          tamilName,
           grade,
           location,
           quantityAvailable,

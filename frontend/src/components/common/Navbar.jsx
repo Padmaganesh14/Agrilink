@@ -116,7 +116,7 @@ export const Navbar = () => {
               >
                 <LayoutDashboard className="w-5 h-5 md:w-4 md:h-4" />
                 <span className="hidden md:inline">
-                  {lang === "ta" ? "முகப்பு" : "Dashboard"}
+                  {"Dashboard"}
                 </span>
               </button>
 
@@ -131,7 +131,7 @@ export const Navbar = () => {
               >
                 <Sprout className="w-5 h-5 md:w-4 md:h-4" />
                 <span className="hidden md:inline">
-                  {lang === "ta" ? "பயிரை விற்க" : "Sell Crop"}
+                  {"Sell Crop"}
                 </span>
               </button>
             </>
@@ -148,7 +148,7 @@ export const Navbar = () => {
               >
                 <Building2 className="w-5 h-5 md:w-4 md:h-4" />
                 <span className="hidden md:inline">
-                  {lang === "ta" ? "சந்தை" : "Marketplace"}
+                  {"Marketplace"}
                 </span>
               </button>
 
@@ -163,7 +163,7 @@ export const Navbar = () => {
               >
                 <Truck className="w-5 h-5 md:w-4 md:h-4" />
                 <span className="hidden md:inline">
-                  {lang === "ta" ? "கண்காணிப்பு" : "Track Cargo"}
+                  {"Track Cargo"}
                 </span>
               </button>
             </>

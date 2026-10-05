@@ -6,12 +6,12 @@ export const SellMyCropStepper = () => {
   const { flowStep, setFlowStep, t, lang, selectedCrop, customLocation, customQty, marketIntelligence, selectedBuyer, activeOrderId } = useAgri();
 
   const steps = [
-    { num: 1, label: lang === "ta" ? "1. பயிர்" : "1. Crop" },
-    { num: 2, label: lang === "ta" ? "2. சந்தை" : "2. Market" },
-    { num: 3, label: lang === "ta" ? "3. வாங்குபவர்" : "3. Buyer" },
-    { num: 4, label: lang === "ta" ? "4. AI" : "4. AI" },
-    { num: 5, label: lang === "ta" ? "5. ஆர்டர்" : "5. Order" },
-    { num: 6, label: lang === "ta" ? "6. சரக்கு" : "6. Logistics" },
+    { num: 1, label: "1. Crop" },
+    { num: 2, label: "2. Market" },
+    { num: 3, label: "3. Buyer" },
+    { num: 4, label: "4. AI" },
+    { num: 5, label: "5. Order" },
+    { num: 6, label: "6. Logistics" },
   ];
 
   const currentStepNum = flowStep === "transport" ? 5.5 : flowStep;
@@ -40,7 +40,7 @@ export const SellMyCropStepper = () => {
         <div className="hidden md:flex items-center space-x-2 mb-2">
           <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
           <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-            {lang === "ta" ? "பயிரை விற்க" : "SELL CROP WORKFLOW"}
+            {"SELL CROP WORKFLOW"}
           </span>
         </div>
 

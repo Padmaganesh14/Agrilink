@@ -79,15 +79,13 @@ export const Step2MarketOpportunity = () => {
         <div className="inline-flex items-center space-x-2 bg-emerald-50 text-emerald-700 px-5 py-3 rounded-md text-base font-black mb-2 border border-emerald-200">
           <span>{t.step02Pill}</span>
           <span>•</span>
-          <span>{lang === 'ta' ? 'படி 2 / 6' : 'Step 2 of 6'}</span>
+          <span>{'Step 2 of 6'}</span>
         </div>
         <h1 className="text-3xl font-black text-[#0F172A] tracking-tight">
           {t.step02Title}
         </h1>
         <p className="text-base sm:text-lg font-medium text-slate-500 mt-1">
-          {lang === 'ta'
-            ? 'AI சந்தை நுண்ணறிவு மூலம் உங்கள் பயிருக்கான சிறந்த சந்தை வாய்ப்பு.'
-            : 'AI-powered market intelligence with real APMC mandi prices.'}
+          {'AI-powered market intelligence with real APMC mandi prices.'}
         </p>
       </div>
 
