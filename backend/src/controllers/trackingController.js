@@ -19,32 +19,12 @@ export async function startTracking(req, res, next) {
       });
     }
 
-    // Resolve AGRI- string to UUID
-    let resolvedOrderId = orderId;
-    const isUUID =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-        orderId,
-      );
-    if (!isUUID) {
-      const { data: orderData, error: orderErr } = await supabase
-        .from("orders")
-        .select("id")
-        .eq("orderId", orderId)
-        .single();
-      if (orderErr || !orderData) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Invalid order ID" });
-      }
-      resolvedOrderId = orderData.id;
-    }
-
     const trackingId = `TRK-${Date.now().toString().slice(-6)}`;
     const speedKmH = distanceKm / etaHours; // Calculate actual speed based on data
 
     const trackingData = {
       trackingId,
-      orderId: resolvedOrderId,
+      orderId, // Use the string directly!
       origin,
       destination,
       currentCheckpoint: origin,
